@@ -15,7 +15,6 @@ var Game = /** @class */ (function () {
             var position = Terms_1.boardPositions[i];
             var side = (Number(i + Number(Math.floor(Number(i) / 8) % 2 === 0)) % 2) === 1 ? 'white' : 'black';
             var square = new Square_1.default({ row: position[1], col: position[0] }, side);
-            console.log(position);
             if (position in Object.keys(Terms_1.startingFormation)) {
                 switch (Terms_1.startingFormation[position]) {
                     case Terms_1.PieceKind.Pawn:

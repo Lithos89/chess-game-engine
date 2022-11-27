@@ -1,9 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Game = void 0;
 var Game_1 = require("./Game");
-var gameModel = new Game_1.Game();
-console.log(Object.keys(gameModel.squares).length);
-for (var key in gameModel.squares) {
-    console.log(gameModel.squares[key]);
-}
+Object.defineProperty(exports, "Game", { enumerable: true, get: function () { return Game_1.Game; } });
 //# sourceMappingURL=index.js.map
