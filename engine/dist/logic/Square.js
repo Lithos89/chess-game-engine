@@ -17,6 +17,7 @@ var Square = /** @class */ (function () {
     */
     Square.prototype.setPiece = function (newPiece) {
         this.piece = newPiece;
+        this.abbrPiece = String(typeof newPiece);
     };
     return Square;
 }());

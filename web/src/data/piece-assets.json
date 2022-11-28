@@ -1,0 +1,14 @@
+{
+  "bishop_white": "/pieces/bishopW.png",
+  "bishop_black": "/pieces/bishopB.png",
+  "king_white": "/pieces/kingW.png",
+  "king_black": "/pieces/kingB.png",
+  "knight_white": "/pieces/knightW.png",
+  "knight_black": "/pieces/knightB.png",
+  "pawn_white": "/pieces/pawnW.png",
+  "pawn_black": "/pieces/pawnB.png",
+  "rook_white": "/pieces/rookW.png",
+  "rook_black": "/pieces/rookB.png",
+  "queen_white": "/pieces/queenW.png",
+  "queen_black": "/pieces/queenB.png"
+}

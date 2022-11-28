@@ -13,31 +13,33 @@ var Game = /** @class */ (function () {
     Game.prototype.initializeGame = function () {
         for (var i in Terms_1.boardPositions) {
             var position = Terms_1.boardPositions[i];
-            var side = (Number(i + Number(Math.floor(Number(i) / 8) % 2 === 0)) % 2) === 1 ? 'white' : 'black';
-            var square = new Square_1.default({ row: position[1], col: position[0] }, side);
-            if (position in Object.keys(Terms_1.startingFormation)) {
-                switch (Terms_1.startingFormation[position]) {
-                    case Terms_1.PieceKind.Pawn:
-                        square.setPiece(new pieces_1.Pawn('white'));
-                        break;
-                    case Terms_1.PieceKind.Rook:
-                        square.setPiece(new pieces_1.Rook('white'));
-                        break;
-                    case Terms_1.PieceKind.Knight:
-                        square.setPiece(new pieces_1.Knight('white'));
-                        break;
-                    case Terms_1.PieceKind.Bishop:
-                        square.setPiece(new pieces_1.Bishop('white'));
-                        break;
-                    case Terms_1.PieceKind.Queen:
-                        square.setPiece(new pieces_1.Queen('white'));
-                        break;
-                    case Terms_1.PieceKind.King:
-                        square.setPiece(new pieces_1.King('white'));
-                        break;
-                }
+            var regex = /b|d|f|h/;
+            var isEvenRow = regex.test(position);
+            var side = ((Number(i) % 8) + Number(isEvenRow)) % 2 === 0 ? 'white' : 'black';
+            this.squares[position] = new Square_1.default({ row: position[1], col: position[0] }, side);
+            //!: Temporary
+            // this.squares[position].setPiece(new Pawn('white'));
+            switch (Terms_1.startingFormation[position]) {
+                case Terms_1.PieceKind.Pawn:
+                    this.squares[position].setPiece(new pieces_1.Pawn('white'));
+                    break;
+                case Terms_1.PieceKind.Rook:
+                    this.squares[position].setPiece(new pieces_1.Rook('white'));
+                    break;
+                case Terms_1.PieceKind.Knight:
+                    this.squares[position].setPiece(new pieces_1.Knight('white'));
+                    break;
+                case Terms_1.PieceKind.Bishop:
+                    this.squares[position].setPiece(new pieces_1.Bishop('white'));
+                    break;
+                case Terms_1.PieceKind.Queen:
+                    this.squares[position].setPiece(new pieces_1.Queen('white'));
+                    break;
+                case Terms_1.PieceKind.King:
+                    this.squares[position].setPiece(new pieces_1.King('white'));
+                    break;
             }
-            this.squares[position] = square;
+            console.log(this.squares);
         }
         ;
     };

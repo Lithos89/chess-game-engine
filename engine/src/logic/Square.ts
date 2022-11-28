@@ -5,9 +5,10 @@ import Piece from './pieces/Piece';
 
 class Square {
   // only allow position to be set
-  readonly pos: Position
-  readonly side: Side
-  piece: Piece
+  public readonly pos: Position;
+  public readonly side: Side;
+  public piece: Piece;
+  public abbrPiece: string;
 
   constructor(position: Position, side: Side) {
     this.pos = position;
@@ -15,7 +16,7 @@ class Square {
   }
 
   getPosition(): string {
-    return this.pos.col + this.pos.row
+    return this.pos.col + this.pos.row;
   }
 
   /*
@@ -26,7 +27,8 @@ class Square {
 
   */
   setPiece(newPiece: Piece) {
-    this.piece = newPiece
+    this.piece = newPiece;
+    this.abbrPiece = String(typeof newPiece)
   }
 }
 

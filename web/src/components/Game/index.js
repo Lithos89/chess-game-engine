@@ -6,9 +6,9 @@ import { Game as GameModel } from 'chess-engine';
 const Game = () => {
 
   const gameModel = new GameModel();
-  console.log(Object.keys(gameModel.squares).length)
+  const squares = gameModel.squares;
 
-  return <Board squares={gameModel.squares}/>
+  return <Board squares={squares}/>
 }
 
 export default Game;

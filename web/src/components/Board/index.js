@@ -1,6 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
-import Square from './Square';
+
+import Square from 'components/Square';
 
 // Just setting up a test implementation for the background to get it to work on the screen
 const Background = styled.div`
@@ -16,19 +16,15 @@ const Background = styled.div`
   to handle the logic if a eice is allowed to pass through it to allow
 */
 
-const rowVals = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-const colVals = ['8', '7', '6', '5', '4', '3', '2', '1'];
-
-const temp = Array.from(Array(64).keys());
-
+// *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
 const Board = ({ squares }) => {
 
-  console.info(temp)
+  console.info(squares)
   return (
     <Background>
       {
         Object.entries(squares)
-          .map(([position, square]) => <Square primary={square.side} position={position}/>)
+          .map(([position, square]) => <Square key={position} color={square.side} position={position} piece={square.piece}/>)
       }
     </Background>
   );

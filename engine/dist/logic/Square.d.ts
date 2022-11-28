@@ -4,6 +4,7 @@ declare class Square {
     readonly pos: Position;
     readonly side: Side;
     piece: Piece;
+    abbrPiece: string;
     constructor(position: Position, side: Side);
     getPosition(): string;
     setPiece(newPiece: Piece): void;
