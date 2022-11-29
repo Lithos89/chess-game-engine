@@ -7,9 +7,13 @@
     "module": "commonjs",
     "target": "es5",
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    // "allowJs": true,
   },
   "include": [
     "src/**/*"
-  ]
+  ],
+  // "exclude": [
+  //   "src/**/*.test.ts"
+  // ]
 }

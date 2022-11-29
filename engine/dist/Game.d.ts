@@ -1,9 +1,19 @@
-import Square from './logic/Square';
+import { PieceKind, Side } from './Terms';
+import { PieceListing } from './formation/structure';
+import Square from './components/Square';
+import Piece from './components/pieces';
 export declare class Game {
-    squares: {
-        [index: string]: Square;
+    boardSquares: {
+        [shortPosition: string]: Square;
     };
+    captured: {
+        [_side in Side]: {
+            [_piece in PieceKind]: number;
+        };
+    };
+    requestMove(caller: Piece, target: Square): void;
     constructor();
-    private initializeGame;
+    createPiece({ kind, side }: PieceListing): Piece | null;
+    private initializeBoard;
     private initializeSquares;
 }

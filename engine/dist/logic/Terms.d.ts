@@ -6,17 +6,20 @@ export type ShortPosition = `${Column}${Row}`;
 export declare enum PieceKind {
     Pawn = "p",
     Rook = "r",
-    Knight = "k",
+    Knight = "h",
     Bishop = "b",
     Queen = "q",
     King = "k"
 }
-type PieceListing = {
-    [index: string]: PieceKind;
+export interface PieceListing {
+    kind: PieceKind;
+    side: Side;
+}
+export type PieceListings = {
+    [index: string]: PieceListing;
 };
-export declare const startingFormation: PieceListing;
+export declare const startingFormation: PieceListings;
 export type Position = {
     row: Row;
     col: Column;
 };
-export {};

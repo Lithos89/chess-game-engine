@@ -1,6 +1,5 @@
-import { PieceKind, type Side } from '../Terms.js';
-
-import Piece from './Piece.js';
+import { PieceKind, type Side } from '../../Terms';
+import Piece from './Piece';
 
 class King extends Piece {
   side: Side;

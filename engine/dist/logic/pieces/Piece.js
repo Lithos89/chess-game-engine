@@ -5,7 +5,7 @@ var PieceKind;
 (function (PieceKind) {
     PieceKind["Pawn"] = "p";
     PieceKind["Rook"] = "r";
-    PieceKind["Knight"] = "k";
+    PieceKind["Knight"] = "h";
     PieceKind["Bishop"] = "b";
     PieceKind["Queen"] = "q";
     PieceKind["King"] = "k";
@@ -18,10 +18,8 @@ var Piece = /** @class */ (function () {
     function Piece(piece) {
         this.kind = piece;
     }
-    Piece.prototype.getAvailablePositions = function () {
-    };
     return Piece;
 }());
-;
 exports.default = Piece;
+;
 //# sourceMappingURL=Piece.js.map
