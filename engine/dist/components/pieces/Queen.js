@@ -26,7 +26,7 @@ var Queen = /** @class */ (function (_super) {
     }
     ;
     Queen.prototype.move = function (currentSquare, destSquare) {
-        Piece_1.default.movePiece(currentSquare, destSquare);
+        return Piece_1.default.movePiece(currentSquare, destSquare);
     };
     return Queen;
 }(Piece_1.default));

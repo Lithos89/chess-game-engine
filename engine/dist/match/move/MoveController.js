@@ -23,8 +23,11 @@ var MoveController = /** @class */ (function () {
             // this.requestMove(originPosShort, destPosShort);
             var originPiece = origin.piece;
             // const destPiece = this.boardSquares[to]?.piece
-            dest.setPiece(originPiece);
+            var goTo = _this.boardSquares['d4'];
+            console.info(goTo);
+            goTo.setPiece(originPiece);
             delete origin.piece;
+            return _this.boardSquares;
         };
         this.boardSquares = squareListing;
         index_1.default.movePiece = this.moveRequestCallback;

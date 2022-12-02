@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PieceKind = exports.boardPositions = void 0;
+exports.PieceKind = exports.SIDES = exports.boardPositions = void 0;
 // TODO: Determine if this should be constructed at runtime using column and row or statically implemented like it is right now
 exports.boardPositions = [
     'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
@@ -12,6 +12,8 @@ exports.boardPositions = [
     'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8'
 ];
+// SIDE SPECIFIC
+exports.SIDES = ['white', 'black'];
 // PIECE SPECIFIC
 var PieceKind;
 (function (PieceKind) {

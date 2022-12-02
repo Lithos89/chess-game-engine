@@ -26,7 +26,7 @@ var Bishop = /** @class */ (function (_super) {
     }
     ;
     Bishop.prototype.move = function (currentSquare, destSquare) {
-        Piece_1.default.movePiece(currentSquare, destSquare);
+        return Piece_1.default.movePiece(currentSquare, destSquare);
     };
     ;
     return Bishop;

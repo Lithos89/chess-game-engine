@@ -26,13 +26,13 @@ var Game = /** @class */ (function () {
         };
         this.id = id;
         this.playerSide = side;
-        // !: Still have to do something with this side prop
+        // !: Still have to use this side to manipulate the board depending on the side
         this.boardController = new BoardController_1.default(start_1.default);
     }
+    ;
     Game.prototype.getGameSquares = function () {
         return this.boardController.boardSquares;
     };
-    ;
     return Game;
 }());
 exports.Game = Game;

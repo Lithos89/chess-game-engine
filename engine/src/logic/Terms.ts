@@ -25,7 +25,9 @@ export type Position = {
 };
 
 // SIDE SPECIFIC
-export type Side = 'white' | 'black';
+export const SIDES = ['white', 'black'] as const
+type SideTuple = typeof SIDES
+export type Side = SideTuple[number];
 
 
 // PIECE SPECIFIC

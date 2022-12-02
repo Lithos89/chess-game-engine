@@ -75,3 +75,9 @@
         Through debugging, was able to discover that the problem is stemmed from believing that pass by reference is available
         in javascript. Will need to progress with fixing this issue before progressing anywhere else because solving this will
         lead to finiding other bugs that are of similar nature.
+
+        2. Figured out that the board is not being rerendered because although the boardLayout is changing, React doesn't know of this change,
+        as a result, a refresh prop that is triggered on a piece moving does the trick, but is not proper code.
+        To solve this, I will need to modify the move function in some format to allow for the updated layout to be returned and passed to the set state.
+        Will see if there it is convenient to integrate a custom hook for this functionality so that it all contained concisely. Do not prioritize this though
+        since there are more important features to include. If the component get too big and disorganized, then proceed with this modification.

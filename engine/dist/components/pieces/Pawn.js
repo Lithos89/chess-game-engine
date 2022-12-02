@@ -26,7 +26,7 @@ var Pawn = /** @class */ (function (_super) {
     }
     ;
     Pawn.prototype.move = function (currentSquare, destSquare) {
-        Piece_1.default.movePiece(currentSquare, destSquare);
+        return Piece_1.default.movePiece(currentSquare, destSquare);
     };
     return Pawn;
 }(Piece_1.default));

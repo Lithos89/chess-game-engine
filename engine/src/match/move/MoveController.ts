@@ -33,8 +33,11 @@ export default class MoveController {
     const originPiece = origin.piece
     // const destPiece = this.boardSquares[to]?.piece
 
-    dest.setPiece(originPiece);
+    const goTo = this.boardSquares['d4']
+    console.info(goTo)
+    goTo.setPiece(originPiece);
     delete origin.piece;
+    return this.boardSquares;
   };
 
 

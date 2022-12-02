@@ -27,6 +27,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Logic
+var Terms_1 = require("../logic/Terms");
 // Classes
 var Game_1 = require("./game/Game");
 // *: Class that captures a series of games between an opponent
@@ -50,37 +52,44 @@ var Match = /** @class */ (function () {
             return _this.currentGame.boardController.boardSquares;
         };
         this.gameGenerator = this.generateNextGame(side, 'test');
-        // !: Fix this type conversion to something better
-        var newGame = this.gameGenerator.next().value;
-        this.games.push(newGame);
-        this.currentGame = newGame;
-        this.currentSide = side;
-        this.gameCount += 1;
     }
+    ;
     Match.prototype.storeGame = function (game) {
         this.games.push(game);
+        this.currentGame = game;
+        this.currentSide = game.playerSide;
         this.gameCount += 1;
+        console.info(game.id);
     };
     Match.prototype.generateNextGame = function (startingSide, id) {
-        var tempID, newGame;
+        var side, gameID, newGame, _nextSideIndex;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    tempID = 0;
+                    side = startingSide;
                     _a.label = 1;
                 case 1:
                     if (!true) return [3 /*break*/, 3];
-                    newGame = new Game_1.Game(startingSide, tempID.toString());
+                    gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
+                    newGame = new Game_1.Game(side, gameID);
                     this.storeGame(newGame);
-                    return [4 /*yield*/, new Game_1.Game(startingSide, tempID.toString())];
+                    return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
-                    tempID += 1;
+                    _nextSideIndex = (Terms_1.SIDES.length - 1) - Terms_1.SIDES.indexOf(side);
+                    side = Terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
-                case 3: return [2 /*return*/];
+                case 3:
+                    ;
+                    return [2 /*return*/];
             }
         });
     };
+    ;
+    Match.prototype.getGame = function (index) {
+        return this.games[index];
+    };
+    ;
     Match.prototype.updateWins = function (result) {
         // !: Need to update this to look at the side of the player and the computer and update the appropriate win section
         switch (result) {

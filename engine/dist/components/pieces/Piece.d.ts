@@ -3,7 +3,11 @@ import Square from '../Square';
 export default abstract class Piece {
     abstract side: Side;
     kind: PieceKind;
-    static movePiece: (arg0: Square, arg1: Square) => void;
+    static movePiece: (arg0: Square, arg1: Square) => {
+        [shortPosition: string]: Square;
+    };
     constructor(piece: PieceKind);
-    abstract move(currentSquare: Square, destSquare: Square): void;
+    abstract move(currentSquare: Square, destSquare: Square): {
+        [shortPosition: string]: Square;
+    };
 }

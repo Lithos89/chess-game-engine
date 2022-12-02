@@ -1,19 +1,19 @@
 // Logic
-import { type Side } from '../logic/Terms';
+import { type Side, SIDES } from '../logic/Terms';
 
 // Classes
 import { Game } from './game/Game';
 
 // *: Class that captures a series of games between an opponent
 export default class Match {
-  games: Game[] = [];
+  private games: Game[] = [];
 
   selectedGameIndex: number = 0;
   currentGame: Game;
   currentSide: Side;
 
   // !: Need to add static type checking to this line
-  gameGenerator;
+  gameGenerator: Generator<Game, Game, Game>;
   // Add here a property that takes the squares from the current games move cntroller
   private gameCount: number = 0
 
@@ -25,36 +25,35 @@ export default class Match {
 
   constructor(side: Side) {
     this.gameGenerator = this.generateNextGame(side, 'test')
-    // !: Fix this type conversion to something better
-    const newGame = this.gameGenerator.next().value as Game
-    this.games.push(newGame);
-
-    this.currentGame = newGame;
-    this.currentSide = side;
-    this.gameCount += 1;
-  }
+  };
 
   storeGame(game: Game) {
-    this.games.push(game)
-    this.gameCount += 1
+    this.games.push(game);
+    this.currentGame = game;
+    this.currentSide = game.playerSide;
+    this.gameCount += 1;
+    console.info(game.id);
   }
 
-  * generateNextGame(startingSide: Side, id: string) {
+  * generateNextGame(startingSide: Side, id: string): Generator<Game, Game, Game> {
     // ?: Add in here the logic that will keep switching the sides of 
     // ?: the game for the match based on the previous game
 
-    var tempID = 0
+    var side: Side = startingSide
 
     while (true) {
-      const newGame = new Game(startingSide, tempID.toString())
-      this.storeGame(newGame)
-      yield new Game(startingSide, tempID.toString());
-      tempID += 1
-    }
-  }
+      const gameID = `${id}_${side}_${this.gameCount}`;
+      const newGame = new Game(side, gameID);
+      this.storeGame(newGame);
+      yield newGame;
+      const _nextSideIndex = (SIDES.length - 1) - SIDES.indexOf(side);
+      side = SIDES[_nextSideIndex];
+    };
+  };
 
-  
-
+  getGame(index: number) {
+    return this.games[index];
+  };
 
   resetGame = () => {
     this.currentGame = this.gameGenerator.next().value;
@@ -62,7 +61,7 @@ export default class Match {
     console.log(this.currentGame.id);
     // this.currentGame = new Game('white')
     return this.currentGame.boardController.boardSquares;
-  }
+  };
 
   updateWins(result: Side | 'draw') {
 

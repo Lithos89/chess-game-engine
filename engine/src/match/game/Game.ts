@@ -4,10 +4,10 @@ import startingFormation from '../../formation/setups/start';
 import BoardController from '../board/BoardController';
 
 export class Game {
-  id: string;
+  readonly id: string;
   // !: Make boardController private and come up with a mechanism o provide an outlet to the square dictionary and make that public
   boardController: BoardController;
-  playerSide: Side
+  readonly playerSide: Side
 
   // *: Dictionary that holds the squares that makeup the board
   captures: {[_side in Side]: {[_piece in PieceKind] : number}} = {
@@ -29,14 +29,14 @@ export class Game {
     }
   };
 
-  getGameSquares() {
-    return this.boardController.boardSquares
-  }
-
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
-    // !: Still have to do something with this side prop
+    // !: Still have to use this side to manipulate the board depending on the side
     this.boardController = new BoardController(startingFormation);
   };
+
+  getGameSquares() {
+    return this.boardController.boardSquares
+  }
 };

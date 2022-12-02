@@ -26,7 +26,7 @@ var Knight = /** @class */ (function (_super) {
     }
     ;
     Knight.prototype.move = function (currentSquare, destSquare) {
-        Piece_1.default.movePiece(currentSquare, destSquare);
+        return Piece_1.default.movePiece(currentSquare, destSquare);
     };
     ;
     return Knight;

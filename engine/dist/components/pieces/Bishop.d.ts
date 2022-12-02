@@ -4,6 +4,8 @@ import Piece from './Piece';
 declare class Bishop extends Piece {
     side: Side;
     constructor(side: Side);
-    move(currentSquare: Square, destSquare: Square): void;
+    move(currentSquare: Square, destSquare: Square): {
+        [shortPosition: string]: Square;
+    };
 }
 export default Bishop;

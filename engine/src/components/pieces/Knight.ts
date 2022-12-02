@@ -11,8 +11,8 @@ class Knight extends Piece {
     this.side = side;
   };
 
-  move(currentSquare: Square, destSquare: Square) {
-    Piece.movePiece(currentSquare, destSquare);
+  move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square } {
+    return Piece.movePiece(currentSquare, destSquare);
   };
 };
 

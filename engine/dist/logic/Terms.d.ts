@@ -6,7 +6,9 @@ export type Position = {
     row: Row;
     col: Column;
 };
-export type Side = 'white' | 'black';
+export declare const SIDES: readonly ["white", "black"];
+type SideTuple = typeof SIDES;
+export type Side = SideTuple[number];
 export declare enum PieceKind {
     Pawn = "p",
     Rook = "r",
@@ -15,3 +17,4 @@ export declare enum PieceKind {
     Queen = "q",
     King = "k"
 }
+export {};

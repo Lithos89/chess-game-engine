@@ -6,5 +6,7 @@ export default class MoveController {
         [shortPosition: string]: Square;
     });
     requestMove: (from: ShortPosition, to: ShortPosition) => void;
-    moveRequestCallback: (origin: Square, dest: Square) => void;
+    moveRequestCallback: (origin: Square, dest: Square) => {
+        [shortPosition: string]: Square;
+    };
 }

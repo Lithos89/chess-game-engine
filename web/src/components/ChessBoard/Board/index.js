@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Square from 'components/ChessBoard/Square';
@@ -17,15 +16,24 @@ const Background = styled.div`
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
 const Board = ({ squares, update }) => {
 
-  const square2 = squares['d4'];
+  // const square2 = squares[4].square;
+
+  
   return (
     <Background>
-      {
-        Object.entries(squares)
-          .map(([position, square]) => (
-            <Square key={position} square={square} square2={square2} color={square.color} position={position} piece={square.piece} update={update}/>
-          ))
-      }
+        {
+          squares.map(({position , square }) => {
+            const { color, piece } = square;
+            // const tempPiece = (data.square.piece !== null && data.square.piece !== undefined) ? ({
+            //   kind: data.pieceKind ?? null,
+            //   side: data.pieceSide ?? null,
+            //   move: data.pieceMove ?? null
+            // }) : undefined
+            return (
+              <Square key={position} square={square} square2={square} color={color} position={position} piece={piece} update={update} />
+            )
+          })
+        }
     </Background>
   );
 };

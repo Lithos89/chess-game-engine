@@ -1,16 +1,37 @@
+import { useState } from 'react';
+
+// Modules
 import { startSession } from 'chess-engine';
 
+// Components
 import Game from '../Game';
 
+const { matchController, showcase } = startSession();
+const initialGame = matchController.generateGame();
+
 const Session = () => {
-  const { matchController, showcase } = startSession();
 
-  const squares = matchController.start();
+  const [boardSquares, tempSetBoardSquares] = useState(Object.entries(initialGame).map(([pos, val]) => ({
+    position: pos,
+    square: val
+  })));
 
-  console.log(squares)
+  const setBoardSquares = (temp) => tempSetBoardSquares(Object.entries(temp).map(([pos, val]) => ({
+    position: pos,
+    square: val
+  })));
+
+  const resetSquares = () => {
+    tempSetBoardSquares(Object.entries(matchController.generateGame()).map(([pos, val]) => ({
+      position: pos,
+      square: val
+    }))); 
+  };
+
+  console.log(boardSquares)
 
   return (
-    <Game resetFunc={matchController.reset} newSquares={squares} showcase={showcase} />
+    <Game boardSquares={boardSquares} setBoardSquares={setBoardSquares} resetSquares={resetSquares} showcase={showcase} />
   )
 };
 

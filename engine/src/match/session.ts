@@ -41,28 +41,16 @@ export function startSession(side: Side = 'white'):
   {
 
   const session = new Session();
-
-  // !: Class instantiation is not being passed by reference, need to figure out how to solve this before progressing
   const currentMatch = session.currentMatch;
 
-  // ?: Could implement a callback implementation that when an update is persisted throughout the model than the callback that this line is referencing gets updated.
-  // const currentGame = currentMatch.gameGenerator.next().value;
-
-  // const gameSquares = currentGame.boardController.boardSquares;
-
-  const randomFunc = (generator) => () => {
-    const squares = generator.next().value.boardController.boardSquares
-    return squares
-  }
-
-  const restartGame = (generator) => () => {
-    const newGame = generator.next().value;
-    return newGame.boardController.boardSquares;
+  const generateNewBoard = (generator) => () => {
+    const newGame = generator.next().value
+    const boardSquares = newGame.boardController.boardSquares
+    return boardSquares
   }
 
   const matchController = {
-    start: randomFunc(currentMatch.gameGenerator), 
-    reset: restartGame(currentMatch.gameGenerator),
+    generateGame: generateNewBoard(currentMatch.gameGenerator)
   };
 
   const showcase = () => {

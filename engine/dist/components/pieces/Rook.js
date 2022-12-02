@@ -26,7 +26,7 @@ var Rook = /** @class */ (function (_super) {
     }
     ;
     Rook.prototype.move = function (currentSquare, destSquare) {
-        Piece_1.default.movePiece(currentSquare, destSquare);
+        return Piece_1.default.movePiece(currentSquare, destSquare);
     };
     return Rook;
 }(Piece_1.default));
