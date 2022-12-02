@@ -1,4 +1,6 @@
-import { PieceKind, type Side } from '../../Terms';
+import { PieceKind, type Side } from '../../logic/Terms';
+
+import Square from 'components/Square';
 import Piece from './Piece';
 
 class Bishop extends Piece {
@@ -7,6 +9,10 @@ class Bishop extends Piece {
   constructor(side: Side) {
     super(PieceKind.Bishop);
     this.side = side;
+  };
+
+  move(currentSquare: Square, destSquare: Square) {
+    Piece.movePiece(currentSquare, destSquare)
   };
 };
 

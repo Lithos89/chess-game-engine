@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.Game = void 0;
-var Terms_1 = require("./logic/Terms");
+var Terms_1 = require("../../logic/Terms");
 var pieces_1 = require("./logic/pieces");
 var Square_1 = require("./logic/Square");
 var Game = /** @class */ (function () {

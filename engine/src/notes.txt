@@ -1,0 +1,77 @@
+11-29-2022:
+
+- Goal: 
+        Allow the web game to be able to traverse pieces across the board and capture pieces of only the
+        opposite side. It will be a major plus if I am able to also implement the logic that governs the piece's movement.
+
+- Notes: 
+        1. Come up with a different name for formations that is able to capture the description that it is supposed to hold
+        the different board formations
+        2. Determine a good name for the directory of where the game is supoosed to live depending on the structure of the
+        different controllers that will be required in order for the game to be operational
+        3. See how to organize game so that I don't have the ugly file structure of game/Game
+        4. Provide a function for the pawn class called promote that allows it to change into a different piece
+
+- Objective Plan:
+        1. Arrange folder structure to match what I mapped out on paper and configure to something that I see accurately
+        depicts the program
+        2. Create a Move Controller (ignoring the constrints surrounding a game for now) that will handle the move
+        requests sent to the controller
+        3. Implement two functions tied to the Move Controller being, one being a "request move" function that determines
+        if the move is viable according to the neccessary checks for validty (basic side and piece movement adherance for now)
+        , second be perform move which will update the state of the board with the new piece configuration as well as push the
+        move to be recoreded as part of the game's move history
+        4. Implement a type/structure that is able to capture moves as strings (like legitimate chess) and/or piece
+        and square references.
+        5. Work on the web react portion to allow the UI to access this new functionality.
+        6. Create an aside on the web that shows the pieces captured by each side.
+
+- Reflection:
+        1. Majority of the model development required to get the pieces to work complete, however, inidividual piece implmentations
+        of the abstract method "movePiece" still need to be implmeneted
+        2. Additionaly, there is still no event that is called for when a side manages to capture the pieces of the opposing side
+        3. The biggest problem encountered is that the state in React for the different squares on the board is not being updated,
+        thus the game is only playable when not using a GUI
+        4. Reference of the boardsquares in the move controller is also confusing as depending on the implementation, is empty,
+        while other times it contains all the information that is passed from the boardcontroller where the property is instatiated;
+        need to inspect this further and come up with a consistent way to pass down the reference across the app 
+        5. Need to come up with an effective way to pass down the props from the game model to be able to effectively change state in React
+
+
+12-01-2022:
+
+- Goal:
+        1. Implement an efficient, coherent, and responsive state management system in React that communicates with the model.
+        All the information will flow from the model to web with the GUI communicating changes (piece movements) using callbacks.
+        2. The ability to move pieces either through dragging the piece to the desired location, or clicking depending on what
+        is more convenient for development purposes.
+        3. Implement the basic piece constraints if the piece were on a free board (excluding proper captures) such
+        as a bishop can only move diagonally.
+
+- Notes:
+        1. Need to first review effective implementation of react hooks to create reus
+        2. Seperate the piece constraints into two seperate components, one being movements to free squares and the other being captures.
+        Thus, when I'm developing the free squares method for today, I do not have to modify the algorithm when it comes back to finishing
+        up the complete implementation.
+
+        - I'm going to pass a callback from the model that is oriented around the available moves already calculated that will be passed to the component.
+        This way I am able to kill two birds in one stone by also providing the available moves at the same time to allow for stuff like move highlighting.
+        This will need revising depending on how it works out but it's worth trying out for the time being.
+
+
+- Objective Plan
+        1. Look back at previous code I have written in React to get a sense of custom hooks, state management, and
+        delegate method pass down.
+        2. Devise a plan for clean callback implementation in the web that is able to scope to the appropriate components effectively.
+        3. Update the model module to export only what is required for the web.
+        4. Go into every subclass of Piece and figure out a way to override the move function to instill the two parts of
+        determining viable moves for the piece.
+        5. Update the free moves part for every piece (for example a pawn can only move forward because capturing will not
+        be integrated yet).
+        6. Change the way that callback updates are implemented in React.
+
+- Reflection:
+        1. Ran into the problem of the board not updateing when the model is being reset through setting a different game.
+        Through debugging, was able to discover that the problem is stemmed from believing that pass by reference is available
+        in javascript. Will need to progress with fixing this issue before progressing anywhere else because solving this will
+        lead to finiding other bugs that are of similar nature.

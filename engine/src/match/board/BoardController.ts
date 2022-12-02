@@ -1,43 +1,21 @@
-import { boardPositions, PieceKind, ShortPosition, Side } from './Terms';
-import startingFormation from './formation/setups/start';
-import { type PieceListings, PieceListing } from './formation/structure';
+import { boardPositions, PieceKind, ShortPosition, Side } from '../../logic/Terms';
+import { type PieceListings, PieceListing } from '../../formation/structure';
 
-import Square, { SquareColor } from './components/Square';
-import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from './components/pieces';
+import Square, { SquareColor } from '../../components/Square';
+import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from '../../components/pieces';
+import MoveController from '../move/MoveController';
 
-export class Game {
-  // *: Dictionary that holds the squares that makeup the board
+export default class BoardController {
   boardSquares: { [shortPosition: string] : Square } = {};
-  captured: {[_side in Side]: {[_piece in PieceKind] : number}} = {
-    white: {
-      p: 0,
-      r: 0,
-      h: 0,
-      b: 0,
-      q: 0,
-      k: 0,
-    },
-    black: {
-      p: 0,
-      r: 0,
-      h: 0,
-      b: 0,
-      q: 0,
-      k: 0,
-    }
-  };
+  moveController: MoveController;
 
-  requestMove(caller: Piece, target: Square) {
-    target.setPiece(caller);
+  constructor(startingFormation: PieceListings) {
+    this.initializeBoard(startingFormation);
+    this.moveController = new MoveController(this.boardSquares);
+    // console.log(this.moveController)
   };
   
-
-  constructor() {
-    this.initializeBoard(startingFormation);
-  };
-
-
-  createPiece({ kind, side }: PieceListing): Piece | null {
+  private createPiece({ kind, side }: PieceListing): Piece | null {
     switch (kind) {
       case PieceKind.Pawn:
         return new Pawn(side);

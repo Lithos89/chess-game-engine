@@ -8,6 +8,7 @@
     "target": "es5",
     "declaration": true,
     "outDir": "./dist",
+    "baseUrl": "./src",
     // "allowJs": true,
   },
   "include": [

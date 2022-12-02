@@ -1,1 +1,1 @@
-export { Game } from './Game';
+export { startSession } from "./match/session";

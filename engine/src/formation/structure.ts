@@ -1,4 +1,4 @@
-import { type Side, PieceKind } from '../Terms';
+import { type Side, PieceKind } from '../logic/Terms';
 
 
 // ?: Not sure if structure is the appropriate file name, consider revising in the future

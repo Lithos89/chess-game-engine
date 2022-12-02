@@ -1,4 +1,4 @@
-import { Position, ShortPosition } from '../Terms';
+import { Position, ShortPosition } from '../logic/Terms';
 import Piece from '../components/pieces/index';
 export type SquareColor = 'light' | 'dark';
 export default class Square {

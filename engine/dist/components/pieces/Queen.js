@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Terms_1 = require("../../Terms");
+var Terms_1 = require("../../logic/Terms");
 var Piece_1 = require("./Piece");
 var Queen = /** @class */ (function (_super) {
     __extends(Queen, _super);
@@ -25,6 +25,9 @@ var Queen = /** @class */ (function (_super) {
         return _this;
     }
     ;
+    Queen.prototype.move = function (currentSquare, destSquare) {
+        Piece_1.default.movePiece(currentSquare, destSquare);
+    };
     return Queen;
 }(Piece_1.default));
 ;

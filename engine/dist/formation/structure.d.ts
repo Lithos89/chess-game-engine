@@ -1,4 +1,4 @@
-import { type Side, PieceKind } from '../Terms';
+import { type Side, PieceKind } from '../logic/Terms';
 export interface PieceListing {
     kind: PieceKind;
     side: Side;

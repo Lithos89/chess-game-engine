@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 import pieceAssets from 'data/piece-assets.json';
 
 const StyledSquare = styled.div`
-  display: block;
+  display: flex;
   background-color: ${p => p.primary ? 'white' : '#CCC'};
   flex: 0 0 12.5%;
   aspect-ratio: 1 / 1;
@@ -12,8 +12,9 @@ const StyledSquare = styled.div`
 
 const PieceImg = styled.img`
   cursor: pointer;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
+  margin: auto;
   /* &: {
     cursor: move;
   } */
@@ -63,7 +64,7 @@ const getAssetKey = (pieceObj) => {
   };
 };
 
-const Square = ({ color, position, piece }) => {
+const Square = ({ square, square2, color, position, piece, update }) => {
 
   const pieceAssetKey = getAssetKey(piece);
 
@@ -71,9 +72,16 @@ const Square = ({ color, position, piece }) => {
 
   const pieceAsset = pieceAssets[pieceAssetKey];
 
+  const moveQueen = () => {
+    if (pieceAssetKey !== null) {
+      piece.move(square, square2);
+      update(true)
+    }
+  }
+
 
   return (
-    <StyledSquare primary={isLight}>
+    <StyledSquare primary={isLight} onClick={moveQueen}>
       {
         pieceAssetKey && <PieceImg src={pieceAsset} alt={piece.kind} draggable={true} />
       }

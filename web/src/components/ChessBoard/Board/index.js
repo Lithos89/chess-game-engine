@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import Square from 'components/Square';
+import Square from 'components/ChessBoard/Square';
 
 // Determine either to create the background frame of the board dynamically or use an image
 // TODO: Add frame to board
@@ -8,26 +9,21 @@ const Background = styled.div`
   display: flex;
   background-color: brown;
   flex-wrap: wrap;
-  width: 50%;
+  width: 70%;
   padding: 20px;
   /* border: 5px brown solid; */
 `;
 
-
-/*
-  Consider passing in a prop that takes in the chess model to pass the props to the different squares 
-  to handle the logic if a piece is allowed to pass through it to allow
-*/
-
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
-const Board = ({ squares }) => {
-  console.info(squares)
+const Board = ({ squares, update }) => {
+
+  const square2 = squares['d4'];
   return (
     <Background>
       {
         Object.entries(squares)
           .map(([position, square]) => (
-            <Square key={position} color={square.color} position={position} piece={square.piece} />
+            <Square key={position} square={square} square2={square2} color={square.color} position={position} piece={square.piece} update={update}/>
           ))
       }
     </Background>

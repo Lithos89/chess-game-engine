@@ -1,5 +1,5 @@
-import { Row, Column } from '../Terms';
-import { ShortPosition } from '../Terms';
+import { Row, Column } from '../logic/Terms';
+import { ShortPosition } from '../logic/Terms';
 
 // TODO: Need to either fix type implementation or provide overrides for the different types of possible inputs
 export function getSquareColor(position: ShortPosition): [row: Row, col: Column] {

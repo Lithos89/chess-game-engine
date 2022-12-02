@@ -1,12 +1,12 @@
 import './App.css';
-import Game from './components/Game';
+import Session from './components/Session';
 import styled from 'styled-components';
 
 function App() {
   return (
     <div className="App">
       <div id="main">
-        <Game />
+        <Session />
       </div>
     </div>
   );
