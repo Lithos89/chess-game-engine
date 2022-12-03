@@ -1,18 +1,27 @@
-import { type Side, PieceKind } from '../../logic/Terms';
+// Types, interfaces, constants, ...
+import { type Side, PieceKind, type ShortPosition, type Position } from 'logic/Terms';
+import Movable from 'match/move/interfaces/Movable';
+
+// Components
 import Square from '../Square';
 
-export default abstract class Piece {
-  abstract side: Side;
+abstract class Piece implements Movable {
+  side: Side;
   kind: PieceKind;
+  position: Position
   static movePiece: (arg0: Square, arg1: Square) => { [shortPosition: string] : Square };
-  // abstract availablePositions: string;
 
-  // TODO: Come up with a better name that is able to encapsulate this better
-  // abstract seekBasicMoves(): string[];
-
-  constructor(piece: PieceKind) { 
+  constructor(piece: PieceKind, side: Side) { 
     this.kind = piece;
+    this.side = side;
   }
 
-  abstract move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square }
+  // this will be an algorithm that will generate the available moves, I'm imagining using generator functions to assist in this
+  abstract getAvailablePositions(): ShortPosition[];
+
+  move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square } {
+    return Piece.movePiece(currentSquare, destSquare);
+  }
 };
+
+export default Piece;

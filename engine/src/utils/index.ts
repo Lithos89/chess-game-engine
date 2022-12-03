@@ -1,7 +1,11 @@
-import { Row, Column } from '../logic/Terms';
-import { ShortPosition } from '../logic/Terms';
+// Types, interface, constants, ...
+import { type Row, type Column, type ShortPosition, type Position } from '../logic/Terms';
 
-// TODO: Need to either fix type implementation or provide overrides for the different types of possible inputs
-export function getSquareColor(position: ShortPosition): [row: Row, col: Column] {
-  return [position[1] as Row, position[0] as Column]
-};
+// *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
+export function convertPosition(rawPosition: ShortPosition | Position): ShortPosition | Position {
+  if (typeof rawPosition === 'string') {
+    return { row: rawPosition[1] as Row, col: rawPosition[0] as Column }
+  } else if (typeof rawPosition === 'object') {
+    return 
+  }
+}

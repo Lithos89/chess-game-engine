@@ -1,12 +1,15 @@
 
 // BOARD POSITIONING
-export type Column = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h';
+export const COLUMNS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
+type ColumnsTuple = typeof COLUMNS;
+export type Column = ColumnsTuple[number];
 
-export type Row = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
+export const ROWS = ['1', '2', '3', '4', '5', '6', '7', '8'] as const;
+type RowsTuple = typeof ROWS;
+export type Row = RowsTuple[number];
 
 export type ShortPosition = `${Column}${Row}`;
 
-// TODO: Determine if this should be constructed at runtime using column and row or statically implemented like it is right now
 export const boardPositions: ShortPosition[] = [
   'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
   'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',

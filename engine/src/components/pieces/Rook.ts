@@ -1,19 +1,19 @@
+import { ShortPosition } from 'logic/Terms';
+// Types, interfaces, constants, ...
 import { PieceKind, type Side } from '../../logic/Terms';
 
-import Square from 'components/Square';
+// Components
 import Piece from './Piece';
 
 class Rook extends Piece {
-  side: Side;
-
   constructor(side: Side) {
-    super(PieceKind.Rook);
-    this.side = side;
+    super(PieceKind.Rook, side);
   };
 
-  move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square } {
-    return Piece.movePiece(currentSquare, destSquare)
+  getAvailablePositions(): ShortPosition[] {
+    
   }
+
 };
 
 export default Rook;

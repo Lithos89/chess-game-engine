@@ -1,14 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
+// Components
 var Square_1 = require("../../components/Square");
 var pieces_1 = require("../../components/pieces");
-var MoveController_1 = require("../move/MoveController");
+// Controllers
+var MoveManager_1 = require("../move/MoveManager");
 var BoardController = /** @class */ (function () {
     function BoardController(startingFormation) {
         this.boardSquares = {};
         this.initializeBoard(startingFormation);
-        this.moveController = new MoveController_1.default(this.boardSquares);
+        this.moveManager = new MoveManager_1.default(this.boardSquares);
         // console.log(this.moveController)
     }
     ;

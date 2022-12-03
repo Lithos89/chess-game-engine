@@ -1,44 +1,59 @@
-import { type ShortPosition } from 'logic/Terms';
-import Square from 'components/Square';
-import Piece from '../../components/pieces/index';
+// Types, interfaces, constants, ...
+import { ShortPosition } from "logic/Terms";
+import Movable from "./interfaces/Movable";
 
-// *: The purpose of MoveController will be to keep track of available moves, forced plays, signal someone has won, and more...
-export default class MoveController {
-  private boardSquares: { [shortPosition: string] : Square }
+// Components
+import Square from "components/Square";
 
-  constructor(squareListing: { [shortPosition: string] : Square }) {
-    this.boardSquares = squareListing;
-    Piece.movePiece = this.moveRequestCallback;
+// Utils
+import { convertPosition } from "utils";
+
+/*
+  This is the class that will be used to communicate with the move manager,
+  therefore being able to seperate the move logic with the move callbacks
+*/
+class MoveController {
+  boardPositions: { [shortPosition: string] : Square }
+
+  constructor(boardPositions: { [shortPosition: string] : Square }) {
+    this.boardPositions = boardPositions
   }
 
-  // !: Make sure to make these run at the same time because the piece could be added to the original, and not yet be deleted from the original,
-  // !: leading to a duplication glitch
+  trackBackward = () => {
+
+  }
+
+  trackForward = () => {
+
+  };
+
+  commitMove = (piece: Movable) => {
+    piece.move()
+  }
+
   requestMove = (from: ShortPosition, to: ShortPosition) => {
-    const originPiece = this.boardSquares[from]?.piece
+    const originPiece = this.boardPositions[from]?.piece
     // const destPiece = this.boardSquares[to]?.piece
 
-    this.boardSquares[to].piece = originPiece;
-    delete this.boardSquares[from].piece
+    this.boardPositions[to].piece = originPiece;
+    delete this.boardPositions[from].piece
 
     // TODO: Add filter functions here that will evaluate if it is a viable move
   }
 
   moveRequestCallback = (origin: Square, dest: Square) => {
-    const originPosShort: ShortPosition = `${origin.pos.col}${origin.pos.row}` as ShortPosition;
-    const destPosShort: ShortPosition = `${dest.pos.col}${dest.pos.row}`;
+    const originPosShort: ShortPosition = convertPosition(origin.position) as ShortPosition;
+    const destPosShort: ShortPosition = convertPosition(dest.position) as ShortPosition;
 
-    // const destPosShort: ShortPosition = `${dest.pos.col}${dest.pos.row}`;
-    // const destPosShort = 'd4';
-    // this.requestMove(originPosShort, destPosShort);
     const originPiece = origin.piece
     // const destPiece = this.boardSquares[to]?.piece
 
-    const goTo = this.boardSquares['d4']
+    const goTo = this.boardPositions['d4']
     console.info(goTo)
     goTo.setPiece(originPiece);
     delete origin.piece;
-    return this.boardSquares;
+    return this.boardPositions;
   };
-
-
 };
+
+export default MoveController

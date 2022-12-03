@@ -1,20 +1,29 @@
+// Types, interfaces, constants, ...
 import { boardPositions, PieceKind, ShortPosition, Side } from '../../logic/Terms';
 import { type PieceListings, PieceListing } from '../../formation/structure';
 
+// Components
 import Square, { SquareColor } from '../../components/Square';
 import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from '../../components/pieces';
-import MoveController from '../move/MoveController';
+
+// Controllers
+import MoveManager from '../move/MoveManager';
 
 export default class BoardController {
   boardSquares: { [shortPosition: string] : Square } = {};
-  moveController: MoveController;
+  moveManager: MoveManager;
 
   constructor(startingFormation: PieceListings) {
     this.initializeBoard(startingFormation);
-    this.moveController = new MoveController(this.boardSquares);
+    this.moveManager = new MoveManager(this.boardSquares);
     // console.log(this.moveController)
   };
   
+  // board highlighting will be acomplished here as well through state updates that will affect boardSquares
+  highlightAvailableSquares = () => {
+
+  };
+
   private createPiece({ kind, side }: PieceListing): Piece | null {
     switch (kind) {
       case PieceKind.Pawn:

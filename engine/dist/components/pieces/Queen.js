@@ -15,19 +15,16 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+// Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
+// Components
 var Piece_1 = require("./Piece");
 var Queen = /** @class */ (function (_super) {
     __extends(Queen, _super);
     function Queen(side) {
-        var _this = _super.call(this, Terms_1.PieceKind.Queen) || this;
-        _this.side = side;
-        return _this;
+        return _super.call(this, Terms_1.PieceKind.Queen, side) || this;
     }
     ;
-    Queen.prototype.move = function (currentSquare, destSquare) {
-        return Piece_1.default.movePiece(currentSquare, destSquare);
-    };
     return Queen;
 }(Piece_1.default));
 ;
