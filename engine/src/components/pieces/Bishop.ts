@@ -1,13 +1,17 @@
 // Types, interfaces, constants, ...
-import { PieceKind, type Side } from '../../logic/Terms';
+import { PieceKind, type Side } from 'logic/Terms';
 
 // Components
 import Piece from './Piece';
+
+// Algorithms
+import { search } from 'logic/algorithms/movement';
 
 class Bishop extends Piece {
 
   constructor(side: Side) {
     super(PieceKind.Bishop, side);
+    super.getAvailablePositions(search.diagonals);
   };
 };
 

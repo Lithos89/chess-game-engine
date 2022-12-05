@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PieceKind = exports.SIDES = exports.boardPositions = void 0;
-// TODO: Determine if this should be constructed at runtime using column and row or statically implemented like it is right now
+exports.PieceKind = exports.SIDES = exports.boardPositions = exports.ROWS = exports.COLUMNS = void 0;
+// BOARD POSITIONING
+exports.COLUMNS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+exports.ROWS = ['1', '2', '3', '4', '5', '6', '7', '8'];
 exports.boardPositions = [
     'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
     'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',

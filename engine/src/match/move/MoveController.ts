@@ -13,7 +13,7 @@ import { convertPosition } from "utils";
   therefore being able to seperate the move logic with the move callbacks
 */
 class MoveController {
-  boardPositions: { [shortPosition: string] : Square }
+  boardPositions: { [shortPosition: string] : Square };
 
   constructor(boardPositions: { [shortPosition: string] : Square }) {
     this.boardPositions = boardPositions
@@ -28,7 +28,7 @@ class MoveController {
   };
 
   commitMove = (piece: Movable) => {
-    piece.move()
+    // piece.move()
   }
 
   requestMove = (from: ShortPosition, to: ShortPosition) => {
@@ -36,7 +36,7 @@ class MoveController {
     // const destPiece = this.boardSquares[to]?.piece
 
     this.boardPositions[to].piece = originPiece;
-    delete this.boardPositions[from].piece
+    this.boardPositions[from].piece = null;
 
     // TODO: Add filter functions here that will evaluate if it is a viable move
   }
@@ -48,8 +48,8 @@ class MoveController {
     const originPiece = origin.piece
     // const destPiece = this.boardSquares[to]?.piece
 
-    const goTo = this.boardPositions['d4']
-    console.info(goTo)
+    const goTo = this.boardPositions['d4'];
+    console.info(goTo);
     goTo.setPiece(originPiece);
     delete origin.piece;
     return this.boardPositions;

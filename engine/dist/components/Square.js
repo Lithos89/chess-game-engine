@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// Util
+var utils_1 = require("utils");
 var Square = /** @class */ (function () {
     function Square(position, color, piece) {
         if (typeof position === 'string') {
-            this.pos = {
-                row: position[1],
-                col: position[0],
-            };
+            this.position = (0, utils_1.convertPosition)(position);
         }
         else if (typeof position === 'object') {
-            this.pos = position;
+            this.position = position;
         }
         this.color = color;
         this.setPiece(piece);
     }
     Square.prototype.getPosition = function () {
-        return this.pos.col + this.pos.row;
+        return (0, utils_1.convertPosition)(this.position);
     };
+    ;
     /*
       Possible cases to consider:
       1. Passing in an initialized piece

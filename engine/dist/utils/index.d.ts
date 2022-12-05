@@ -1,3 +1,2 @@
-import { Row, Column } from '../logic/Terms';
-import { ShortPosition } from '../logic/Terms';
-export declare function getSquareColor(position: ShortPosition): [row: Row, col: Column];
+import { type ShortPosition, type Position } from '../logic/Terms';
+export declare function convertPosition(rawPosition: ShortPosition | Position): ShortPosition | Position;

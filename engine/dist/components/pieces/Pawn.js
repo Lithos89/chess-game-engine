@@ -16,13 +16,17 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var Terms_1 = require("logic/Terms");
 // Components
 var Piece_1 = require("./Piece");
+// Algorithms
+var movement_1 = require("logic/algorithms/movement");
 var Pawn = /** @class */ (function (_super) {
     __extends(Pawn, _super);
     function Pawn(side) {
-        return _super.call(this, Terms_1.PieceKind.Pawn, side) || this;
+        var _this = _super.call(this, Terms_1.PieceKind.Pawn, side) || this;
+        _super.prototype.getAvailablePositions.call(_this, movement_1.search.file(false));
+        return _this;
     }
     ;
     return Pawn;

@@ -8,7 +8,8 @@ import Square from '../Square';
 abstract class Piece implements Movable {
   side: Side;
   kind: PieceKind;
-  position: Position
+  position: Position;
+  availableMoves: ShortPosition[];
   static movePiece: (arg0: Square, arg1: Square) => { [shortPosition: string] : Square };
 
   constructor(piece: PieceKind, side: Side) { 
@@ -16,8 +17,15 @@ abstract class Piece implements Movable {
     this.side = side;
   }
 
-  // this will be an algorithm that will generate the available moves, I'm imagining using generator functions to assist in this
-  abstract getAvailablePositions(): ShortPosition[];
+  getAvailablePositions(...searchAlgorithms: ((_position: Position) => ShortPosition[])[]): ShortPosition[] {
+    const availableMoves: ShortPosition[] = []
+
+    for (const algo of searchAlgorithms) {
+      availableMoves.push(...algo(this.position));
+    };
+
+    return availableMoves
+  };
 
   move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square } {
     return Piece.movePiece(currentSquare, destSquare);

@@ -10,6 +10,9 @@ var MoveManager_1 = require("../move/MoveManager");
 var BoardController = /** @class */ (function () {
     function BoardController(startingFormation) {
         this.boardSquares = {};
+        // board highlighting will be acomplished here as well through state updates that will affect boardSquares
+        this.highlightAvailableSquares = function () {
+        };
         this.initializeBoard(startingFormation);
         this.moveManager = new MoveManager_1.default(this.boardSquares);
         // console.log(this.moveController)

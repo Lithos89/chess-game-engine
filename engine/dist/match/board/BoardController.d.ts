@@ -7,6 +7,7 @@ export default class BoardController {
     };
     moveManager: MoveManager;
     constructor(startingFormation: PieceListings);
+    highlightAvailableSquares: () => void;
     private createPiece;
     private initializeBoard;
     private initializeSquares;

@@ -1,7 +1,11 @@
 import { type ShortPosition } from 'logic/Terms';
 import Square from 'components/Square';
+import MoveController from './MoveController';
 declare class MoveManager {
-    private boardSquares;
+    protected boardSquares: {
+        [shortPosition: string]: Square;
+    };
+    readonly controller: MoveController;
     constructor(squareListing: {
         [shortPosition: string]: Square;
     });

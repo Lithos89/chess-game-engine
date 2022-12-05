@@ -1,12 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Piece = /** @class */ (function () {
-    // TODO: Come up with a better name that is able to encapsulate this better
-    // abstract seekBasicMoves(): string[];
     function Piece(piece, side) {
         this.kind = piece;
         this.side = side;
     }
+    Piece.prototype.getAvailablePositions = function () {
+        var searchAlgorithms = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            searchAlgorithms[_i] = arguments[_i];
+        }
+        var availableMoves = [];
+        for (var _a = 0, searchAlgorithms_1 = searchAlgorithms; _a < searchAlgorithms_1.length; _a++) {
+            var algo = searchAlgorithms_1[_a];
+            availableMoves.push.apply(availableMoves, algo(this.position));
+        }
+        ;
+        return availableMoves;
+    };
+    ;
     Piece.prototype.move = function (currentSquare, destSquare) {
         return Piece.movePiece(currentSquare, destSquare);
     };

@@ -1,7 +1,7 @@
-
+import Square from "components/Square";
 
 interface Movable {
-  move(): void
+  move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square }
 };
 
 export default Movable;

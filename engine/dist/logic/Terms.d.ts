@@ -1,5 +1,9 @@
-export type Column = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h';
-export type Row = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
+export declare const COLUMNS: readonly ["a", "b", "c", "d", "e", "f", "g", "h"];
+type ColumnsTuple = typeof COLUMNS;
+export type Column = ColumnsTuple[number];
+export declare const ROWS: readonly ["1", "2", "3", "4", "5", "6", "7", "8"];
+type RowsTuple = typeof ROWS;
+export type Row = RowsTuple[number];
 export type ShortPosition = `${Column}${Row}`;
 export declare const boardPositions: ShortPosition[];
 export type Position = {
