@@ -1,17 +1,16 @@
 import { ShortPosition } from "logic/Terms";
-import Movable from "./interfaces/Movable";
 import Square from "components/Square";
 declare class MoveController {
     boardPositions: {
         [shortPosition: string]: Square;
     };
+    commitMove: any;
     constructor(boardPositions: {
         [shortPosition: string]: Square;
-    });
+    }, commitMove: any);
     trackBackward: () => void;
     trackForward: () => void;
-    commitMove: (piece: Movable) => void;
-    requestMove: (from: ShortPosition, to: ShortPosition) => void;
+    requestMove: (from: ShortPosition, to: ShortPosition) => boolean;
     moveRequestCallback: (origin: Square, dest: Square) => {
         [shortPosition: string]: Square;
     };

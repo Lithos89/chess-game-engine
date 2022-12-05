@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.startSession = void 0;
 // Classes
 var Match_1 = require("./Match");
+var BoardController_1 = require("./board/BoardController");
 // session will be used so that broadcasts are appropriately handled
 // session will allow for the scaling up of the app in the case of multiple opponents
 var Session = /** @class */ (function () {
@@ -29,10 +30,11 @@ function startSession(side) {
     if (side === void 0) { side = 'white'; }
     var session = new Session();
     var currentMatch = session.currentMatch;
-    var generateNewBoard = function (generator) { return function () {
+    var generateNewBoard = function (generator) { return function (stateUpdateFunc) {
         var newGame = generator.next().value;
-        var boardSquares = newGame.boardController.boardSquares;
-        return boardSquares;
+        var boardController = new BoardController_1.default(newGame, stateUpdateFunc);
+        var moveController = boardController.moveManager.controller;
+        return moveController.requestMove;
     }; };
     var matchController = {
         generateGame: generateNewBoard(currentMatch.gameGenerator)

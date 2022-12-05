@@ -7,21 +7,30 @@ var utils_1 = require("../../utils");
   therefore being able to seperate the move logic with the move callbacks
 */
 var MoveController = /** @class */ (function () {
-    function MoveController(boardPositions) {
+    function MoveController(boardPositions, commitMove) {
         var _this = this;
         this.trackBackward = function () {
         };
         this.trackForward = function () {
         };
-        this.commitMove = function (piece) {
-            // piece.move()
-        };
         this.requestMove = function (from, to) {
-            var _a;
+            var _a, _b;
             var originPiece = (_a = _this.boardPositions[from]) === null || _a === void 0 ? void 0 : _a.piece;
-            // const destPiece = this.boardSquares[to]?.piece
-            _this.boardPositions[to].piece = originPiece;
-            _this.boardPositions[from].piece = null;
+            // destpiece will be used when it comes to reflecting captures
+            var destPiece = (_b = _this.boardPositions[to]) === null || _b === void 0 ? void 0 : _b.piece;
+            try {
+                // this.boardPositions[to].piece = originPiece;
+                // this.boardPositions[from].piece = null;
+                _this.commitMove(from, to);
+            }
+            catch (_c) {
+                return false;
+            }
+            finally {
+                // Here you will comit the move to the MoveManager using a commitMove method
+                // this.commitMove()
+                return true;
+            }
             // TODO: Add filter functions here that will evaluate if it is a viable move
         };
         this.moveRequestCallback = function (origin, dest) {
@@ -36,6 +45,7 @@ var MoveController = /** @class */ (function () {
             return _this.boardPositions;
         };
         this.boardPositions = boardPositions;
+        this.commitMove = commitMove;
     }
     return MoveController;
 }());

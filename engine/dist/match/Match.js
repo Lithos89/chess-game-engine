@@ -49,7 +49,7 @@ var Match = /** @class */ (function () {
             // console.log('new')
             console.log(_this.currentGame.id);
             // this.currentGame = new Game('white')
-            return _this.currentGame.boardController.boardSquares;
+            // return this.currentGame.boardController.boardSquares;
         };
         this.gameGenerator = this.generateNextGame(side, 'test');
     }

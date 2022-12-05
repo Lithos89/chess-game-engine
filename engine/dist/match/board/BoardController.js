@@ -8,14 +8,33 @@ var pieces_1 = require("../../components/pieces");
 // Controllers
 var MoveManager_1 = require("../move/MoveManager");
 var BoardController = /** @class */ (function () {
-    function BoardController(startingFormation) {
+    function BoardController(game, stateUpdateFunc) {
+        var _this = this;
         this.boardSquares = {};
+        this.setSubscription = function (updateFunc) { return function () {
+            console.log(updateFunc);
+            updateFunc(_this.compileBoard());
+        }; };
+        this.compileBoard = function () {
+            var _a;
+            var processedBoard = [];
+            for (var position in _this.boardSquares) {
+                processedBoard.push({
+                    position: position,
+                    square: _this.boardSquares[position],
+                    piece: (_a = _this.boardSquares[position].piece) !== null && _a !== void 0 ? _a : undefined
+                });
+            }
+            ;
+            return processedBoard;
+        };
         // board highlighting will be acomplished here as well through state updates that will affect boardSquares
         this.highlightAvailableSquares = function () {
         };
-        this.initializeBoard(startingFormation);
-        this.moveManager = new MoveManager_1.default(this.boardSquares);
-        // console.log(this.moveController)
+        this.updateBoard = this.setSubscription(stateUpdateFunc);
+        this.initializeBoard(game.startingFormation);
+        this.moveManager = new MoveManager_1.default(this.boardSquares, this.updateBoard);
+        this.updateBoard();
     }
     ;
     BoardController.prototype.createPiece = function (_a) {

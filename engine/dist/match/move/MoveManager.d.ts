@@ -6,9 +6,11 @@ declare class MoveManager {
         [shortPosition: string]: Square;
     };
     readonly controller: MoveController;
+    updateBoard: any;
     constructor(squareListing: {
         [shortPosition: string]: Square;
-    });
+    }, boardUpdateCallback: any);
+    commitMove: (from: ShortPosition, to: ShortPosition) => void;
     requestMove: (from: ShortPosition, to: ShortPosition) => void;
     moveRequestCallback: (origin: Square, dest: Square) => {
         [shortPosition: string]: Square;

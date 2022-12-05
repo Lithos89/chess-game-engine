@@ -1,3 +1,4 @@
+import { Game } from './../game/Game';
 // Types, interfaces, constants, ...
 import { boardPositions, PieceKind, ShortPosition, Side } from '../../logic/Terms';
 import { type PieceListings, PieceListing } from '../../formation/structure';
@@ -12,11 +13,32 @@ import MoveManager from '../move/MoveManager';
 export default class BoardController {
   boardSquares: { [shortPosition: string] : Square } = {};
   moveManager: MoveManager;
+  updateBoard: () => void;
 
-  constructor(startingFormation: PieceListings) {
-    this.initializeBoard(startingFormation);
-    this.moveManager = new MoveManager(this.boardSquares);
-    // console.log(this.moveController)
+  private setSubscription = (updateFunc: (boardState) => void) => () => {
+    console.log(updateFunc);
+    updateFunc(this.compileBoard());
+  };
+
+  compileBoard = (): any[] => {
+    const processedBoard = [];
+
+    for (const position in this.boardSquares) {
+      processedBoard.push({
+        position,
+        square: this.boardSquares[position],
+        piece: this.boardSquares[position].piece ?? undefined
+      });
+    };
+
+    return processedBoard;
+  }
+
+  constructor(game: Game, stateUpdateFunc) {
+    this.updateBoard = this.setSubscription(stateUpdateFunc)
+    this.initializeBoard(game.startingFormation);
+    this.moveManager = new MoveManager(this.boardSquares, this.updateBoard);
+    this.updateBoard();
   };
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares

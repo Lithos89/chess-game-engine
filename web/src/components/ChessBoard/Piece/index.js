@@ -56,21 +56,14 @@ const getAssetKey = (pieceObj) => {
   };
 };
 
-const Piece = ({ piece, square, square2, update }) => {
+const Piece = ({ piece, position, update }) => {
 
   const pieceAssetKey = getAssetKey(piece);
 
   const pieceAsset = pieceAssets[pieceAssetKey];
 
-  const move = () => {
-    if (pieceAssetKey !== null) {
-      console.info('here');
-      update(piece.move(square, square2));
-    }
-  }
-
   return (
-    <PieceImg src={pieceAsset} alt={piece.kind} draggable={true} onClick={move} />
+    <PieceImg src={pieceAsset} alt={piece.kind} draggable={true} />
   );
 };
 

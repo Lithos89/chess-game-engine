@@ -14,9 +14,11 @@ import { convertPosition } from "../../utils";
 */
 class MoveController {
   boardPositions: { [shortPosition: string] : Square };
+  commitMove
 
-  constructor(boardPositions: { [shortPosition: string] : Square }) {
-    this.boardPositions = boardPositions
+  constructor(boardPositions: { [shortPosition: string] : Square }, commitMove) {
+    this.boardPositions = boardPositions;
+    this.commitMove = commitMove;
   }
 
   trackBackward = () => {
@@ -27,16 +29,25 @@ class MoveController {
 
   };
 
-  commitMove = (piece: Movable) => {
-    // piece.move()
-  }
-
-  requestMove = (from: ShortPosition, to: ShortPosition) => {
+  requestMove = (from: ShortPosition, to: ShortPosition): boolean => {
     const originPiece = this.boardPositions[from]?.piece
-    // const destPiece = this.boardSquares[to]?.piece
 
-    this.boardPositions[to].piece = originPiece;
-    this.boardPositions[from].piece = null;
+    // destpiece will be used when it comes to reflecting captures
+    const destPiece = this.boardPositions[to]?.piece
+
+
+    try {
+      // this.boardPositions[to].piece = originPiece;
+      // this.boardPositions[from].piece = null;
+
+      this.commitMove(from, to)
+    } catch {
+      return false;
+    } finally {
+      // Here you will comit the move to the MoveManager using a commitMove method
+      // this.commitMove()
+      return true;
+    }
 
     // TODO: Add filter functions here that will evaluate if it is a viable move
   }

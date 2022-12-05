@@ -3,6 +3,9 @@ import { type Side } from '../logic/Terms';
 // Classes
 import Match from './Match';
 import Square from '../components/Square';
+import { Game } from './game/Game';
+import BoardController from './board/BoardController';
+import startingFormation from 'formation/setups/start';
 
 type temp = { [shortPosition: string] : Square }
 
@@ -43,10 +46,11 @@ export function startSession(side: Side = 'white'):
   const session = new Session();
   const currentMatch = session.currentMatch;
 
-  const generateNewBoard = (generator) => () => {
-    const newGame = generator.next().value
-    const boardSquares = newGame.boardController.boardSquares
-    return boardSquares
+  const generateNewBoard = (generator: Generator<Game, Game, Game>) => (stateUpdateFunc) => {
+    const newGame = generator.next().value;
+    const boardController = new BoardController(newGame, stateUpdateFunc)
+    const moveController = boardController.moveManager.controller
+    return moveController.requestMove
   }
 
   const matchController = {

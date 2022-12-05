@@ -15,12 +15,16 @@ const Square = ({ square, square2, color, position, piece, update }) => {
 
   const isLight = color === 'light';
 
-
+  const move = () => {
+    if (piece !== null) {
+      update(position);
+    }
+  }
 
   return (
-    <StyledSquare primary={isLight}>
-      {
-        piece &&  <Piece piece={piece} square={square} square2={square2} update={update} />
+    <StyledSquare primary={isLight} onClick={move}>
+      { piece &&
+          <Piece piece={piece} square={square} square2={square2} position={position} />
       }
     </StyledSquare>
   );

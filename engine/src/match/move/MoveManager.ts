@@ -15,10 +15,12 @@ import { convertPosition } from '../../utils';
 class MoveManager {
   protected boardSquares: { [shortPosition: string] : Square }
   readonly controller: MoveController
+  updateBoard;
 
-  constructor(squareListing: { [shortPosition: string] : Square }) {
+  constructor(squareListing: { [shortPosition: string] : Square }, boardUpdateCallback) {
+    this.updateBoard = boardUpdateCallback
     this.boardSquares = squareListing;
-    this.controller = new MoveController(this.boardSquares);
+    this.controller = new MoveController(this.boardSquares, this.commitMove);
     Piece.movePiece = this.moveRequestCallback;
   }
 
@@ -32,6 +34,26 @@ class MoveManager {
       - Insufficient Material Check
     ?: - Time check (if I decide to take the app this far)
   */
+
+
+  commitMove = (from: ShortPosition, to: ShortPosition) => {
+
+    const originSquare = this.boardSquares[from] 
+    const destSquare = this.boardSquares[to]
+
+    const originPiece = originSquare?.piece
+    // destpiece will be used when it comes to reflecting captures
+    const destPiece = destSquare?.piece
+
+    destSquare.piece = originPiece;
+    originSquare.piece = null;
+
+    // TODO: Make a method that will update the piece that the square holds
+    // destSquare.updatePiece
+
+    // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration
+    this.updateBoard();
+  }
 
   // !: Make sure to make these run at the same time because the piece could be added to the original, and not yet be deleted from the original,
   // !: leading to a duplication glitch

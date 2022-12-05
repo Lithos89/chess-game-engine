@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
 var start_1 = require("../../formation/setups/start");
-var BoardController_1 = require("../board/BoardController");
 var Game = /** @class */ (function () {
     function Game(side, id) {
+        this.startingFormation = start_1.default;
         // *: Dictionary that holds the squares that makeup the board
         this.captures = {
             white: {
@@ -27,12 +27,9 @@ var Game = /** @class */ (function () {
         this.id = id;
         this.playerSide = side;
         // !: Still have to use this side to manipulate the board depending on the side
-        this.boardController = new BoardController_1.default(start_1.default);
+        // this.boardController = new BoardController(startingFormation);
     }
     ;
-    Game.prototype.getGameSquares = function () {
-        return this.boardController.boardSquares;
-    };
     return Game;
 }());
 exports.Game = Game;

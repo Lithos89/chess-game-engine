@@ -38,7 +38,6 @@ export default class Square {
   */
   setPiece(newPiece: Piece) {
     this.piece = newPiece;
-    console.info(this.position)
     if (this.piece !== null) {
       this.piece.position = this.position
       this.piece.updateAvailableMoves();

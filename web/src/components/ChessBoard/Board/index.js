@@ -17,20 +17,13 @@ const Background = styled.div`
 const Board = ({ squares, update }) => {
 
   // const square2 = squares[4].square;
-
   
   return (
     <Background>
         {
-          squares.map(({position , square }) => {
-            const { color, piece } = square;
-            // const tempPiece = (data.square.piece !== null && data.square.piece !== undefined) ? ({
-            //   kind: data.pieceKind ?? null,
-            //   side: data.pieceSide ?? null,
-            //   move: data.pieceMove ?? null
-            // }) : undefined
+          squares.map(({position, square, piece }) => {
             return (
-              <Square key={position} square={square} square2={square} color={color} position={position} piece={piece} update={update} />
+              <Square key={position} square={square} square2={square} color={square.color} position={position} piece={piece} update={update} />
             )
           })
         }

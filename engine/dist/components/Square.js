@@ -26,7 +26,6 @@ var Square = /** @class */ (function () {
     */
     Square.prototype.setPiece = function (newPiece) {
         this.piece = newPiece;
-        console.info(this.position);
         if (this.piece !== null) {
             this.piece.position = this.position;
             this.piece.updateAvailableMoves();

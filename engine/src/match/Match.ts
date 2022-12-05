@@ -60,7 +60,7 @@ export default class Match {
     // console.log('new')
     console.log(this.currentGame.id);
     // this.currentGame = new Game('white')
-    return this.currentGame.boardController.boardSquares;
+    // return this.currentGame.boardController.boardSquares;
   };
 
   updateWins(result: Side | 'draw') {

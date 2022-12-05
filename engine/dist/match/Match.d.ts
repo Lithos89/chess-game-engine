@@ -14,8 +14,6 @@ export default class Match {
     storeGame(game: Game): void;
     generateNextGame(startingSide: Side, id: string): Generator<Game, Game, Game>;
     getGame(index: number): Game;
-    resetGame: () => {
-        [shortPosition: string]: import("../components/Square").default;
-    };
+    resetGame: () => void;
     updateWins(result: Side | 'draw'): void;
 }

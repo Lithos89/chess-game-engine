@@ -8,7 +8,7 @@ import Board from '../ChessBoard/Board';
 import useBoardLayout from 'hooks/board/useBoardLayout';
 
 
-const Game = ({ boardSquares, setBoardSquares, resetSquares, showcase }) => {
+const Game = ({ boardSquares, update }) => {
 
 
   // Move this into a function that is passed from the model
@@ -34,11 +34,9 @@ const Game = ({ boardSquares, setBoardSquares, resetSquares, showcase }) => {
 
 
   return (
-    <Fragment>
-      <Board squares={boardSquares} update={setBoardSquares} />
-      {/* <button onClick={() => { resetFunc(); setRefresh(true); }}> Restart </button> */}
-      <button onClick={() => { resetSquares(); }}> Restart </button>
-    </Fragment>
+    // <Fragment>
+      <Board squares={boardSquares} update={update} />
+    // </Fragment>
   )
 }
 
