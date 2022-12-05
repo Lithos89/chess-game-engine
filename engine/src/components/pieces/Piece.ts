@@ -1,6 +1,6 @@
 // Types, interfaces, constants, ...
-import { type Side, PieceKind, type ShortPosition, type Position } from 'logic/Terms';
-import Movable from 'match/move/interfaces/Movable';
+import { type Side, PieceKind, type ShortPosition, type Position } from '../../logic/Terms';
+import Movable from '../../match/move/interfaces/Movable';
 
 // Components
 import Square from '../Square';
@@ -16,6 +16,8 @@ abstract class Piece implements Movable {
     this.kind = piece;
     this.side = side;
   }
+
+  abstract updateAvailableMoves(): void;
 
   getAvailablePositions(...searchAlgorithms: ((_position: Position) => ShortPosition[])[]): ShortPosition[] {
     const availableMoves: ShortPosition[] = []

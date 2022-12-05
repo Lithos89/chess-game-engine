@@ -4,7 +4,7 @@ var index_1 = require("../../components/pieces/index");
 // Classes
 var MoveController_1 = require("./MoveController");
 // utils
-var utils_1 = require("utils");
+var utils_1 = require("../../utils");
 // *: The purpose of MoveController will be to keep track of available moves, forced plays, signal someone has won, and more...
 var MoveManager = /** @class */ (function () {
     function MoveManager(squareListing) {

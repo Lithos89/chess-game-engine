@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// Util
-var utils_1 = require("utils");
+// Utils
+var utils_1 = require("../utils");
 var Square = /** @class */ (function () {
     function Square(position, color, piece) {
         if (typeof position === 'string') {
@@ -26,6 +26,11 @@ var Square = /** @class */ (function () {
     */
     Square.prototype.setPiece = function (newPiece) {
         this.piece = newPiece;
+        console.info(this.position);
+        if (this.piece !== null) {
+            this.piece.position = this.position;
+            this.piece.updateAvailableMoves();
+        }
         this.abbrPiece = String(typeof newPiece);
     };
     return Square;

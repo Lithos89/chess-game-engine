@@ -1,5 +1,5 @@
 // Types, interfaces, constants, ...
-import { type ShortPosition } from 'logic/Terms';
+import { type ShortPosition } from '../../logic/Terms';
 
 // Components
 import Square from 'components/Square';
@@ -9,7 +9,7 @@ import Piece from '../../components/pieces/index';
 import MoveController from './MoveController';
 
 // utils
-import { convertPosition } from 'utils';
+import { convertPosition } from '../../utils';
 
 // *: The purpose of MoveController will be to keep track of available moves, forced plays, signal someone has won, and more...
 class MoveManager {

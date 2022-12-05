@@ -28,8 +28,8 @@ export type Position = {
 };
 
 // SIDE SPECIFIC
-export const SIDES = ['white', 'black'] as const
-type SideTuple = typeof SIDES
+export const SIDES = ['white', 'black'] as const;
+type SideTuple = typeof SIDES;
 export type Side = SideTuple[number];
 
 

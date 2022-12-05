@@ -1,4 +1,4 @@
-import { type ShortPosition } from 'logic/Terms';
+import { type ShortPosition } from '../../logic/Terms';
 import Square from 'components/Square';
 import MoveController from './MoveController';
 declare class MoveManager {

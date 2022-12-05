@@ -1,18 +1,21 @@
 // Types, interfaces, constants, ...
-import { PieceKind, type Side } from 'logic/Terms';
+import { PieceKind, type Side } from '../../logic/Terms';
 
 // Components
 import Piece from './Piece';
 
 // Algorithms
-import { search } from 'logic/algorithms/movement';
+import { search } from '../../logic/algorithms/movement';
 
 class Pawn extends Piece {
 
   constructor(side: Side) {
     super(PieceKind.Pawn, side);
-    super.getAvailablePositions(search.file(false));
   };
+
+  updateAvailableMoves = () => {
+   this.availableMoves = super.getAvailablePositions(search.file(false)) 
+  }
 };
 
 export default Pawn;

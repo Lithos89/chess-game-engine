@@ -1,8 +1,8 @@
-import { Position, ShortPosition, Row, Column } from '../logic/Terms';
+import { Position, ShortPosition } from '../logic/Terms';
 import Piece from '../components/pieces/index';
 
-// Util
-import { convertPosition } from 'utils';
+// Utils
+import { convertPosition } from '../utils';
 
 export type SquareColor = 'light' | 'dark';
 
@@ -38,6 +38,11 @@ export default class Square {
   */
   setPiece(newPiece: Piece) {
     this.piece = newPiece;
+    console.info(this.position)
+    if (this.piece !== null) {
+      this.piece.position = this.position
+      this.piece.updateAvailableMoves();
+    }
     this.abbrPiece = String(typeof newPiece);
   }
 };

@@ -6,7 +6,7 @@ import Movable from "./interfaces/Movable";
 import Square from "components/Square";
 
 // Utils
-import { convertPosition } from "utils";
+import { convertPosition } from "../../utils";
 
 /*
   This is the class that will be used to communicate with the move manager,

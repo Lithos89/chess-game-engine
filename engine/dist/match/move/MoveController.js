@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Utils
-var utils_1 = require("utils");
+var utils_1 = require("../../utils");
 /*
   This is the class that will be used to communicate with the move manager,
   therefore being able to seperate the move logic with the move callbacks
