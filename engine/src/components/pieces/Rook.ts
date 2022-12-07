@@ -15,7 +15,7 @@ class Rook extends Piece {
 
   updateAvailableMoves = () => {
     this.availableMoves = super.getAvailablePositions(search.file(true), search.rank);
-  }
+  };
 };
 
 export default Rook;

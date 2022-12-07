@@ -1,16 +1,17 @@
+import { BoardSquareCondensed } from './../../formation/structure/board';
+import { BoardSquareListings } from './../../formation/structure/squareCollection';
 import { Game } from './../game/Game';
-import Square from '../../components/Square';
+import { type ShortPosition } from '../../logic/Terms';
+import Piece from '../../components/pieces';
 import MoveManager from '../move/MoveManager';
 export default class BoardController {
-    boardSquares: {
-        [shortPosition: string]: Square;
-    };
+    boardSquares: BoardSquareListings;
     moveManager: MoveManager;
-    updateBoard: () => void;
+    updateBoard: (params: any) => void;
     private setSubscription;
-    compileBoard: () => any[];
+    compileBoard: (highlightedSquarePositions?: ShortPosition[]) => BoardSquareCondensed[];
     constructor(game: Game, stateUpdateFunc: any);
-    highlightAvailableSquares: () => void;
+    highlightAvailableSquares: (piece: Piece | undefined) => void;
     private createPiece;
     private initializeBoard;
     private initializeSquares;

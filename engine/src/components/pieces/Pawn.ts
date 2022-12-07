@@ -8,14 +8,13 @@ import Piece from './Piece';
 import { search } from '../../logic/algorithms/movement';
 
 class Pawn extends Piece {
-
   constructor(side: Side) {
     super(PieceKind.Pawn, side);
   };
 
   updateAvailableMoves = () => {
-   this.availableMoves = super.getAvailablePositions(search.file(false)) 
-  }
+   this.availableMoves = super.getAvailablePositions(search.file(false)) ;
+  };
 };
 
 export default Pawn;

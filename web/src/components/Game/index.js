@@ -5,38 +5,13 @@ import { useState, useEffect, Fragment } from 'react';
 import Board from '../ChessBoard/Board';
 
 // Hooks
-import useBoardLayout from 'hooks/board/useBoardLayout';
+// import useBoardLayout from 'hooks/board/useBoardLayout';
 
 
-const Game = ({ boardSquares, update }) => {
-
-
-  // Move this into a function that is passed from the model
-
-
-  // const startNextGame = () => {
-  //   setCurrentGame(nextGame().value);
-  // };
-
-  // const [refresh, setRefresh] = useState(false);
-
-  // useEffect(() => {
-  //   if (refresh) {
-  //     setRefresh(false);
-  //   }
-  // }, [refresh]);
-
-
-  // useEffect(() => {
-  //   setCurrentGame(nextGame().value);
-  //   setSquares(currentGame.boardController.boardSquares);
-  // }, [])
-
+const Game = ({ boardSquares, update, highlight }) => {
 
   return (
-    // <Fragment>
-      <Board squares={boardSquares} update={update} />
-    // </Fragment>
+    <Board squares={boardSquares} update={update} highlight={highlight} />
   )
 }
 

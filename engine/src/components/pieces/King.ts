@@ -8,14 +8,13 @@ import Piece from './Piece';
 import { search } from '../../logic/algorithms/movement';
 
 class King extends Piece {
-
   constructor(side: Side) {
     super(PieceKind.King, side);
   };
 
   updateAvailableMoves = () => {
     this.availableMoves = super.getAvailablePositions(search.file(true), search.diagonals, search.rank);
-  }
+  };
 };
 
 export default King;

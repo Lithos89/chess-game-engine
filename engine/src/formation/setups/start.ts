@@ -1,4 +1,4 @@
-import { type PieceListings } from '../structure';
+import { type PieceListings } from '../structure/pieceCollection';
 import { PieceKind } from '../../logic/Terms';
 
 // ? In the future, consider converting this file into JSON (see if there is some sort of type specification that I am allowed to set)

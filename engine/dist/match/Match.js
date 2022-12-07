@@ -42,11 +42,14 @@ var Match = /** @class */ (function () {
         // *: In the case of a tie, add 0.5 to each side
         this.wins = {
             player: 0,
-            computer: 0
+            opponent: 0
         };
-        this.resetGame = function () {
+        // !: Will need to change this to act like resigning
+        this.resignGame = function () {
+            // *: Give the victory to the opponent
+            var _opponentSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(_this.currentSide)];
+            _this.updateWins(_opponentSide);
             _this.currentGame = _this.gameGenerator.next().value;
-            // console.log('new')
             console.log(_this.currentGame.id);
             // this.currentGame = new Game('white')
             // return this.currentGame.boardController.boardSquares;
@@ -59,23 +62,24 @@ var Match = /** @class */ (function () {
         this.currentGame = game;
         this.currentSide = game.playerSide;
         this.gameCount += 1;
-        console.info(game.id);
     };
-    Match.prototype.generateNextGame = function (startingSide, id) {
+    // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
+    Match.prototype.generateNextGame = function (startingSide, id, matchLength) {
         var side, gameID, newGame, _nextSideIndex;
+        if (matchLength === void 0) { matchLength = 100; }
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     side = startingSide;
                     _a.label = 1;
                 case 1:
-                    if (!true) return [3 /*break*/, 3];
+                    if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
                     newGame = new Game_1.Game(side, gameID);
-                    this.storeGame(newGame);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
+                    this.storeGame(newGame);
                     _nextSideIndex = (Terms_1.SIDES.length - 1) - Terms_1.SIDES.indexOf(side);
                     side = Terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
@@ -90,18 +94,25 @@ var Match = /** @class */ (function () {
         return this.games[index];
     };
     ;
+    Match.prototype.getMatchStats = function () {
+        return ({
+            wins: this.wins,
+            currentSide: this.currentSide
+        });
+    };
     Match.prototype.updateWins = function (result) {
-        // !: Need to update this to look at the side of the player and the computer and update the appropriate win section
-        switch (result) {
-            case ('white'):
-                this.wins.white++;
-                break;
-            case ('black'):
-                this.wins.black++;
-                break;
-            case ('draw'):
-                this.wins.white += 0.5;
-                this.wins.black += 0.5;
+        if (result === 'draw') {
+            this.wins.player += 0.5;
+            this.wins.opponent += 0.5;
+        }
+        else {
+            var playerWon = result === this.currentSide;
+            if (playerWon) {
+                this.wins.player += 1;
+            }
+            else {
+                this.wins.opponent += 1;
+            }
         }
     };
     return Match;

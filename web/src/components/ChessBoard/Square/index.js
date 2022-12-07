@@ -5,26 +5,25 @@ import Piece from '../Piece';
 
 const StyledSquare = styled.div`
   display: flex;
-  background-color: ${p => p.primary ? 'white' : '#CCC'};
+  background-color: ${p => p.isHighlighted ? 'red' : p.primary ? 'white' : '#CCC'};
   flex: 0 0 12.5%;
   aspect-ratio: 1 / 1;
 `;
 
 
-const Square = ({ square, square2, color, position, piece, update }) => {
+const Square = ({ color, position, piece, update, highlight, isHighlighted }) => {
 
   const isLight = color === 'light';
 
   const move = () => {
-    if (piece !== null) {
-      update(position);
-    }
+    // highlight(position);
+    update(position, piece);
   }
 
   return (
-    <StyledSquare primary={isLight} onClick={move}>
+    <StyledSquare primary={isLight} isHighlighted={isHighlighted} onClick={move}>
       { piece &&
-          <Piece piece={piece} square={square} square2={square2} position={position} />
+          <Piece piece={piece} position={position} />
       }
     </StyledSquare>
   );

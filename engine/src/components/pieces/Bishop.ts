@@ -15,7 +15,7 @@ class Bishop extends Piece {
 
   updateAvailableMoves = () => {
     this.availableMoves = super.getAvailablePositions(search.diagonals);
-  }
+  };
 };
 
 export default Bishop;

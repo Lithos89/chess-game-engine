@@ -1,14 +1,14 @@
-import { boardPositions, PieceKind, ShortPosition, type Side } from '../../logic/Terms';
-import startingFormation from '../../formation/setups/start';
-
-import BoardController from '../board/BoardController';
+import { SIDES } from '../../logic/Terms';
+import { PieceKind, type Side } from '../../logic/Terms';
+import defaultStartingFormation from '../../formation/setups/start';
 
 export class Game {
   readonly id: string;
   // !: Make boardController private and come up with a mechanism o provide an outlet to the square dictionary and make that public
   // boardController: BoardController;
-  readonly playerSide: Side
-  startingFormation = startingFormation;
+  readonly playerSide: Side;
+  private currentTurnSide: Side = 'white';
+  startingFormation = defaultStartingFormation;
 
   // *: Dictionary that holds the squares that makeup the board
   captures: {[_side in Side]: {[_piece in PieceKind] : number}} = {
@@ -27,7 +27,7 @@ export class Game {
       b: 0,
       q: 0,
       k: 0,
-    }
+    },
   };
 
   constructor(side: Side, id: string) {
@@ -35,6 +35,10 @@ export class Game {
     this.playerSide = side;
     // !: Still have to use this side to manipulate the board depending on the side
     // this.boardController = new BoardController(startingFormation);
+  };
+
+  takeTurn = () => {
+    this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
   };
 
   // getGameSquares() {

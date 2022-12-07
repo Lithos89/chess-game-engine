@@ -1,1 +1,1 @@
-export { startSession } from "./match/session";
+export { startSession } from "./session";

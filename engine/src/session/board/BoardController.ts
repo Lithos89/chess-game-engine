@@ -1,7 +1,9 @@
-import { Game } from './../game/Game';
+import { BoardSquareCondensed } from '../../formation/structure/board';
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
+import { Game } from '../game/Game';
 // Types, interfaces, constants, ...
-import { boardPositions, PieceKind, ShortPosition, Side } from '../../logic/Terms';
-import { type PieceListings, PieceListing } from '../../formation/structure';
+import { boardPositions, PieceKind, type ShortPosition, type Side } from '../../logic/Terms';
+import { type PieceListings, PieceListing } from '../../formation/structure/pieceCollection';
 
 // Components
 import Square, { SquareColor } from '../../components/Square';
@@ -11,39 +13,56 @@ import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from '../../components
 import MoveManager from '../move/MoveManager';
 
 export default class BoardController {
-  boardSquares: { [shortPosition: string] : Square } = {};
+  boardSquares: BoardSquareListings = {};
   moveManager: MoveManager;
-  updateBoard: () => void;
+  updateBoard: (params) => void;
 
-  private setSubscription = (updateFunc: (boardState) => void) => () => {
-    console.log(updateFunc);
-    updateFunc(this.compileBoard());
+  private setSubscription = (updateFunc: (boardState) => void) => (params) => {
+    updateFunc(this.compileBoard(params));
   };
 
-  compileBoard = (): any[] => {
-    const processedBoard = [];
+  // TODO: Fix the paramters so that it tracks the different highlighted action type
+  compileBoard = (highlightedSquarePositions: ShortPosition[] = []): BoardSquareCondensed[] => {
+    const processedBoard: BoardSquareCondensed[] = [];
 
     for (const position in this.boardSquares) {
+      // console.log(typeof position);
+      // console.log(typeof highlightedSquarePositions);
       processedBoard.push({
-        position,
-        square: this.boardSquares[position],
-        piece: this.boardSquares[position].piece ?? undefined
+        position: position as ShortPosition,
+        square: {
+          color: this.boardSquares[position].color,
+          focus: {
+            highlighted: highlightedSquarePositions.includes(position as ShortPosition),
+            action: highlightedSquarePositions.includes(position as ShortPosition) ? 'move' : null,
+          },
+        },
+        piece: this.boardSquares[position].piece ? {
+          kind: this.boardSquares[position].piece.kind,
+          side: this.boardSquares[position].piece.side,
+        } : null
       });
     };
 
     return processedBoard;
-  }
+  };
 
   constructor(game: Game, stateUpdateFunc) {
-    this.updateBoard = this.setSubscription(stateUpdateFunc)
+    this.updateBoard = this.setSubscription(stateUpdateFunc);
     this.initializeBoard(game.startingFormation);
-    this.moveManager = new MoveManager(this.boardSquares, this.updateBoard);
-    this.updateBoard();
+    this.moveManager = new MoveManager(this.boardSquares, this.updateBoard, this.highlightAvailableSquares);
+    this.updateBoard([]);
   };
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares
-  highlightAvailableSquares = () => {
-
+  highlightAvailableSquares = (piece: Piece | undefined) => {
+    console.log(piece);
+    // console.log(piece.availableMoves)
+    if (piece instanceof Piece) {
+      this.updateBoard(piece.availableMoves)
+    } else {
+      this.updateBoard([])
+    };
   };
 
   private createPiece({ kind, side }: PieceListing): Piece | null {

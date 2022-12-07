@@ -14,16 +14,16 @@ const Background = styled.div`
 `;
 
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
-const Board = ({ squares, update }) => {
-
-  // const square2 = squares[4].square;
+const Board = ({ squares, update, highlight }) => {
   
   return (
     <Background>
         {
           squares.map(({position, square, piece }) => {
+
+            // console.log(square)
             return (
-              <Square key={position} square={square} square2={square} color={square.color} position={position} piece={piece} update={update} />
+              <Square key={position} color={square.color} position={position} piece={piece} update={update} highlight={highlight} isHighlighted={square.focus.highlighted} />
             )
           })
         }

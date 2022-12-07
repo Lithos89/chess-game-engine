@@ -56,7 +56,7 @@ const getAssetKey = (pieceObj) => {
   };
 };
 
-const Piece = ({ piece, position, update }) => {
+const Piece = ({ piece }) => {
 
   const pieceAssetKey = getAssetKey(piece);
 

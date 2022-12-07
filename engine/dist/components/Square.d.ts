@@ -6,7 +6,7 @@ export default class Square {
     readonly color: SquareColor;
     piece: Piece;
     abbrPiece: string;
-    constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | void);
+    constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null);
     getPosition(): ShortPosition;
     setPiece(newPiece: Piece): void;
 }

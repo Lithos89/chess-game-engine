@@ -1,10 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// import Movable from '../../match/move/interfaces/Movable';
+// Components
+// import Square from '../Square';
 var Piece = /** @class */ (function () {
     function Piece(piece, side) {
         this.kind = piece;
         this.side = side;
     }
+    ;
     Piece.prototype.getAvailablePositions = function () {
         var searchAlgorithms = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -19,9 +23,6 @@ var Piece = /** @class */ (function () {
         return availableMoves;
     };
     ;
-    Piece.prototype.move = function (currentSquare, destSquare) {
-        return Piece.movePiece(currentSquare, destSquare);
-    };
     return Piece;
 }());
 ;

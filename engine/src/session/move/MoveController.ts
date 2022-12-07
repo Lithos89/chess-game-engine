@@ -1,3 +1,4 @@
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
 // Types, interfaces, constants, ...
 import { ShortPosition } from "logic/Terms";
 import Movable from "./interfaces/Movable";
@@ -7,27 +8,39 @@ import Square from "components/Square";
 
 // Utils
 import { convertPosition } from "../../utils";
+import Piece from 'components/pieces';
 
 /*
   This is the class that will be used to communicate with the move manager,
   therefore being able to seperate the move logic with the move callbacks
 */
 class MoveController {
-  boardPositions: { [shortPosition: string] : Square };
-  commitMove
+  boardPositions: BoardSquareListings;
+  private commitMove;
+  private highlightBoard;
+  private selectedPiece: Piece;
+  undo: () => void;
 
-  constructor(boardPositions: { [shortPosition: string] : Square }, commitMove) {
+  constructor(boardPositions: BoardSquareListings, commitMove, highlightBoard , takebackMove: () => void) {
     this.boardPositions = boardPositions;
     this.commitMove = commitMove;
-  }
-
-  trackBackward = () => {
-
-  }
-
-  trackForward = () => {
-
+    this.highlightBoard = highlightBoard;
+    this.undo = takebackMove;
   };
+
+  selectPiece = (position: ShortPosition) => {
+    const newSelectedPiece = this.boardPositions[position]?.piece;
+
+    if (newSelectedPiece && newSelectedPiece !== this.selectedPiece) { 
+      // Highlight board with the selected piece and keep track of the piece for 
+      this.highlightBoard(newSelectedPiece);
+      this.selectedPiece = newSelectedPiece;
+    } else {
+      // Unhighlight board and reset highlighted piece pointer
+      this.highlightBoard();
+      this.selectedPiece = null;
+    }
+  }
 
   requestMove = (from: ShortPosition, to: ShortPosition): boolean => {
     const originPiece = this.boardPositions[from]?.piece
@@ -35,12 +48,12 @@ class MoveController {
     // destpiece will be used when it comes to reflecting captures
     const destPiece = this.boardPositions[to]?.piece
 
-
     try {
+      if (from === to) { throw Error }
       // this.boardPositions[to].piece = originPiece;
       // this.boardPositions[from].piece = null;
 
-      this.commitMove(from, to)
+      this.commitMove(from, to);
     } catch {
       return false;
     } finally {
@@ -51,20 +64,6 @@ class MoveController {
 
     // TODO: Add filter functions here that will evaluate if it is a viable move
   }
-
-  moveRequestCallback = (origin: Square, dest: Square) => {
-    const originPosShort: ShortPosition = convertPosition(origin.position) as ShortPosition;
-    const destPosShort: ShortPosition = convertPosition(dest.position) as ShortPosition;
-
-    const originPiece = origin.piece
-    // const destPiece = this.boardSquares[to]?.piece
-
-    const goTo = this.boardPositions['d4'];
-    console.info(goTo);
-    goTo.setPiece(originPiece);
-    delete origin.piece;
-    return this.boardPositions;
-  };
 };
 
 export default MoveController

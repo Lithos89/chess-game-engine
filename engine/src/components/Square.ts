@@ -13,7 +13,7 @@ export default class Square {
   public piece: Piece;
   public abbrPiece: string;
 
-  constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | void)
+  constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
   constructor(position: Position | ShortPosition, color: SquareColor, piece?: Piece) {
     if (typeof position === 'string') {
       this.position = convertPosition(position) as Position
@@ -21,7 +21,6 @@ export default class Square {
       this.position = position;
     }
     this.color = color;
-
     this.setPiece(piece);
   }
 

@@ -9,6 +9,8 @@ function convertPosition(rawPosition) {
     else if (typeof rawPosition === 'object') {
         return;
     }
+    ;
 }
 exports.convertPosition = convertPosition;
+;
 //# sourceMappingURL=index.js.map

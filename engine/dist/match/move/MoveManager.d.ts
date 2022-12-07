@@ -1,19 +1,14 @@
+import { BoardSquareListings } from './../../formation/structure/squareCollection';
 import { type ShortPosition } from '../../logic/Terms';
-import Square from 'components/Square';
 import MoveController from './MoveController';
+import MoveHistoryLL from './MoveHistoryLL';
 declare class MoveManager {
-    protected boardSquares: {
-        [shortPosition: string]: Square;
-    };
+    protected boardSquares: BoardSquareListings;
     readonly controller: MoveController;
+    moveLL: MoveHistoryLL;
     updateBoard: any;
-    constructor(squareListing: {
-        [shortPosition: string]: Square;
-    }, boardUpdateCallback: any);
+    constructor(squareListing: BoardSquareListings, boardUpdateCallback: any, highlightBoard: any);
+    takebackMove: () => void;
     commitMove: (from: ShortPosition, to: ShortPosition) => void;
-    requestMove: (from: ShortPosition, to: ShortPosition) => void;
-    moveRequestCallback: (origin: Square, dest: Square) => {
-        [shortPosition: string]: Square;
-    };
 }
 export default MoveManager;

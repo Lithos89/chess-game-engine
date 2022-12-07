@@ -6,77 +6,82 @@ import { startSession } from 'chess-engine';
 // Components
 import Game from '../Game';
 
-const { matchController, showcase } = startSession();
-// const initialGame = matchController.generateGame();
+// const { matchController, matchObserver } = startSession();
+
+const { matchController } = startSession();
 
 const Session = () => {
 
-  const [newBoardSquares, setNewBoardSquares] = useState([]);
+  const [matchInfo, setMatchInfo] = useState(null);
 
-  // TODO: Move the movement function into a custom hook
-  const [moveFunc, setMoveFunc] = useState(() => () => {});
-  const [pieceSelected, setPieceSelected] = useState(null);
+  const [boardSquares, setBoardSquares] = useState([]);
 
-  const [selectPiece, setSelectPiece] = useState()
+  // TODO: Move the movement Fntion into a custom hook
+  const [moveController, setMoveController] = useState(null);
 
-  const [gameLoaded, setGameLoaded] = useState(false);
+  const [selectedPiecePos, setSelectedPiecePos] = useState(null);
+  const [selectPiece, setSelectPiece] = useState(() => () => {});
 
-  // Initial Game Load
+  // const [matchInfo, setMatchInfo] = useState(null);
+
+  const [matchLoaded, setMatchLoaded] = useState(false);
+
+  // Initial Match Load
   useEffect(() => {
-    if (!gameLoaded) {
-      const move = matchController.generateGame(setNewBoardSquares);
-      setMoveFunc(() => (a,b) => {move(a,b)});
-      setGameLoaded(true);
+    if (!matchLoaded) {
+      matchController.observe(setMatchInfo);
+      const moveController = matchController.generateGame(setBoardSquares);
+      setMoveController(moveController);
+      setMatchLoaded(true);
     }
     // TODO: Add in here match generated catch here to prevent pre-rendering
-  }, [gameLoaded]);
+  }, [matchLoaded]);
 
   // Piece Selection
   useEffect(() => {
-    console.log(pieceSelected)
-    if (pieceSelected) {
-      setSelectPiece(() => (pos) => {
-        if (pos !== pieceSelected) {
-          moveFunc(pieceSelected, pos)
-        }
-        setPieceSelected(null)
-      })
-    } else {
-      setSelectPiece(() => (pos) => {
-        setPieceSelected(pos)
-      })
+    if (matchLoaded) {
+      if (selectedPiecePos) {
+        setSelectPiece(() => (pos) => {
+          if (pos !== selectedPiecePos) {
+            moveController.move(selectedPiecePos, pos)
+          }
+          setSelectedPiecePos(null)
+          moveController.select(pos)
+        })
+      } else {
+        setSelectPiece(() => (pos, piece) => {
+          if (piece) {
+            setSelectedPiecePos(pos)
+            moveController.select(pos)
+          }
+        })
+      }
     }
-  }, [pieceSelected, moveFunc])
+  }, [selectedPiecePos, matchLoaded, moveController]);
 
+  // console.log(boardSquares[0])
 
-  // const [boardSquares, tempSetBoardSquares] = useState(Object.entries(initialGame).map(([pos, val]) => ({
-  //   position: pos,
-  //   square: val
-  // })));
-
-  // const setBoardSquares = (temp) => tempSetBoardSquares(Object.entries(temp).map(([pos, val]) => ({
-  //   position: pos,
-  //   square: val
-  // })));
-
-  // const resetSquares = () => {
-  //   tempSetBoardSquares(Object.entries(matchController.generateGame()).map(([pos, val]) => ({
-  //     position: pos,
-  //     square: val
-  //   }))); 
-  // };
-
-  // console.log(boardSquares)
+  const resign = () => {
+    setMoveController(matchController.resign());
+  };
 
   return (
     <Fragment>
-      { gameLoaded ? (
-        <Fragment>
-          <Game boardSquares={newBoardSquares} update={selectPiece} />
-          <button onClick={() => { matchController.generateGame(setNewBoardSquares); }}> Restart </button>
-        </Fragment>
-        ) : null
+      {
+        matchLoaded && moveController && (
+          <Fragment>
+            <Game boardSquares={boardSquares} update={selectPiece} highlight={moveController.select} />
+            <button onClick={resign}> Resign </button>
+            <button onClick={moveController.undo}> Undo </button>
+          </Fragment>
+        )
       }
+      { matchInfo && (
+        <Fragment>
+          <h1>Side: {matchInfo.currentSide}</h1>
+          <h5>You: {matchInfo.wins.player}   Computer: {matchInfo.wins.opponent}</h5>
+        </Fragment>
+      )}
     </Fragment>
   )
 };

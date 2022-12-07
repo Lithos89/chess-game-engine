@@ -15,7 +15,7 @@ class Knight extends Piece {
 
   updateAvailableMoves = () => {
     this.availableMoves = super.getAvailablePositions(search.Ls);
-  }
+  };
 };
 
 export default Knight;

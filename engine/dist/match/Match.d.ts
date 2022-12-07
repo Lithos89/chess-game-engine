@@ -8,12 +8,20 @@ export default class Match {
     gameGenerator: Generator<Game, Game, Game>;
     private gameCount;
     readonly wins: {
-        [user: string]: number;
+        player: number;
+        opponent: number;
     };
     constructor(side: Side);
     storeGame(game: Game): void;
-    generateNextGame(startingSide: Side, id: string): Generator<Game, Game, Game>;
+    generateNextGame(startingSide: Side, id: string, matchLength?: number): Generator<Game, Game, Game>;
     getGame(index: number): Game;
-    resetGame: () => void;
+    getMatchStats(): {
+        wins: {
+            player: number;
+            opponent: number;
+        };
+        currentSide: "white" | "black";
+    };
+    resignGame: () => void;
     updateWins(result: Side | 'draw'): void;
 }

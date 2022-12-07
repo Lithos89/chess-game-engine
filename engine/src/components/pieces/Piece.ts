@@ -1,37 +1,32 @@
 // Types, interfaces, constants, ...
 import { type Side, PieceKind, type ShortPosition, type Position } from '../../logic/Terms';
-import Movable from '../../match/move/interfaces/Movable';
+// import Movable from '../../match/move/interfaces/Movable';
 
 // Components
-import Square from '../Square';
+// import Square from '../Square';
 
-abstract class Piece implements Movable {
-  side: Side;
-  kind: PieceKind;
+abstract class Piece {
+  readonly side: Side;
+  readonly kind: PieceKind;
   position: Position;
   availableMoves: ShortPosition[];
-  static movePiece: (arg0: Square, arg1: Square) => { [shortPosition: string] : Square };
+
+  abstract updateAvailableMoves(): void;
 
   constructor(piece: PieceKind, side: Side) { 
     this.kind = piece;
     this.side = side;
-  }
-
-  abstract updateAvailableMoves(): void;
+  };
 
   getAvailablePositions(...searchAlgorithms: ((_position: Position) => ShortPosition[])[]): ShortPosition[] {
-    const availableMoves: ShortPosition[] = []
+    const availableMoves: ShortPosition[] = [];
 
     for (const algo of searchAlgorithms) {
       availableMoves.push(...algo(this.position));
     };
 
-    return availableMoves
+    return availableMoves;
   };
-
-  move(currentSquare: Square, destSquare: Square): { [shortPosition: string] : Square } {
-    return Piece.movePiece(currentSquare, destSquare);
-  }
 };
 
 export default Piece;

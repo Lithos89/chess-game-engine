@@ -9,14 +9,13 @@ import Piece from './Piece';
 import { search } from '../../logic/algorithms/movement';
 
 class Queen extends Piece {
-
   constructor(side: Side) {
     super(PieceKind.Queen, side);
   };
 
   updateAvailableMoves = () => {
     this.availableMoves = super.getAvailablePositions(search.diagonals, search.file(true), search.rank);
-  }
+  };
 };
 
 export default Queen;
