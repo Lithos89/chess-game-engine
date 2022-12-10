@@ -1,5 +1,5 @@
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
 import { type ShortPosition } from '../../logic/Terms';
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
 import MoveController from './MoveController';
 import MoveHistoryLL from './MoveHistoryLL';
 declare class MoveManager {

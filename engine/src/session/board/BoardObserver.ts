@@ -1,6 +1,17 @@
+import BoardManager from "./BoardManager";
 
-// class BoardObserver {
+class BoardObserver {
+  boardManager: BoardManager;
+  updateState: (state) => void;
 
-// }
+  constructor(boardManager: BoardManager, updateStateCallback: (state) => void) {
+    this.boardManager = boardManager;
+    this.updateState = updateStateCallback;
+  };
 
-// export default BoardObserver;
+  update = () => {
+    this.updateState(this.boardManager.compileBoard);
+  };
+}
+
+export default BoardObserver;

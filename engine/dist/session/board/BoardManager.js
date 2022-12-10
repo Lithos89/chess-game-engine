@@ -7,8 +7,8 @@ var Square_1 = require("../../components/Square");
 var pieces_1 = require("../../components/pieces");
 // Controllers, Managers, Observers
 var MoveManager_1 = require("../move/MoveManager");
-var BoardController = /** @class */ (function () {
-    function BoardController(game, stateUpdateFunc) {
+var BoardManager = /** @class */ (function () {
+    function BoardManager(game, stateUpdateFunc) {
         var _this = this;
         this.boardSquares = {};
         this.setSubscription = function (updateFunc) { return function (params) {
@@ -57,7 +57,7 @@ var BoardController = /** @class */ (function () {
         this.updateBoard([]);
     }
     ;
-    BoardController.prototype.createPiece = function (_a) {
+    BoardManager.prototype.createPiece = function (_a) {
         var kind = _a.kind, side = _a.side;
         switch (kind) {
             case Terms_1.PieceKind.Pawn:
@@ -80,13 +80,13 @@ var BoardController = /** @class */ (function () {
     };
     ;
     // TODO: replace orientationflipped with the side that the player is on defaulting to white
-    BoardController.prototype.initializeBoard = function (boardConfiguration, side) {
+    BoardManager.prototype.initializeBoard = function (boardConfiguration, side) {
         if (side === void 0) { side = 'white'; }
         // ?: If I include a board flipping function, do it here and pass the new positions to initializeSquares?
         this.initializeSquares(boardConfiguration);
     };
     ;
-    BoardController.prototype.initializeSquares = function (pieceMapping) {
+    BoardManager.prototype.initializeSquares = function (pieceMapping) {
         for (var tileIndex in Terms_1.boardPositions) {
             var position = Terms_1.boardPositions[tileIndex];
             var regex = /b|d|f|h/;
@@ -99,8 +99,8 @@ var BoardController = /** @class */ (function () {
         ;
     };
     ;
-    return BoardController;
+    return BoardManager;
 }());
-exports.default = BoardController;
 ;
-//# sourceMappingURL=BoardController.js.map
+exports.default = BoardManager;
+//# sourceMappingURL=BoardManager.js.map

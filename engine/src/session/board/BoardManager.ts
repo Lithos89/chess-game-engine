@@ -1,18 +1,21 @@
-import { BoardSquareCondensed } from '../../formation/structure/board';
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
-import { Game } from '../game/Game';
+
 // Types, interfaces, constants, ...
 import { boardPositions, PieceKind, type ShortPosition, type Side } from '../../logic/Terms';
 import { type PieceListings, PieceListing } from '../../formation/structure/pieceCollection';
+import { BoardSquareCondensed } from '../../formation/structure/board';
+import { type BoardSquareListings } from '../../formation/structure/squareCollection';
 
 // Components
-import Square, { SquareColor } from '../../components/Square';
+import Square, { type SquareColor } from '../../components/Square';
 import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from '../../components/pieces';
 
-// Controllers
+// Controllers, Managers, Observers
 import MoveManager from '../move/MoveManager';
 
-export default class BoardController {
+// Classes
+import { Game } from '../game/Game';
+
+class BoardManager {
   boardSquares: BoardSquareListings = {};
   moveManager: MoveManager;
   updateBoard: (params) => void;
@@ -107,3 +110,5 @@ export default class BoardController {
     };
   };
 };
+
+export default BoardManager;

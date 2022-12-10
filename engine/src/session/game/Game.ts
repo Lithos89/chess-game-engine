@@ -4,8 +4,7 @@ import defaultStartingFormation from '../../formation/setups/start';
 
 export class Game {
   readonly id: string;
-  // !: Make boardController private and come up with a mechanism o provide an outlet to the square dictionary and make that public
-  // boardController: BoardController;
+
   readonly playerSide: Side;
   private currentTurnSide: Side = 'white';
   startingFormation = defaultStartingFormation;
@@ -33,15 +32,9 @@ export class Game {
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
-    // !: Still have to use this side to manipulate the board depending on the side
-    // this.boardController = new BoardController(startingFormation);
   };
 
   takeTurn = () => {
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
   };
-
-  // getGameSquares() {
-  //   return this.boardController.boardSquares
-  // }
 };

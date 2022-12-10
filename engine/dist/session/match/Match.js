@@ -27,16 +27,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var BoardController_1 = require("../board/BoardController");
+var BoardManager_1 = require("../board/BoardManager");
 var Terms_1 = require("../../logic/Terms");
 // Classes
 var Game_1 = require("../game/Game");
+var MatchObserver_1 = require("./MatchObserver");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(side) {
         var _this = this;
         this.games = [];
         this.selectedGameIndex = 0;
+        // !:be able to scope it in the generator so that way different actions like resign have access to the callback
         // Add here a property that takes the squares from the current games move cntroller
         this.gameCount = 0;
         // *: In the case of a tie, add 0.5 to each side
@@ -46,16 +48,19 @@ var Match = /** @class */ (function () {
         };
         this.startNewGame = function (updateBoardStateCallback) {
             var newGame = _this.gameGenerator.next().value;
-            var boardController = new BoardController_1.default(newGame, updateBoardStateCallback);
-            var moveController = boardController.moveManager.controller;
+            var boardManager = new BoardManager_1.default(newGame, updateBoardStateCallback);
+            var moveController = boardManager.moveManager.controller;
             // TODO: Set this is as the type of GameController which I will create or do something along these lines
             var move = moveController.requestMove, select = moveController.selectPiece, undo = moveController.undo;
+            _this.tempfunc = updateBoardStateCallback;
+            _this.observer.update();
             return { move: move, select: select, undo: undo };
         };
         this.getMatchStats = function () {
             return ({
                 wins: _this.wins,
-                currentSide: _this.currentSide
+                currentSide: _this.currentSide,
+                games: _this.games.length,
             });
         };
         // !: Will need to change this to act like resigning
@@ -63,14 +68,20 @@ var Match = /** @class */ (function () {
             // *: Give the victory to the opponent
             var _opponentSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(_this.currentSide)];
             _this.updateWins(_opponentSide);
+            var newGame = _this.startNewGame(_this.tempfunc);
             // this.currentGame = new Game('white')
-            // return this.currentGame.boardController.boardSquares;
+            _this.observer.update();
+            return newGame;
+        };
+        this.setObserver = function (updateMatchStateCallback) {
+            _this.observer = new MatchObserver_1.default(_this, updateMatchStateCallback);
         };
         this.gameGenerator = this.generateNextGame(side, 'test');
     }
     ;
     Match.prototype.storeGame = function (game) {
         this.games.push(game);
+        // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
         this.currentGame = game;
         this.currentSide = game.playerSide;
         this.gameCount += 1;
@@ -120,8 +131,11 @@ var Match = /** @class */ (function () {
             else {
                 this.wins.opponent += 1;
             }
+            ;
         }
+        ;
     };
+    ;
     return Match;
 }());
 exports.default = Match;

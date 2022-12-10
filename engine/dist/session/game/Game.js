@@ -32,8 +32,6 @@ var Game = /** @class */ (function () {
         };
         this.id = id;
         this.playerSide = side;
-        // !: Still have to use this side to manipulate the board depending on the side
-        // this.boardController = new BoardController(startingFormation);
     }
     ;
     return Game;
