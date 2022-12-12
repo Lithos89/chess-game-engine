@@ -12,14 +12,14 @@ import Match from './match/Match';
   TODO: 3. Implement an interface or type for the match controller
 
 /*
-  *: session will be used so that broadcasts are appropriately handled
-  *: session will allow for the scaling up of the app in the case of multiple opponents
+  * session will be used so that broadcasts are appropriately handled
+  * session will allow for the scaling up of the app in the case of multiple opponents
 */
 class Session {
   private matches: Match[] = [];
   private currentMatch: Match;
   public static getCurrentSession: () => Session;
-  constructor(startingSide: Side = 'white') {
+  constructor() {
     Session.getCurrentSession = () => this;
   };
 
@@ -34,13 +34,17 @@ class Session {
 
   updateCurrentMatch = (index: number = this.matches.length - 1) => {
     this.currentMatch = this.matches[index];
+    // this.currentMatch.ob
     // !: Add in here a call to update the current match observer
     // ?: If this function were being used to its full potential, would also need to update the match observer
   };
 
-  getCurrentMatch = () => {
-    if (this.currentMatch) {
+  getCurrentMatch = (): Match => {
+    if (this.currentMatch instanceof Match) {
       return this.currentMatch;
+    } else {
+      const exhaustiveCheck: never = this.currentMatch;
+      throw new Error(exhaustiveCheck);
     };
   };
 };

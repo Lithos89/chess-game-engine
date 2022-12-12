@@ -9,12 +9,11 @@ var Match_1 = require("./match/Match");
   TODO: 3. Implement an interface or type for the match controller
 
 /*
-  *: session will be used so that broadcasts are appropriately handled
-  *: session will allow for the scaling up of the app in the case of multiple opponents
+  * session will be used so that broadcasts are appropriately handled
+  * session will allow for the scaling up of the app in the case of multiple opponents
 */
 var Session = /** @class */ (function () {
-    function Session(startingSide) {
-        if (startingSide === void 0) { startingSide = 'white'; }
+    function Session() {
         var _this = this;
         this.matches = [];
         // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)

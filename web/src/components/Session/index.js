@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useState, useCallback } from 'react';
+import { Fragment, useEffect, useState} from 'react';
 
 // Modules
-import { startSession, setMatchObserver, setGameObserver } from 'chess-engine';
+import { startSession, setMatchObserver } from 'chess-engine';
 
 // Components
 import Game from '../Game';
@@ -21,23 +21,17 @@ const Session = () => {
 
   // Initial Match Load
   useEffect(() => {
-      // match.setObserver(setMatchInfo);
-      // setMatchController(match);
-      setMatchObserver(setMatchInfo)
+      match.startNewGame();
+      setMatchObserver(setMatchInfo);
       setMatchLoaded(true);
   }, []);
-
-  // const resign = () => {
-  //   setMoveController(match.resignGame());
-  // };
 
   return (
     <Fragment>
       { matchLoaded && (
         <Fragment>
-          <Game match={match}/>
+          <Game game={match.currentGame}/>
           <button onClick={() => {match.resignGame()}}> Resign </button>
-          {/* <button onClick={moveController.undo}> Undo </button> */}
         </Fragment>
       )}
       { matchInfo && (

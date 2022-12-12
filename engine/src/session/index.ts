@@ -1,11 +1,8 @@
 
-// Types, interfaces, constants, ...
-import { type Side } from '../logic/Terms';
-
 // Classes
 import Session from './Session';
 
-export function startSession(side: Side = 'white'):
+export function startSession():
   // Return Type
   {
     // matchController: {
@@ -20,7 +17,7 @@ export function startSession(side: Side = 'white'):
   }
   // Function
   {
-  const session = new Session(side);
+  const session = new Session();
 
   const matchController = {
     newMatch: session.startNewMatch,
@@ -37,6 +34,7 @@ export function setMatchObserver(callback) {
 export function setGameObserver(callback) {
   const match = Session.getCurrentSession().getCurrentMatch();
   match.setGameStateCallback(callback)
+  match.currentGame.boardObserver.update();
   // match.gameCallback = callback;
 };
 

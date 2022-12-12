@@ -6,46 +6,45 @@ import { setGameObserver } from 'chess-engine';
 // Components
 import Board from '../ChessBoard/Board';
 
-// Hooks
-// import useBoardLayout from 'hooks/board/useBoardLayout';
-
-
-
-const Game = ({ match }) => {
-
+const Game = ({ game }) => {
   const [gameData, setGameData] = useState([]);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
   const [selectedPiecePos, setSelectedPiecePos] = useState(null);
 
   useEffect(() => {
-    const game = match.startNewGame();
-    setMoveController(game);
     setGameObserver(setGameData);
-    setGameLoaded(true)
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    setMoveController(game.moveController);
+    setGameLoaded(true);
+  }, [game]);
 
   // Piece Selection
   const selectPiece = useCallback((pos, piece) => {
     if (gameLoaded) {
       if (selectedPiecePos) {
           if (pos !== selectedPiecePos) {
-            moveController.move(selectedPiecePos, pos)
+            moveController.requestMove(selectedPiecePos, pos)
           }
           setSelectedPiecePos(null)
-          moveController.select(pos)
+          moveController.selectPiece(pos)
       } else {
         if (piece) {
           setSelectedPiecePos(pos)
-          moveController.select(pos)
+          moveController.selectPiece(pos)
         }
       }
     }
-  }, [selectedPiecePos, moveController]);
+  }, [selectedPiecePos, moveController, gameLoaded]);
 
   return (
       gameLoaded && moveController && (
-        <Board squares={gameData} update={selectPiece} highlight={moveController.select} />
+        <Fragment>
+          <Board squares={gameData} update={selectPiece} highlight={moveController.select} />
+          <button onClick={moveController.undo}> Undo </button>
+        </Fragment>
       )
   )
 }

@@ -1,7 +1,5 @@
 
 // Types, interfaces, constants, ...
-import { BoardSquareCondensed } from 'formation/structure/board';
-import BoardObserver from 'session/board/BoardObserver';
 import { type Side, SIDES } from '../../logic/Terms';
 
 // Classes
@@ -11,50 +9,49 @@ import MatchObserver from './MatchObserver';
 // *: Class that captures a series of games between an opponent
 export default class Match {
   private games: Game[] = [];
+  private gameCount: number = 0;
+
   public currentGame: Game;
   private selectedGameIndex: number = 0;
+
   protected currentSide: Side;
 
   private readonly gameGenerator: Generator<Game, Game, Game>;
 
   private observer: MatchObserver;
 
-  gameStateCallback: (state) => void = () => {};
-  
-  private gameCount: number = 0
+  private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
 
   // *: In the case of a tie, add 0.5 to each side
-  readonly wins: { player: number, opponent: number } = {
+  private readonly wins: { player: number, opponent: number } = {
     player: 0,
-    opponent: 0
+    opponent: 0,
   };
 
   constructor(side: Side) {
-    this.gameGenerator = this.generateNextGame(side, 'test')
+    this.gameGenerator = this.generateNextGame(side, 'test');
   };
 
-  storeGame(game: Game) {
-    this.games.push(game);
 
-    // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
-    this.currentGame = game;
-    this.currentSide = game.playerSide;
-    this.gameCount += 1;
+  /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
 
-    console.log(this.currentGame.id);
-  }
-
-  setGameStateCallback = (callback) => {
-    this.gameStateCallback = callback
+  public startNewGame = () => {
+    this.gameGenerator.next();
+    this.observer?.update();
   };
 
-  callGameStateCallback = (contents) => {
-    this.gameStateCallback(contents);
-  }
+  // TODO: Will need to change this to act like resigning (freezing the current game)
+  public resignGame = () => {
+    // *: Give the victory to the opponent
+    const _opponentSide = SIDES[1 - SIDES.indexOf(this.currentSide)];
+    this.updateWins(_opponentSide);
+
+    // ?: For now, resigning starts the next game.
+    this.startNewGame();
+  };
 
   // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
-  // TODO: Fix the type annotation for the generator
-  * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<Game, Game, Game> {
+  private * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<Game, Game, Game> {
     let side: Side = startingSide;
 
     while (this.games.length < matchLength) {
@@ -67,52 +64,47 @@ export default class Match {
       side = SIDES[_nextSideIndex];
     };
 
-    return
+    return;
   };
 
-  setObserver = (updateMatchStateCallback) => {
+  private storeGame(game: Game) {
+    this.games.push(game);
+
+    // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
+    this.currentGame = game;
+    this.currentSide = game.playerSide;
+    this.gameCount += 1;
+
+    console.log(this.currentGame.id);
+  };
+
+
+  /*----------------------------------------CLIENT STATE MANAGEMENT------------------------------------------*/
+
+  setObserver = (updateMatchStateCallback: (state: any) => void) => {
     this.observer = new MatchObserver(this, updateMatchStateCallback);
-    this.observer?.update();
+    this.observer?.update(); // ?: See if I need to include the ?
   };
 
-  startNewGame = () => {
-    const newGame = this.gameGenerator.next().value;
-
-    // TODO: Set this is as the type of GameController which I will create or do something along these lines
-    const {
-      requestMove: move,
-      selectPiece: select,
-      undo
-    } = newGame.moveController;
-
-    this.observer?.update();
-    
-    return { move, select, undo };
+  setGameStateCallback = (callback) => {
+    this.gameStateCallback = callback;
   };
 
-  getGame(index: number) {
-    return this.games[index];
+  callGameStateCallback = (contents) => {
+    this.gameStateCallback(contents);
   };
 
-  getMatchStats = () => {
-    return({
-      wins: this.wins,
-      currentSide: this.currentSide,
-      games: this.games.length,
-    });
-  };
 
-  // !: Will need to change this to act like resigning
-  resignGame = () => {
-    // *: Give the victory to the opponent
-    const _opponentSide = SIDES[1 - SIDES.indexOf(this.currentSide)];
-    this.updateWins(_opponentSide);
+  /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
 
-    const newGame = this.startNewGame();
-    return newGame;
-  };
+  // TODO: Have to fix the class access for this function
+  getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side, games: number } => ({
+    wins: this.wins,
+    currentSide: this.currentSide,
+    games: this.games.length,
+  });
 
-  updateWins(result: Side | 'draw') {
+  private updateWins(result: Side | 'draw') {
     if (result === 'draw') {
       this.wins.player += 0.5;
       this.wins.opponent += 0.5;
@@ -128,8 +120,4 @@ export default class Match {
 
     this.observer?.update();
   };
-
-  // setObserver = (updateMatchStateCallback) => {
-  //   this.observer = new MatchObserver(this, updateMatchStateCallback);
-  // };
 };
