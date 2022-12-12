@@ -1,6 +1,7 @@
-// Logic
+
+// Types, interfaces, constants, ...
 import { BoardSquareCondensed } from 'formation/structure/board';
-import BoardManager from '../board/BoardManager';
+import BoardObserver from 'session/board/BoardObserver';
 import { type Side, SIDES } from '../../logic/Terms';
 
 // Classes
@@ -10,18 +11,16 @@ import MatchObserver from './MatchObserver';
 // *: Class that captures a series of games between an opponent
 export default class Match {
   private games: Game[] = [];
+  public currentGame: Game;
+  private selectedGameIndex: number = 0;
+  protected currentSide: Side;
 
-  selectedGameIndex: number = 0;
-  currentGame: Game;
-  currentSide: Side;
-  observer: MatchObserver;
+  private readonly gameGenerator: Generator<Game, Game, Game>;
 
-  gameGenerator: Generator<Game, Game, Game>;
+  private observer: MatchObserver;
 
-  tempfunc; // !: Make sure to get rid of this, may 
-  // !:be able to scope it in the generator so that way different actions like resign have access to the callback
-
-  // Add here a property that takes the squares from the current games move cntroller
+  gameStateCallback: (state) => void = () => {};
+  
   private gameCount: number = 0
 
   // *: In the case of a tie, add 0.5 to each side
@@ -45,15 +44,25 @@ export default class Match {
     console.log(this.currentGame.id);
   }
 
+  setGameStateCallback = (callback) => {
+    this.gameStateCallback = callback
+  };
+
+  callGameStateCallback = (contents) => {
+    this.gameStateCallback(contents);
+  }
+
   // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
+  // TODO: Fix the type annotation for the generator
   * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<Game, Game, Game> {
     let side: Side = startingSide;
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new Game(side, gameID);
+      const newGame = new Game(side, gameID, this.callGameStateCallback);
       yield newGame;
       this.storeGame(newGame);
+      console.info(this.currentGame);
       const _nextSideIndex = (SIDES.length - 1) - SIDES.indexOf(side);
       side = SIDES[_nextSideIndex];
     };
@@ -61,21 +70,22 @@ export default class Match {
     return
   };
 
-  startNewGame = (updateBoardStateCallback: (boardState: BoardSquareCondensed[]) => void) => {
+  setObserver = (updateMatchStateCallback) => {
+    this.observer = new MatchObserver(this, updateMatchStateCallback);
+    this.observer?.update();
+  };
+
+  startNewGame = () => {
     const newGame = this.gameGenerator.next().value;
-    const boardManager = new BoardManager(newGame, updateBoardStateCallback);
-    const moveController = boardManager.moveManager.controller;
 
     // TODO: Set this is as the type of GameController which I will create or do something along these lines
     const {
       requestMove: move,
       selectPiece: select,
       undo
-    } = moveController;
+    } = newGame.moveController;
 
-    this.tempfunc = updateBoardStateCallback;
-
-    this.observer.update();
+    this.observer?.update();
     
     return { move, select, undo };
   };
@@ -97,10 +107,8 @@ export default class Match {
     // *: Give the victory to the opponent
     const _opponentSide = SIDES[1 - SIDES.indexOf(this.currentSide)];
     this.updateWins(_opponentSide);
-    const newGame = this.startNewGame(this.tempfunc);
-    // this.currentGame = new Game('white')
-    this.observer.update()
 
+    const newGame = this.startNewGame();
     return newGame;
   };
 
@@ -110,16 +118,18 @@ export default class Match {
       this.wins.opponent += 0.5;
     } else {
       const playerWon = result === this.currentSide;
-
+      
       if (playerWon) {
         this.wins.player += 1;
       } else {
         this.wins.opponent += 1;
       };
     };
+
+    this.observer?.update();
   };
 
-  setObserver = (updateMatchStateCallback) => {
-  this.observer = new MatchObserver(this, updateMatchStateCallback);
-  };
+  // setObserver = (updateMatchStateCallback) => {
+  //   this.observer = new MatchObserver(this, updateMatchStateCallback);
+  // };
 };

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /*
   !: What needs to be done before further development
   TODO: 1. Clean up callback storage to exist in the match observer
-  // TODO: 2. Fix the updating of the observer so that the it
 */
 var MatchObserver = /** @class */ (function () {
     // TODO: Update state once you've added 
@@ -12,8 +11,6 @@ var MatchObserver = /** @class */ (function () {
         this.update = function () {
             _this.updateState(_this.match.getMatchStats());
         };
-        console.log('here');
-        console.log(match);
         this.match = match;
         this.updateState = updateStateCallback;
     }

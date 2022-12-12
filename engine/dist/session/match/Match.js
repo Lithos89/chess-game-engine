@@ -27,7 +27,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var BoardManager_1 = require("../board/BoardManager");
 var Terms_1 = require("../../logic/Terms");
 // Classes
 var Game_1 = require("../game/Game");
@@ -38,22 +37,30 @@ var Match = /** @class */ (function () {
         var _this = this;
         this.games = [];
         this.selectedGameIndex = 0;
-        // !:be able to scope it in the generator so that way different actions like resign have access to the callback
-        // Add here a property that takes the squares from the current games move cntroller
+        this.gameStateCallback = function () { };
         this.gameCount = 0;
         // *: In the case of a tie, add 0.5 to each side
         this.wins = {
             player: 0,
             opponent: 0
         };
-        this.startNewGame = function (updateBoardStateCallback) {
+        this.setGameStateCallback = function (callback) {
+            _this.gameStateCallback = callback;
+        };
+        this.callGameStateCallback = function (contents) {
+            _this.gameStateCallback(contents);
+        };
+        this.setObserver = function (updateMatchStateCallback) {
+            var _a;
+            _this.observer = new MatchObserver_1.default(_this, updateMatchStateCallback);
+            (_a = _this.observer) === null || _a === void 0 ? void 0 : _a.update();
+        };
+        this.startNewGame = function () {
+            var _a;
             var newGame = _this.gameGenerator.next().value;
-            var boardManager = new BoardManager_1.default(newGame, updateBoardStateCallback);
-            var moveController = boardManager.moveManager.controller;
             // TODO: Set this is as the type of GameController which I will create or do something along these lines
-            var move = moveController.requestMove, select = moveController.selectPiece, undo = moveController.undo;
-            _this.tempfunc = updateBoardStateCallback;
-            _this.observer.update();
+            var _b = newGame.moveController, move = _b.requestMove, select = _b.selectPiece, undo = _b.undo;
+            (_a = _this.observer) === null || _a === void 0 ? void 0 : _a.update();
             return { move: move, select: select, undo: undo };
         };
         this.getMatchStats = function () {
@@ -68,13 +75,8 @@ var Match = /** @class */ (function () {
             // *: Give the victory to the opponent
             var _opponentSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(_this.currentSide)];
             _this.updateWins(_opponentSide);
-            var newGame = _this.startNewGame(_this.tempfunc);
-            // this.currentGame = new Game('white')
-            _this.observer.update();
+            var newGame = _this.startNewGame();
             return newGame;
-        };
-        this.setObserver = function (updateMatchStateCallback) {
-            _this.observer = new MatchObserver_1.default(_this, updateMatchStateCallback);
         };
         this.gameGenerator = this.generateNextGame(side, 'test');
     }
@@ -88,6 +90,7 @@ var Match = /** @class */ (function () {
         console.log(this.currentGame.id);
     };
     // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
+    // TODO: Fix the type annotation for the generator
     Match.prototype.generateNextGame = function (startingSide, id, matchLength) {
         var side, gameID, newGame, _nextSideIndex;
         if (matchLength === void 0) { matchLength = 100; }
@@ -99,11 +102,12 @@ var Match = /** @class */ (function () {
                 case 1:
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
-                    newGame = new Game_1.Game(side, gameID);
+                    newGame = new Game_1.Game(side, gameID, this.callGameStateCallback);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
                     this.storeGame(newGame);
+                    console.info(this.currentGame);
                     _nextSideIndex = (Terms_1.SIDES.length - 1) - Terms_1.SIDES.indexOf(side);
                     side = Terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
@@ -119,6 +123,7 @@ var Match = /** @class */ (function () {
     };
     ;
     Match.prototype.updateWins = function (result) {
+        var _a;
         if (result === 'draw') {
             this.wins.player += 0.5;
             this.wins.opponent += 0.5;
@@ -134,6 +139,7 @@ var Match = /** @class */ (function () {
             ;
         }
         ;
+        (_a = this.observer) === null || _a === void 0 ? void 0 : _a.update();
     };
     ;
     return Match;

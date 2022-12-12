@@ -11,6 +11,8 @@ declare class BoardManager {
     private setSubscription;
     compileBoard: (highlightedSquarePositions?: ShortPosition[]) => BoardSquareCondensed[];
     constructor(game: Game, stateUpdateFunc: any);
+    setObserver: (stateUpdateFunc: any) => void;
+    update: (params: any) => void;
     highlightAvailableSquares: (piece: Piece | undefined) => void;
     private createPiece;
     private initializeBoard;

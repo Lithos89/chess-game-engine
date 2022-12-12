@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
 var Terms_1 = require("../../logic/Terms");
 var start_1 = require("../../formation/setups/start");
+var BoardManager_1 = require("../board/BoardManager");
+var BoardObserver_1 = require("../board/BoardObserver");
 var Game = /** @class */ (function () {
-    function Game(side, id) {
+    function Game(side, id, callback) {
         var _this = this;
         this.currentTurnSide = 'white';
         this.startingFormation = start_1.default;
@@ -32,6 +34,11 @@ var Game = /** @class */ (function () {
         };
         this.id = id;
         this.playerSide = side;
+        var boardManager = new BoardManager_1.default(this, callback);
+        var boardObserver = new BoardObserver_1.default(boardManager, callback);
+        this.boardManager = boardManager;
+        this.boardObserver = boardObserver;
+        this.moveController = boardManager.moveManager.controller;
     }
     ;
     return Game;

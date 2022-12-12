@@ -1,7 +1,6 @@
 
 // Types, interfaces, constants, ...
-import { type BoardSquareCondensed } from '../formation/structure/board';
-import { type ShortPosition, type Side } from '../logic/Terms';
+import { type Side } from '../logic/Terms';
 
 // Classes
 import Session from './Session';
@@ -23,18 +22,21 @@ export function startSession(side: Side = 'white'):
   {
   const session = new Session(side);
 
-  console.info("test me");
-
-
-  // *: At the moment, you cannot start a new match, therefore passing in a static match works
   const matchController = {
     newMatch: session.startNewMatch,
-    // resign: session.resign,
-    // setObserver: session.setMatchObserver,
   };
 
-
-
   return matchController;
+};
+
+export function setMatchObserver(callback) {
+  const match = Session.getCurrentSession().getCurrentMatch();
+  match.setObserver(callback);
+};
+
+export function setGameObserver(callback) {
+  const match = Session.getCurrentSession().getCurrentMatch();
+  match.setGameStateCallback(callback)
+  // match.gameCallback = callback;
 };
 

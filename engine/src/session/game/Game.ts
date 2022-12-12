@@ -1,6 +1,9 @@
 import { SIDES } from '../../logic/Terms';
 import { PieceKind, type Side } from '../../logic/Terms';
 import defaultStartingFormation from '../../formation/setups/start';
+import MoveController from '../move/MoveController';
+import BoardManager from '../board/BoardManager';
+import BoardObserver from '../board/BoardObserver';
 
 export class Game {
   readonly id: string;
@@ -8,6 +11,10 @@ export class Game {
   readonly playerSide: Side;
   private currentTurnSide: Side = 'white';
   startingFormation = defaultStartingFormation;
+
+  boardManager: BoardManager;
+  boardObserver: BoardObserver;
+  moveController: MoveController;
 
   // *: Dictionary that holds the squares that makeup the board
   captures: {[_side in Side]: {[_piece in PieceKind] : number}} = {
@@ -29,9 +36,15 @@ export class Game {
     },
   };
 
-  constructor(side: Side, id: string) {
+  constructor(side: Side, id: string, callback) {
     this.id = id;
     this.playerSide = side;
+
+    const boardManager = new BoardManager(this, callback);
+    const boardObserver = new BoardObserver(boardManager, callback);
+    this.boardManager = boardManager;
+    this.boardObserver = boardObserver;
+    this.moveController = boardManager.moveManager.controller;
   };
 
   takeTurn = () => {

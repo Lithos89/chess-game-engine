@@ -1,5 +1,5 @@
 // import Match from './match/Match';
 
-export { startSession } from "./session";
+export { startSession, setMatchObserver, setGameObserver } from "./session";
 
 // export default Match;

@@ -1,1 +1,1 @@
-export { startSession } from "./session";
+export { startSession, setMatchObserver, setGameObserver } from "./session";

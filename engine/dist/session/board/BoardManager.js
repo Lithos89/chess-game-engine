@@ -11,6 +11,7 @@ var BoardManager = /** @class */ (function () {
     function BoardManager(game, stateUpdateFunc) {
         var _this = this;
         this.boardSquares = {};
+        this.updateBoard = function () { };
         this.setSubscription = function (updateFunc) { return function (params) {
             updateFunc(_this.compileBoard(params));
         }; };
@@ -39,6 +40,13 @@ var BoardManager = /** @class */ (function () {
             ;
             return processedBoard;
         };
+        this.setObserver = function (stateUpdateFunc) {
+            _this.updateBoard = _this.setSubscription(stateUpdateFunc);
+            _this.updateBoard([]);
+        };
+        this.update = function (params) {
+            _this.updateBoard(params);
+        };
         // board highlighting will be acomplished here as well through state updates that will affect boardSquares
         this.highlightAvailableSquares = function (piece) {
             console.log(piece);
@@ -53,7 +61,7 @@ var BoardManager = /** @class */ (function () {
         };
         this.updateBoard = this.setSubscription(stateUpdateFunc);
         this.initializeBoard(game.startingFormation);
-        this.moveManager = new MoveManager_1.default(this.boardSquares, this.updateBoard, this.highlightAvailableSquares);
+        this.moveManager = new MoveManager_1.default(this.boardSquares, this.update, this.highlightAvailableSquares);
         this.updateBoard([]);
     }
     ;

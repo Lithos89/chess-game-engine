@@ -18,7 +18,7 @@ import { Game } from '../game/Game';
 class BoardManager {
   boardSquares: BoardSquareListings = {};
   moveManager: MoveManager;
-  updateBoard: (params) => void;
+  updateBoard: (params) => void = () => {};
 
   private setSubscription = (updateFunc: (boardState) => void) => (params) => {
     updateFunc(this.compileBoard(params));
@@ -53,9 +53,18 @@ class BoardManager {
   constructor(game: Game, stateUpdateFunc) {
     this.updateBoard = this.setSubscription(stateUpdateFunc);
     this.initializeBoard(game.startingFormation);
-    this.moveManager = new MoveManager(this.boardSquares, this.updateBoard, this.highlightAvailableSquares);
+    this.moveManager = new MoveManager(this.boardSquares, this.update, this.highlightAvailableSquares);
     this.updateBoard([]);
   };
+
+  setObserver = (stateUpdateFunc) => {
+    this.updateBoard = this.setSubscription(stateUpdateFunc);
+    this.updateBoard([]);
+  }
+
+  update = (params) => {
+    this.updateBoard(params)
+  }
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares
   highlightAvailableSquares = (piece: Piece | undefined) => {
