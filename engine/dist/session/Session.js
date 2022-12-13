@@ -3,12 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Classes
 var Match_1 = require("./match/Match");
 /*
-  !: Overview of what needs to be done before further development
-  // TODO: 1. Get rid of the callback
-  // TODO: 2. Move starting a new game to Match
-  TODO: 3. Implement an interface or type for the match controller
-
-/*
   * session will be used so that broadcasts are appropriately handled
   * session will allow for the scaling up of the app in the case of multiple opponents
 */
@@ -24,20 +18,25 @@ var Session = /** @class */ (function () {
             _this.updateCurrentMatch();
             return match;
         };
-        this.updateCurrentMatch = function (index) {
-            if (index === void 0) { index = _this.matches.length - 1; }
-            _this.currentMatch = _this.matches[index];
-            // !: Add in here a call to update the current match observer
-            // ?: If this function were being used to its full potential, would also need to update the match observer
-        };
+        // ?: Could use an index system to get an active match from the active matches array
         this.getCurrentMatch = function () {
-            if (_this.currentMatch) {
+            if (_this.currentMatch instanceof Match_1.default) {
                 return _this.currentMatch;
+            }
+            else {
+                var exhaustiveCheck = _this.currentMatch;
+                throw new Error(exhaustiveCheck);
             }
             ;
         };
         Session.getCurrentSession = function () { return _this; };
     }
+    ;
+    // ?: Could make it so that it update the currently active matches, allowing for more than one match to be active at the same time
+    Session.prototype.updateCurrentMatch = function (index) {
+        if (index === void 0) { index = this.matches.length - 1; }
+        this.currentMatch = this.matches[index];
+    };
     ;
     return Session;
 }());

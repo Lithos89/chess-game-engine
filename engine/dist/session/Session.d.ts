@@ -6,7 +6,7 @@ declare class Session {
     static getCurrentSession: () => Session;
     constructor();
     startNewMatch: (playerSide?: Side) => Match;
-    updateCurrentMatch: (index?: number) => void;
+    updateCurrentMatch(index?: number): void;
     getCurrentMatch: () => Match;
 }
 export default Session;

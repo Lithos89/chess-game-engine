@@ -27,70 +27,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
 // Classes
 var Game_1 = require("../game/Game");
-var MatchObserver_1 = require("./MatchObserver");
+var Observer_1 = require("../Observer");
+/*
+  !: Overview of what needs to be done before further development
+  TODO: 1. Refactor the callback so that it lives inside the boardobserver
+  TODO: 2. Get rid of the game state management that lives inside Match
+*/
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(side) {
         var _this = this;
         this.games = [];
-        this.selectedGameIndex = 0;
-        this.gameStateCallback = function () { };
         this.gameCount = 0;
+        this.selectedGameIndex = 0;
+        // private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
         // *: In the case of a tie, add 0.5 to each side
         this.wins = {
             player: 0,
-            opponent: 0
+            opponent: 0,
         };
-        this.setGameStateCallback = function (callback) {
-            _this.gameStateCallback = callback;
-        };
-        this.callGameStateCallback = function (contents) {
-            _this.gameStateCallback(contents);
-        };
-        this.setObserver = function (updateMatchStateCallback) {
-            var _a;
-            _this.observer = new MatchObserver_1.default(_this, updateMatchStateCallback);
-            (_a = _this.observer) === null || _a === void 0 ? void 0 : _a.update();
-        };
+        /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
         this.startNewGame = function () {
-            var _a;
-            var newGame = _this.gameGenerator.next().value;
-            // TODO: Set this is as the type of GameController which I will create or do something along these lines
-            var _b = newGame.moveController, move = _b.requestMove, select = _b.selectPiece, undo = _b.undo;
-            (_a = _this.observer) === null || _a === void 0 ? void 0 : _a.update();
-            return { move: move, select: select, undo: undo };
+            _this.gameGenerator.next();
+            Observer_1.default.matchObservers.get(_this).update();
         };
-        this.getMatchStats = function () {
-            return ({
-                wins: _this.wins,
-                currentSide: _this.currentSide,
-                games: _this.games.length,
-            });
-        };
-        // !: Will need to change this to act like resigning
+        // TODO: Will need to change this to act like resigning (freezing the current game)
         this.resignGame = function () {
             // *: Give the victory to the opponent
             var _opponentSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(_this.currentSide)];
             _this.updateWins(_opponentSide);
-            var newGame = _this.startNewGame();
-            return newGame;
+            // ?: For now, resigning starts the next game.
+            _this.startNewGame();
         };
+        /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
+        // TODO: Have to fix the class access for this function
+        this.getMatchStats = function () { return ({
+            wins: _this.wins,
+            currentSide: _this.currentSide,
+            games: _this.games.length,
+        }); };
         this.gameGenerator = this.generateNextGame(side, 'test');
+        Observer_1.default.setMatchObserver(this);
     }
     ;
-    Match.prototype.storeGame = function (game) {
-        this.games.push(game);
-        // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
-        this.currentGame = game;
-        this.currentSide = game.playerSide;
-        this.gameCount += 1;
-        console.log(this.currentGame.id);
-    };
     // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
-    // TODO: Fix the type annotation for the generator
     Match.prototype.generateNextGame = function (startingSide, id, matchLength) {
         var side, gameID, newGame, _nextSideIndex;
         if (matchLength === void 0) { matchLength = 100; }
@@ -102,7 +86,7 @@ var Match = /** @class */ (function () {
                 case 1:
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
-                    newGame = new Game_1.Game(side, gameID, this.callGameStateCallback);
+                    newGame = new Game_1.Game(side, gameID);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
@@ -118,12 +102,16 @@ var Match = /** @class */ (function () {
         });
     };
     ;
-    Match.prototype.getGame = function (index) {
-        return this.games[index];
+    Match.prototype.storeGame = function (game) {
+        this.games.push(game);
+        // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
+        this.currentGame = game;
+        this.currentSide = game.playerSide;
+        this.gameCount += 1;
+        console.log(this.currentGame.id);
     };
     ;
     Match.prototype.updateWins = function (result) {
-        var _a;
         if (result === 'draw') {
             this.wins.player += 0.5;
             this.wins.opponent += 0.5;
@@ -139,7 +127,8 @@ var Match = /** @class */ (function () {
             ;
         }
         ;
-        (_a = this.observer) === null || _a === void 0 ? void 0 : _a.update();
+        // this.observer?.update();
+        Observer_1.default.matchObservers.get(this).update();
     };
     ;
     return Match;

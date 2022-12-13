@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState} from 'react';
 
 // Modules
-import { startSession, setMatchObserver } from 'chess-engine';
+import Chess from 'chess-engine';
 
 // Components
 import Game from '../Game';
 
-const session = startSession();
-const initialMatch = session.newMatch();
+const matchController = Chess.startSession();
+const initialMatch = matchController.newMatch();
 
 const Session = () => {
 
@@ -22,13 +22,13 @@ const Session = () => {
   // Initial Match Load
   useEffect(() => {
       match.startNewGame();
-      setMatchObserver(setMatchInfo);
+      Chess.setMatchObserver(setMatchInfo, match);
       setMatchLoaded(true);
   }, []);
 
   return (
     <Fragment>
-      { matchLoaded && (
+      { matchLoaded  && (
         <Fragment>
           <Game game={match.currentGame}/>
           <button onClick={() => {match.resignGame()}}> Resign </button>

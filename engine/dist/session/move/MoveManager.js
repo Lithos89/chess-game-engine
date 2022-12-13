@@ -6,7 +6,6 @@ var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // !: Worth looking into the relationships of MoveManager for bugs
 // *: The purpose of MoveManager will be to keep track of available moves, forced plays, signal someone has won, execute legal moves, and more...
 var MoveManager = /** @class */ (function () {
-    // 
     function MoveManager(squareListing, boardUpdateCallback, highlightBoard) {
         var _this = this;
         // Functions to include in this class
@@ -43,6 +42,7 @@ var MoveManager = /** @class */ (function () {
         // !: Need to figure out a better way of passing these callbacks
         this.controller = new MoveController_1.default(this.boardSquares, this.commitMove, highlightBoard, this.takebackMove);
     }
+    ;
     return MoveManager;
 }());
 ;

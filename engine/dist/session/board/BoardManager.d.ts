@@ -7,12 +7,11 @@ import { Game } from '../game/Game';
 declare class BoardManager {
     boardSquares: BoardSquareListings;
     moveManager: MoveManager;
-    updateBoard: (params: any) => void;
+    readonly updateBoard: (params: any) => void;
     private setSubscription;
     compileBoard: (highlightedSquarePositions?: ShortPosition[]) => BoardSquareCondensed[];
-    constructor(game: Game, stateUpdateFunc: any);
-    setObserver: (stateUpdateFunc: any) => void;
-    update: (params: any) => void;
+    constructor(game: Game);
+    update: (params?: any[]) => void;
     highlightAvailableSquares: (piece: Piece | undefined) => void;
     private createPiece;
     private initializeBoard;

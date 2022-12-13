@@ -1,10 +1,7 @@
 "use strict";
-// import Match from './match/Match';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setGameObserver = exports.setMatchObserver = exports.startSession = void 0;
+// TODO: Clean up the import so that object destructuring isn't required to export
 var session_1 = require("./session");
-Object.defineProperty(exports, "startSession", { enumerable: true, get: function () { return session_1.startSession; } });
-Object.defineProperty(exports, "setMatchObserver", { enumerable: true, get: function () { return session_1.setMatchObserver; } });
-Object.defineProperty(exports, "setGameObserver", { enumerable: true, get: function () { return session_1.setGameObserver; } });
-// export default Match;
+var Chess = { startSession: session_1.startSession, setMatchObserver: session_1.setMatchObserver, setGameObserver: session_1.setGameObserver };
+exports.default = Chess;
 //# sourceMappingURL=index.js.map

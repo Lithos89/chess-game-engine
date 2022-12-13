@@ -1,13 +1,8 @@
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
+
 // Types, interfaces, constants, ...
 import { ShortPosition } from "logic/Terms";
-import Movable from "./interfaces/Movable";
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
 
-// Components
-import Square from "components/Square";
-
-// Utils
-import { convertPosition } from "../../utils";
 import Piece from 'components/pieces';
 
 /*
@@ -21,7 +16,7 @@ class MoveController {
   private selectedPiece: Piece;
   undo: () => void;
 
-  constructor(boardPositions: BoardSquareListings, commitMove, highlightBoard , takebackMove: () => void) {
+  constructor(boardPositions: BoardSquareListings, commitMove, highlightBoard, takebackMove: () => void) {
     this.boardPositions = boardPositions;
     this.commitMove = commitMove;
     this.highlightBoard = highlightBoard;
@@ -43,10 +38,10 @@ class MoveController {
   }
 
   requestMove = (from: ShortPosition, to: ShortPosition): boolean => {
-    const originPiece = this.boardPositions[from]?.piece
+    const originPiece = this.boardPositions[from]?.piece;
 
     // destpiece will be used when it comes to reflecting captures
-    const destPiece = this.boardPositions[to]?.piece
+    const destPiece = this.boardPositions[to]?.piece;
 
     try {
       if (from === to) { throw Error }

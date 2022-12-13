@@ -3,7 +3,6 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import defaultStartingFormation from '../../formation/setups/start';
 import MoveController from '../move/MoveController';
 import BoardManager from '../board/BoardManager';
-import BoardObserver from '../board/BoardObserver';
 
 export class Game {
   readonly id: string;
@@ -13,7 +12,7 @@ export class Game {
   startingFormation = defaultStartingFormation;
 
   boardManager: BoardManager;
-  boardObserver: BoardObserver;
+  // boardObserver: BoardObserver;
   moveController: MoveController;
 
   // *: Dictionary that holds the squares that makeup the board
@@ -22,14 +21,13 @@ export class Game {
     black: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
   };
 
-  constructor(side: Side, id: string, callback) {
+  constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
 
-    const boardManager = new BoardManager(this, callback);
-    const boardObserver = new BoardObserver(boardManager, callback);
+    const boardManager = new BoardManager(this);
     this.boardManager = boardManager;
-    this.boardObserver = boardObserver;
+    
     this.moveController = boardManager.moveManager.controller;
   };
 

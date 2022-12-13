@@ -15,7 +15,6 @@ class MoveManager {
   moveLL: MoveHistoryLL; // ?: See if this can be made private and read only
   updateBoard; // ?: Fix this
 
-  // 
   constructor(squareListing: BoardSquareListings, boardUpdateCallback, highlightBoard) {
     this.updateBoard = boardUpdateCallback;
     this.boardSquares = squareListing;
@@ -23,7 +22,7 @@ class MoveManager {
 
     // !: Need to figure out a better way of passing these callbacks
     this.controller = new MoveController(this.boardSquares, this.commitMove, highlightBoard, this.takebackMove);
-  }
+  };
 
   // Functions to include in this class
 

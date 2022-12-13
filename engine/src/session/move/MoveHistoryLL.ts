@@ -20,18 +20,18 @@ export default class MoveHistoryLL {
     while (_head !== null) {
       moveList.push(_head.log);
       _head = _head.prevMove;
-    }
+    };
 
     return moveList;
-  }
-}
+  };
+};
 
 class Move {
   log: string;
-  prevMove: Move | null
+  prevMove: Move | null;
 
   constructor (moveLog: string, prev = null) {
-    this.log = moveLog
-    this.prevMove = prev
-  }
+    this.log = moveLog;
+    this.prevMove = prev;
+  };
 };

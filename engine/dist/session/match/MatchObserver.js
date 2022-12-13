@@ -8,12 +8,16 @@ var MatchObserver = /** @class */ (function () {
     // TODO: Update state once you've added 
     function MatchObserver(match, updateStateCallback) {
         var _this = this;
-        this.update = function () {
-            _this.updateState(_this.match.getMatchStats());
+        this.setCallback = function (callback) {
+            _this.updateState = callback;
+            _this.update();
         };
+        this.update = function () { _this.updateState(_this.match.getMatchStats()); };
         this.match = match;
         this.updateState = updateStateCallback;
+        this.update();
     }
+    ;
     return MatchObserver;
 }());
 ;

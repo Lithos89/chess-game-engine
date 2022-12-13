@@ -1,5 +1,6 @@
-// import Match from './match/Match';
+// TODO: Clean up the import so that object destructuring isn't required to export
+import { startSession, setMatchObserver, setGameObserver } from "./session";
 
-export { startSession, setMatchObserver, setGameObserver } from "./session";
+const Chess = { startSession, setMatchObserver, setGameObserver };
 
-// export default Match;
+export default Chess;

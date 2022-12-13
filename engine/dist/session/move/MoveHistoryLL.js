@@ -21,18 +21,21 @@ var MoveHistoryLL = /** @class */ (function () {
                 moveList.push(_head.log);
                 _head = _head.prevMove;
             }
+            ;
             return moveList;
         };
     }
     return MoveHistoryLL;
 }());
 exports.default = MoveHistoryLL;
+;
 var Move = /** @class */ (function () {
     function Move(moveLog, prev) {
         if (prev === void 0) { prev = null; }
         this.log = moveLog;
         this.prevMove = prev;
     }
+    ;
     return Move;
 }());
 ;

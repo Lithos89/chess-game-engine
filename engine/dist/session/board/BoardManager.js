@@ -7,12 +7,13 @@ var Square_1 = require("../../components/Square");
 var pieces_1 = require("../../components/pieces");
 // Controllers, Managers, Observers
 var MoveManager_1 = require("../move/MoveManager");
+var Observer_1 = require("../Observer");
 var BoardManager = /** @class */ (function () {
-    function BoardManager(game, stateUpdateFunc) {
+    function BoardManager(game) {
         var _this = this;
         this.boardSquares = {};
-        this.updateBoard = function () { };
         this.setSubscription = function (updateFunc) { return function (params) {
+            if (params === void 0) { params = []; }
             updateFunc(_this.compileBoard(params));
         }; };
         // TODO: Fix the paramters so that it tracks the different highlighted action type
@@ -20,8 +21,6 @@ var BoardManager = /** @class */ (function () {
             if (highlightedSquarePositions === void 0) { highlightedSquarePositions = []; }
             var processedBoard = [];
             for (var position in _this.boardSquares) {
-                // console.log(typeof position);
-                // console.log(typeof highlightedSquarePositions);
                 processedBoard.push({
                     position: position,
                     square: {
@@ -40,29 +39,25 @@ var BoardManager = /** @class */ (function () {
             ;
             return processedBoard;
         };
-        this.setObserver = function (stateUpdateFunc) {
-            _this.updateBoard = _this.setSubscription(stateUpdateFunc);
-            _this.updateBoard([]);
-        };
         this.update = function (params) {
+            if (params === void 0) { params = []; }
             _this.updateBoard(params);
         };
         // board highlighting will be acomplished here as well through state updates that will affect boardSquares
         this.highlightAvailableSquares = function (piece) {
-            console.log(piece);
-            // console.log(piece.availableMoves)
             if (piece instanceof pieces_1.default) {
-                _this.updateBoard(piece.availableMoves);
+                _this.update(piece.availableMoves);
             }
             else {
-                _this.updateBoard([]);
+                _this.update();
             }
             ;
         };
-        this.updateBoard = this.setSubscription(stateUpdateFunc);
+        Observer_1.default.setBoardObserver(this);
+        this.updateBoard = this.setSubscription(Observer_1.default.boardObservers.get(this).update);
         this.initializeBoard(game.startingFormation);
         this.moveManager = new MoveManager_1.default(this.boardSquares, this.update, this.highlightAvailableSquares);
-        this.updateBoard([]);
+        this.update();
     }
     ;
     BoardManager.prototype.createPiece = function (_a) {

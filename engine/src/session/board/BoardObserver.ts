@@ -1,18 +1,23 @@
+import { BoardSquareCondensed } from "formation/structure/board";
 import BoardManager from "./BoardManager";
 
 class BoardObserver {
   boardManager: BoardManager;
-  updateState: (state) => void;
+  updateState: (state: any) => void;
 
-  constructor(boardManager: BoardManager, updateStateCallback: (state) => void) {
+  constructor(boardManager: BoardManager, updateStateCallback: (state: any) => void) {
     this.boardManager = boardManager;
     this.updateState = updateStateCallback;
-    this.update();
   };
 
-  update = () => {
-    console.log('updated');
-    this.updateState(this.boardManager.compileBoard);
+  setCallback = (callback) => {
+    this.updateState = callback;
+    this.boardManager.update();
+  };
+
+  update = (state: BoardSquareCondensed) => {
+    console.info("Board State Updated");
+    this.updateState(state);
   };
 }
 

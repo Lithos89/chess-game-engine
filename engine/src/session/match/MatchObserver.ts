@@ -6,18 +6,22 @@ import Match from "./Match";
 */
 
 class MatchObserver {
-  match: Match
-  updateState: (state) => void
+  match: Match;
+  updateState: (state) => void;
   
   // TODO: Update state once you've added 
   constructor(match: Match, updateStateCallback: (state) => void) {
     this.match = match;
     this.updateState = updateStateCallback;
-  }
-
-  update = () => {
-    this.updateState(this.match.getMatchStats());
+    this.update();
   };
+
+  setCallback = (callback) => {
+    this.updateState = callback;
+    this.update();
+  };
+
+  update = () => { this.updateState(this.match.getMatchStats()) };
 };
 
 export default MatchObserver;

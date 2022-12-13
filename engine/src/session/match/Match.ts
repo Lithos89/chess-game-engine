@@ -6,6 +6,15 @@ import { type Side, SIDES } from '../../logic/Terms';
 import { Game } from '../game/Game';
 import MatchObserver from './MatchObserver';
 
+import Observer from '../Observer';
+
+/*
+  !: Overview of what needs to be done before further development
+  TODO: 1. Refactor the callback so that it lives inside the boardobserver
+  TODO: 2. Get rid of the game state management that lives inside Match
+*/
+
+
 // *: Class that captures a series of games between an opponent
 export default class Match {
   private games: Game[] = [];
@@ -20,7 +29,7 @@ export default class Match {
 
   private observer: MatchObserver;
 
-  private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
+  // private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
 
   // *: In the case of a tie, add 0.5 to each side
   private readonly wins: { player: number, opponent: number } = {
@@ -30,6 +39,7 @@ export default class Match {
 
   constructor(side: Side) {
     this.gameGenerator = this.generateNextGame(side, 'test');
+    Observer.setMatchObserver(this);
   };
 
 
@@ -37,7 +47,7 @@ export default class Match {
 
   public startNewGame = () => {
     this.gameGenerator.next();
-    this.observer?.update();
+    Observer.matchObservers.get(this).update()
   };
 
   // TODO: Will need to change this to act like resigning (freezing the current game)
@@ -56,7 +66,7 @@ export default class Match {
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new Game(side, gameID, this.callGameStateCallback);
+      const newGame = new Game(side, gameID);
       yield newGame;
       this.storeGame(newGame);
       console.info(this.currentGame);
@@ -78,23 +88,7 @@ export default class Match {
     console.log(this.currentGame.id);
   };
 
-
-  /*----------------------------------------CLIENT STATE MANAGEMENT------------------------------------------*/
-
-  setObserver = (updateMatchStateCallback: (state: any) => void) => {
-    this.observer = new MatchObserver(this, updateMatchStateCallback);
-    this.observer?.update(); // ?: See if I need to include the ?
-  };
-
-  setGameStateCallback = (callback) => {
-    this.gameStateCallback = callback;
-  };
-
-  callGameStateCallback = (contents) => {
-    this.gameStateCallback(contents);
-  };
-
-
+  
   /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
 
   // TODO: Have to fix the class access for this function
@@ -118,6 +112,7 @@ export default class Match {
       };
     };
 
-    this.observer?.update();
+    // this.observer?.update();
+    Observer.matchObservers.get(this).update()
   };
 };

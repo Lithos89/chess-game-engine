@@ -15,13 +15,26 @@ import MoveManager from '../move/MoveManager';
 // Classes
 import { Game } from '../game/Game';
 
+import Observer from '../Observer';
+
 class BoardManager {
   boardSquares: BoardSquareListings = {};
   moveManager: MoveManager;
-  updateBoard: (params) => void = () => {};
 
-  private setSubscription = (updateFunc: (boardState) => void) => (params) => {
-    updateFunc(this.compileBoard(params));
+  readonly updateBoard: (params) => void;
+
+  constructor(game: Game) {
+    const observer = Observer.setBoardObserver(this);
+    this.updateBoard = this.setSubscription(observer.update);
+    this.initializeBoard(game.startingFormation);
+
+
+    this.moveManager = new MoveManager(this.boardSquares, this.update, this.highlightAvailableSquares);
+    this.update();
+  };
+
+  private setSubscription = (updateHandler: (boardState) => void) => (params = []) => {
+    updateHandler(this.compileBoard(params));
   };
 
   // TODO: Fix the paramters so that it tracks the different highlighted action type
@@ -29,8 +42,6 @@ class BoardManager {
     const processedBoard: BoardSquareCondensed[] = [];
 
     for (const position in this.boardSquares) {
-      // console.log(typeof position);
-      // console.log(typeof highlightedSquarePositions);
       processedBoard.push({
         position: position as ShortPosition,
         square: {
@@ -40,40 +51,28 @@ class BoardManager {
             action: highlightedSquarePositions.includes(position as ShortPosition) ? 'move' : null,
           },
         },
-        piece: this.boardSquares[position].piece ? {
-          kind: this.boardSquares[position].piece.kind,
-          side: this.boardSquares[position].piece.side,
-        } : null
+        piece: 
+          this.boardSquares[position].piece ? 
+          {
+            kind: this.boardSquares[position].piece.kind,
+            side: this.boardSquares[position].piece.side,
+          }: null
       });
     };
 
     return processedBoard;
   };
 
-  constructor(game: Game, stateUpdateFunc) {
-    this.updateBoard = this.setSubscription(stateUpdateFunc);
-    this.initializeBoard(game.startingFormation);
-    this.moveManager = new MoveManager(this.boardSquares, this.update, this.highlightAvailableSquares);
-    this.updateBoard([]);
+  update = (params = []) => {
+    this.updateBoard(params);
   };
-
-  setObserver = (stateUpdateFunc) => {
-    this.updateBoard = this.setSubscription(stateUpdateFunc);
-    this.updateBoard([]);
-  }
-
-  update = (params) => {
-    this.updateBoard(params)
-  }
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares
   highlightAvailableSquares = (piece: Piece | undefined) => {
-    console.log(piece);
-    // console.log(piece.availableMoves)
     if (piece instanceof Piece) {
-      this.updateBoard(piece.availableMoves)
+      this.update(piece.availableMoves);
     } else {
-      this.updateBoard([])
+      this.update();
     };
   };
 

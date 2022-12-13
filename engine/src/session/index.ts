@@ -1,40 +1,30 @@
 
 // Classes
+import { Side } from 'logic/Terms';
+import Observer from './Observer';
 import Session from './Session';
 
 export function startSession():
   // Return Type
   {
-    // matchController: {
-    //   newMatch: (updateBoardStateCallback: (data: BoardSquareCondensed[]) => void) => {
-    //     move: (from: ShortPosition, to: ShortPosition) => boolean,
-    //     select: (_position: ShortPosition) => void,
-    //     undo: () => void,
-    //   },
-    //   resign,
-    //   observe,
-    // },
+    newMatch: (playerSide: Side) => void,
+    //?: Add here more properties as the app progresses
   }
   // Function
   {
   const session = new Session();
 
-  const matchController = {
+  return ({
     newMatch: session.startNewMatch,
-  };
-
-  return matchController;
+  });
 };
 
-export function setMatchObserver(callback) {
-  const match = Session.getCurrentSession().getCurrentMatch();
-  match.setObserver(callback);
+export function setMatchObserver(callback, match) {
+  Observer.matchObservers.get(match).setCallback(callback);
 };
 
-export function setGameObserver(callback) {
-  const match = Session.getCurrentSession().getCurrentMatch();
-  match.setGameStateCallback(callback)
-  match.currentGame.boardObserver.update();
-  // match.gameCallback = callback;
+// TODO: Need to remove class drilling by moving logic to the subclasses
+export function setGameObserver(callback, game) {
+  Observer.boardObservers.get(game.boardManager).setCallback(callback);
 };
 
