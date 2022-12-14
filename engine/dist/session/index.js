@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setGameObserver = exports.setMatchObserver = exports.startSession = void 0;
-var Observer_1 = require("./Observer");
+var Observer_1 = require("../observers/Observer");
 var Session_1 = require("./Session");
 function startSession() {
     var session = new Session_1.default();

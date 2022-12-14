@@ -1,7 +1,7 @@
 
 // Classes
 import { Side } from 'logic/Terms';
-import Observer from './Observer';
+import Observer from '../observers/Observer';
 import Session from './Session';
 
 export function startSession():

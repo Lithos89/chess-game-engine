@@ -1,5 +1,5 @@
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
 import { ShortPosition } from "logic/Terms";
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
 declare class MoveController {
     boardPositions: BoardSquareListings;
     private commitMove;

@@ -15,26 +15,22 @@ import MoveManager from '../move/MoveManager';
 // Classes
 import { Game } from '../game/Game';
 
-import Observer from '../Observer';
+import Observer from '../../observers/Observer';
+import Observable from 'observers/interfaces/observable';
 
-class BoardManager {
+class BoardManager implements Observable {
   boardSquares: BoardSquareListings = {};
   moveManager: MoveManager;
+  observer: Observer<BoardManager>;
 
   readonly updateBoard: (params) => void;
 
   constructor(game: Game) {
-    const observer = Observer.setBoardObserver(this);
-    this.updateBoard = this.setSubscription(observer.update);
+    this.observer = new Observer(this);
     this.initializeBoard(game.startingFormation);
-
-
-    this.moveManager = new MoveManager(this.boardSquares, this.update, this.highlightAvailableSquares);
-    this.update();
-  };
-
-  private setSubscription = (updateHandler: (boardState) => void) => (params = []) => {
-    updateHandler(this.compileBoard(params));
+    
+    this.moveManager = new MoveManager(this.boardSquares, this.signalState, this.highlightAvailableSquares);
+    this.signalState();
   };
 
   // TODO: Fix the paramters so that it tracks the different highlighted action type
@@ -63,16 +59,17 @@ class BoardManager {
     return processedBoard;
   };
 
-  update = (params = []) => {
-    this.updateBoard(params);
+  signalState = (params = []) => {
+    const boardState = this.compileBoard(params);
+    this.observer.commitState(boardState);
   };
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares
   highlightAvailableSquares = (piece: Piece | undefined) => {
     if (piece instanceof Piece) {
-      this.update(piece.availableMoves);
+      this.signalState(piece.availableMoves);
     } else {
-      this.update();
+      this.signalState();
     };
   };
 

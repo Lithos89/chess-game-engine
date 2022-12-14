@@ -31,12 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Terms_1 = require("../../logic/Terms");
 // Classes
 var Game_1 = require("../game/Game");
-var Observer_1 = require("../Observer");
-/*
-  !: Overview of what needs to be done before further development
-  TODO: 1. Refactor the callback so that it lives inside the boardobserver
-  TODO: 2. Get rid of the game state management that lives inside Match
-*/
+var Observer_1 = require("../../observers/Observer");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(side) {
@@ -44,7 +39,6 @@ var Match = /** @class */ (function () {
         this.games = [];
         this.gameCount = 0;
         this.selectedGameIndex = 0;
-        // private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
         // *: In the case of a tie, add 0.5 to each side
         this.wins = {
             player: 0,
@@ -53,7 +47,7 @@ var Match = /** @class */ (function () {
         /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
         this.startNewGame = function () {
             _this.gameGenerator.next();
-            Observer_1.default.matchObservers.get(_this).update();
+            _this.signalState();
         };
         // TODO: Will need to change this to act like resigning (freezing the current game)
         this.resignGame = function () {
@@ -64,14 +58,19 @@ var Match = /** @class */ (function () {
             _this.startNewGame();
         };
         /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
-        // TODO: Have to fix the class access for this function
         this.getMatchStats = function () { return ({
             wins: _this.wins,
             currentSide: _this.currentSide,
             games: _this.games.length,
         }); };
+        this.signalState = function () {
+            var matchInfo = _this.getMatchStats();
+            // ?: Will make state an object containing the nessecary info in the future
+            var state = matchInfo;
+            _this.observer.commitState(state);
+        };
         this.gameGenerator = this.generateNextGame(side, 'test');
-        Observer_1.default.setMatchObserver(this);
+        this.observer = new Observer_1.default(this);
     }
     ;
     // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
@@ -127,8 +126,7 @@ var Match = /** @class */ (function () {
             ;
         }
         ;
-        // this.observer?.update();
-        Observer_1.default.matchObservers.get(this).update();
+        this.signalState();
     };
     ;
     return Match;

@@ -7,10 +7,9 @@ var BoardObserver = /** @class */ (function () {
             _this.updateState = callback;
             _this.boardManager.update();
         };
-        this.update = function (stuff) {
+        this.update = function (state) {
             console.info("Board State Updated");
-            // this.lastState = stuff
-            _this.updateState(stuff);
+            _this.updateState(state);
         };
         this.boardManager = boardManager;
         this.updateState = updateStateCallback;

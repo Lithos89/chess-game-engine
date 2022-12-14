@@ -4,19 +4,12 @@ import { type Side, SIDES } from '../../logic/Terms';
 
 // Classes
 import { Game } from '../game/Game';
-import MatchObserver from './MatchObserver';
 
-import Observer from '../Observer';
-
-/*
-  !: Overview of what needs to be done before further development
-  TODO: 1. Refactor the callback so that it lives inside the boardobserver
-  TODO: 2. Get rid of the game state management that lives inside Match
-*/
-
+import Observer from '../../observers/Observer';
+import Observable from 'observers/interfaces/observable';
 
 // *: Class that captures a series of games between an opponent
-export default class Match {
+export default class Match implements Observable {
   private games: Game[] = [];
   private gameCount: number = 0;
 
@@ -27,9 +20,7 @@ export default class Match {
 
   private readonly gameGenerator: Generator<Game, Game, Game>;
 
-  private observer: MatchObserver;
-
-  // private gameStateCallback: (state) => void = () => {}; // !: See if I can get rid of this
+  private observer: Observer<Match>;
 
   // *: In the case of a tie, add 0.5 to each side
   private readonly wins: { player: number, opponent: number } = {
@@ -39,7 +30,7 @@ export default class Match {
 
   constructor(side: Side) {
     this.gameGenerator = this.generateNextGame(side, 'test');
-    Observer.setMatchObserver(this);
+    this.observer = new Observer(this);
   };
 
 
@@ -47,7 +38,7 @@ export default class Match {
 
   public startNewGame = () => {
     this.gameGenerator.next();
-    Observer.matchObservers.get(this).update()
+    this.signalState();
   };
 
   // TODO: Will need to change this to act like resigning (freezing the current game)
@@ -91,12 +82,19 @@ export default class Match {
   
   /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
 
-  // TODO: Have to fix the class access for this function
-  getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side, games: number } => ({
+  private getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side, games: number } => ({
     wins: this.wins,
     currentSide: this.currentSide,
     games: this.games.length,
   });
+
+  signalState = () => {
+    const matchInfo = this.getMatchStats()
+    // ?: Will make state an object containing the nessecary info in the future
+    const state = matchInfo;
+
+    this.observer.commitState(state);
+  }
 
   private updateWins(result: Side | 'draw') {
     if (result === 'draw') {
@@ -112,7 +110,6 @@ export default class Match {
       };
     };
 
-    // this.observer?.update();
-    Observer.matchObservers.get(this).update()
+    this.signalState();
   };
 };
