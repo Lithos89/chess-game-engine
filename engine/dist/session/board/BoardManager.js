@@ -5,12 +5,27 @@ var Terms_1 = require("../../logic/Terms");
 // Components
 var Square_1 = require("../../components/Square");
 var pieces_1 = require("../../components/pieces");
-// Controllers, Managers, Observers
+// State Management
 var Observer_1 = require("../../observers/Observer");
 var BoardManager = /** @class */ (function () {
     function BoardManager(startingFormation, currentTurnSideCallback) {
         var _this = this;
         this.boardSquares = {};
+        // TODO: Omit 'K' using some sort of typescript functionality for enums
+        this.captures = {
+            white: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
+            black: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
+        };
+        /*--------------------------------------------STATE MANAGEMENT---------------------------------------------*/
+        this.signalState = function (params) {
+            if (params === void 0) { params = []; }
+            var boardState = _this.compileBoard(params);
+            _this.observer.commitState(boardState);
+        };
+        // TODO: Make this the single function that calls signalState and have this func be called instead to updateBoard
+        this.updateBoard = function () {
+            _this.signalState();
+        };
         // TODO: Fix the paramters so that it tracks the different highlighted action type
         this.compileBoard = function (highlightedSquarePositions) {
             if (highlightedSquarePositions === void 0) { highlightedSquarePositions = []; }
@@ -35,17 +50,9 @@ var BoardManager = /** @class */ (function () {
             ;
             return processedBoard;
         };
-        this.signalState = function (params) {
-            if (params === void 0) { params = []; }
-            var boardState = _this.compileBoard(params);
-            _this.observer.commitState(boardState);
-        };
-        // TODO: Make this the single function that calls signalState and have this func be called instead to updateBoard
-        this.updateBoard = function () {
-            _this.signalState();
-        };
+        /*--------------------------------------------HIGHLIGHTING---------------------------------------------*/
         // board highlighting will be acomplished here as well through state updates that will affect boardSquares
-        this.highlightAvailableSquares = function (piece) {
+        this.highlightAvailableMoves = function (piece) {
             if (piece instanceof pieces_1.default) {
                 if (piece.side === _this.getCurrentTurnSide()) {
                     _this.signalState(piece.availableMoves);
@@ -56,34 +63,12 @@ var BoardManager = /** @class */ (function () {
             }
             ;
         };
-        this.observer = new Observer_1.default(this);
         this.getCurrentTurnSide = currentTurnSideCallback;
+        this.observer = new Observer_1.default(this);
         this.initializeBoard(startingFormation);
-        this.signalState();
     }
     ;
-    BoardManager.prototype.createPiece = function (_a) {
-        var kind = _a.kind, side = _a.side;
-        switch (kind) {
-            case Terms_1.PieceKind.Pawn:
-                return new pieces_1.Pawn(side);
-            case Terms_1.PieceKind.Rook:
-                return new pieces_1.Rook(side);
-            case Terms_1.PieceKind.Knight:
-                return new pieces_1.Knight(side);
-            case Terms_1.PieceKind.Bishop:
-                return new pieces_1.Bishop(side);
-            case Terms_1.PieceKind.Queen:
-                return new pieces_1.Queen(side);
-            case Terms_1.PieceKind.King:
-                return new pieces_1.King(side);
-            // TODO: Assign this with the never typescript property
-            default:
-                return null;
-        }
-        ;
-    };
-    ;
+    /*--------------------------------------------INITIALIZATION---------------------------------------------*/
     // TODO: replace orientationflipped with the side that the player is on defaulting to white
     BoardManager.prototype.initializeBoard = function (boardConfiguration, side) {
         if (side === void 0) { side = 'white'; }
@@ -92,16 +77,17 @@ var BoardManager = /** @class */ (function () {
     };
     ;
     BoardManager.prototype.initializeSquares = function (pieceMapping) {
-        for (var tileIndex in Terms_1.boardPositions) {
-            var position = Terms_1.boardPositions[tileIndex];
+        for (var tileIndex in Terms_1.BOARD_POSITIONS) {
+            var position = Terms_1.BOARD_POSITIONS[tileIndex];
             var regex = /b|d|f|h/;
             var isEvenRow = regex.test(position);
-            var initialPiece = (typeof pieceMapping[position] === 'object') ? this.createPiece(pieceMapping[position]) : null;
+            var initialPiece = (typeof pieceMapping[position] === 'object') ? pieces_1.default.create(pieceMapping[position]) : null;
             var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
             var square = new Square_1.default(position, squareColor, initialPiece);
             this.boardSquares[position] = square;
         }
         ;
+        this.signalState();
     };
     ;
     return BoardManager;

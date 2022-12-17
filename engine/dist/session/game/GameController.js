@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-// Core
 var lodash_1 = require("lodash");
 // Classes
 var Game_1 = require("./Game");
@@ -26,36 +25,41 @@ var GameController = /** @class */ (function (_super) {
         _this.selectedSquarePos = null;
         return _this;
     }
-    GameController.prototype.selectPiece = function (position) {
+    // *: 
+    GameController.prototype.selectSquare = function (position) {
+        console.log(position);
         var newSelection = (0, lodash_1.isNull)(this.selectedSquarePos);
         //* Selecting a square while no square is highlighted
         if (newSelection) {
-            var didHighlight = this.highlightPiece(position);
+            var didHighlight = this.attemptHighlight(position);
             if (didHighlight)
                 this.selectedSquarePos = position;
             //* Selecting the same square or a new square, triggering unhighlighting
         }
         else {
-            var didUnhighlight = !(this.highlightPiece());
+            var didUnhighlight = this.attemptHighlight();
             if (didUnhighlight)
                 this.selectedSquarePos = null;
         }
+        ;
     };
     ;
     // TODO: Add more to this function
-    GameController.prototype.requestMove = function (from, to) {
+    GameController.prototype.move = function (from, to) {
         if (from !== to) {
-            return this.move(from, to);
+            return this.attemptMove(from, to);
         }
         else {
             return false;
         }
+        ;
     };
     ;
     // TODO: Add more to this function
     GameController.prototype.requestUndo = function () {
         this.undo();
     };
+    ;
     return GameController;
 }(Game_1.default));
 ;

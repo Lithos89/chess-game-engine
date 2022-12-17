@@ -1,9 +1,10 @@
+
 // Types, interfaces, constants, ...
+import { PieceListing } from 'formation/structure/pieceCollection';
 import { type Side, PieceKind, type ShortPosition, type Position } from '../../logic/Terms';
-// import Movable from '../../match/move/interfaces/Movable';
 
 // Components
-// import Square from '../Square';
+import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
 
 abstract class Piece {
   readonly side: Side;
@@ -12,6 +13,25 @@ abstract class Piece {
   availableMoves: ShortPosition[];
 
   abstract updateAvailableMoves(): void;
+
+  static create({ kind, side }: PieceListing): Piece {
+    switch (kind) {
+      case PieceKind.Pawn:
+        return new Pawn(side);
+      case PieceKind.Rook:
+        return new Rook(side);
+      case PieceKind.Knight:
+        return new Knight(side);
+      case PieceKind.Bishop:
+        return new Bishop(side);
+      case PieceKind.Queen:
+        return new Queen(side);
+      case PieceKind.King:
+        return new King(side);
+      default:
+        throw new Error(`Unable to create piece with kind: ${kind}, side: ${side}`);
+    };
+  };
 
   constructor(piece: PieceKind, side: Side) { 
     this.kind = piece;

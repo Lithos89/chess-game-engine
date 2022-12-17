@@ -5,7 +5,7 @@ export declare const ROWS: readonly ["1", "2", "3", "4", "5", "6", "7", "8"];
 type RowsTuple = typeof ROWS;
 export type Row = RowsTuple[number];
 export type ShortPosition = `${Column}${Row}`;
-export declare const boardPositions: ShortPosition[];
+export declare const BOARD_POSITIONS: ShortPosition[];
 export type Position = {
     row: Row;
     col: Column;

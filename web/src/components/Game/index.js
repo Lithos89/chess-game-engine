@@ -21,23 +21,21 @@ const Game = ({ game }) => {
   const selectPiece = useCallback((pos, piece) => {
     if (gameLoaded) {
       if (selectedPiecePos) {
-        console.log('a')
           if (pos !== selectedPiecePos) {
-            const isMoved = moveController.requestMove(selectedPiecePos, pos);
+            const isMoved = moveController.move(selectedPiecePos, pos);
 
             if (isMoved) {
               setSelectedPiecePos(null);
-              moveController.selectPiece(pos);
+              moveController.selectSquare(pos);
             }
           } else {
             setSelectedPiecePos(null);
-            moveController.selectPiece(pos);
+            moveController.selectSquare(pos);
           };
       } else {
         if (piece && piece.side === game.currentTurnSide) {
-          console.log('b')
           setSelectedPiecePos(pos);
-          moveController.selectPiece(pos);
+          moveController.selectSquare(pos);
         };
       };
     };

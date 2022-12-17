@@ -1,4 +1,4 @@
-import { type Side, PieceKind } from '../../logic/Terms';
+import { type Side, PieceKind, ShortPosition } from '../../logic/Terms';
 
 // ?: Not sure if structure is the appropriate file name, consider revising in the future
 
@@ -8,5 +8,5 @@ export interface PieceListing {
 };
 
 export type PieceListings = {
-  [index: string]: PieceListing;
+  [_pos in ShortPosition]?: PieceListing;
 };

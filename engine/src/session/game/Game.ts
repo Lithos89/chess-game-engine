@@ -1,9 +1,24 @@
-import { ShortPosition, SIDES } from '../../logic/Terms';
-import { PieceKind, type Side } from '../../logic/Terms';
+
+import { isEqual, isString } from 'lodash';
+
+// Types, interfaces, constants, ...
+import { type ShortPosition, type Side, SIDES } from '../../logic/Terms';
 import defaultStartingFormation from '../../formation/setups/start';
+
+// Components
+import Square from '../../components/Square';
+import Piece from '../../components/pieces';
+
+// Game Management
 import BoardManager from '../board/BoardManager';
 import MoveManager from '../move/MoveManager';
-import Square from 'components/Square';
+
+// Utils
+import { flipFormation } from '../../utils';
+
+
+const flipped = flipFormation(defaultStartingFormation);
+
 
 class Game {
   readonly id: string;
@@ -11,67 +26,72 @@ class Game {
   readonly playerSide: Side;
   private currentTurnSide: Side = 'white';
   private turnCount: number = 0;
-  private startingFormation = defaultStartingFormation;
 
   private boardManager: BoardManager;
   private moveManager: MoveManager;
-  // boardObserver: BoardObserver;
-
-  captures: {[_side in Side]: {[_piece in PieceKind] : number}} = {
-    white: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
-    black: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
-  };
 
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
 
-    const boardManager = new BoardManager(this.startingFormation, () => this.currentTurnSide);
-    this.boardManager = boardManager;
+    const startingFormation = isEqual(side, 'white') ? 
+      defaultStartingFormation :
+      flipped;
+
+    console.info(startingFormation);
+
+    this.boardManager = new BoardManager(startingFormation, () => this.currentTurnSide);
+
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-    this.moveManager = new MoveManager(boardManager); // ?: See if I can get rid of the boardManager parameter
+    this.moveManager = new MoveManager(this.boardManager); // ?: See if I can get rid of the boardManager parameter
   };
 
-  private takeTurn = () => {
+  private takeTurn() {
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
-    this.turnCount += 1
+    this.turnCount += 1;
   };
 
-  protected highlightPiece = (position?: ShortPosition): boolean => {
-    if (position) {
+  //* Returns whether the highlight was performed successfully
+  protected attemptHighlight = (position?: ShortPosition): boolean => {
+    if (isString(position)) {
       const selectedPiece = this.boardManager.boardSquares[position]?.piece;
 
-      if (selectedPiece?.side === this.currentTurnSide) {
-        this.boardManager.highlightAvailableSquares(selectedPiece);
+      if (
+        (selectedPiece instanceof Piece) &&
+        isEqual(selectedPiece.side, this.currentTurnSide)
+      ) {
+        this.boardManager.highlightAvailableMoves(selectedPiece);
         return true;
       } else {
         return false;
-      }
+      };
     } else {
-      this.boardManager.highlightAvailableSquares();
-      return false;
-    }
-  }
+      this.boardManager.highlightAvailableMoves();
+      return true;
+    };
+  };
 
-  protected move = (from: ShortPosition, to: ShortPosition): boolean => {
+  protected attemptMove = (from: ShortPosition, to: ShortPosition): boolean => {
     const originSquare: Square = this.boardManager.boardSquares[from];
     const destSquare: Square = this.boardManager.boardSquares[to];
 
-    const isMoveValid = originSquare?.piece?.availableMoves.includes(to) &&
-      originSquare?.piece.side === this.currentTurnSide;
+    //* Move Validity checks
+    const isLegal = originSquare?.piece?.availableMoves.includes(to);
+    const isValidSide = isEqual(originSquare?.piece.side, this.currentTurnSide);
 
-    if (isMoveValid) {
+    if (isLegal && isValidSide) {
       this.moveManager.commitMove(originSquare, destSquare);
       this.takeTurn();
       return true;
     } else {
       return false;
-    }
+    };
   };
 
+  // TODO: Add more checks and functionality here
   protected undo = () => {
     this.moveManager.takebackMove();
-  }
+  };
 };
 
 export default Game;
