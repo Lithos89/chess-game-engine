@@ -29,9 +29,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
-// Classes
-var Game_1 = require("../game/Game");
 var Observer_1 = require("../../observers/Observer");
+var GameController_1 = require("../game/GameController");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(side) {
@@ -85,12 +84,11 @@ var Match = /** @class */ (function () {
                 case 1:
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
-                    newGame = new Game_1.Game(side, gameID);
+                    newGame = new GameController_1.default(side, gameID);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
                     this.storeGame(newGame);
-                    console.info(this.currentGame);
                     _nextSideIndex = (Terms_1.SIDES.length - 1) - Terms_1.SIDES.indexOf(side);
                     side = Terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
@@ -131,6 +129,6 @@ var Match = /** @class */ (function () {
     ;
     return Match;
 }());
-exports.default = Match;
 ;
+exports.default = Match;
 //# sourceMappingURL=Match.js.map

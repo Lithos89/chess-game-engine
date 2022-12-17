@@ -6,10 +6,9 @@ var Terms_1 = require("../../logic/Terms");
 var Square_1 = require("../../components/Square");
 var pieces_1 = require("../../components/pieces");
 // Controllers, Managers, Observers
-var MoveManager_1 = require("../move/MoveManager");
 var Observer_1 = require("../../observers/Observer");
 var BoardManager = /** @class */ (function () {
-    function BoardManager(game) {
+    function BoardManager(startingFormation, currentTurnSideCallback) {
         var _this = this;
         this.boardSquares = {};
         // TODO: Fix the paramters so that it tracks the different highlighted action type
@@ -41,10 +40,16 @@ var BoardManager = /** @class */ (function () {
             var boardState = _this.compileBoard(params);
             _this.observer.commitState(boardState);
         };
+        // TODO: Make this the single function that calls signalState and have this func be called instead to updateBoard
+        this.updateBoard = function () {
+            _this.signalState();
+        };
         // board highlighting will be acomplished here as well through state updates that will affect boardSquares
         this.highlightAvailableSquares = function (piece) {
             if (piece instanceof pieces_1.default) {
-                _this.signalState(piece.availableMoves);
+                if (piece.side === _this.getCurrentTurnSide()) {
+                    _this.signalState(piece.availableMoves);
+                }
             }
             else {
                 _this.signalState();
@@ -52,8 +57,8 @@ var BoardManager = /** @class */ (function () {
             ;
         };
         this.observer = new Observer_1.default(this);
-        this.initializeBoard(game.startingFormation);
-        this.moveManager = new MoveManager_1.default(this.boardSquares, this.signalState, this.highlightAvailableSquares);
+        this.getCurrentTurnSide = currentTurnSideCallback;
+        this.initializeBoard(startingFormation);
         this.signalState();
     }
     ;

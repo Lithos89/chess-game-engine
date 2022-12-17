@@ -1,12 +1,12 @@
 import { ShortPosition } from "logic/Terms";
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
+import MoveManager from "./MoveManager";
+import BoardManager from "../board/BoardManager";
 declare class MoveController {
-    boardPositions: BoardSquareListings;
-    private commitMove;
-    private highlightBoard;
+    private moveManager;
+    private boardManager;
     private selectedPiece;
     undo: () => void;
-    constructor(boardPositions: BoardSquareListings, commitMove: any, highlightBoard: any, takebackMove: () => void);
+    constructor(moveManager: MoveManager, boardManager: BoardManager);
     selectPiece: (position: ShortPosition) => void;
     requestMove: (from: ShortPosition, to: ShortPosition) => boolean;
 }

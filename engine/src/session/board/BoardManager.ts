@@ -10,26 +10,19 @@ import Square, { type SquareColor } from '../../components/Square';
 import Piece, { Pawn, Rook, Knight, Bishop, Queen, King } from '../../components/pieces';
 
 // Controllers, Managers, Observers
-import MoveManager from '../move/MoveManager';
-
-// Classes
-import { Game } from '../game/Game';
-
 import Observer from '../../observers/Observer';
 import Observable from 'observers/interfaces/observable';
 
 class BoardManager implements Observable {
   boardSquares: BoardSquareListings = {};
-  moveManager: MoveManager;
   observer: Observer<BoardManager>;
+  private readonly getCurrentTurnSide: () => Side;
 
-  readonly updateBoard: (params) => void;
-
-  constructor(game: Game) {
+  constructor(startingFormation: PieceListings, currentTurnSideCallback: () => Side) {
     this.observer = new Observer(this);
-    this.initializeBoard(game.startingFormation);
+    this.getCurrentTurnSide = currentTurnSideCallback;
+    this.initializeBoard(startingFormation);
     
-    this.moveManager = new MoveManager(this.boardSquares, this.signalState, this.highlightAvailableSquares);
     this.signalState();
   };
 
@@ -63,11 +56,18 @@ class BoardManager implements Observable {
     const boardState = this.compileBoard(params);
     this.observer.commitState(boardState);
   };
+
+  // TODO: Make this the single function that calls signalState and have this func be called instead to updateBoard
+  updateBoard = () => {
+    this.signalState();
+  }
   
   // board highlighting will be acomplished here as well through state updates that will affect boardSquares
-  highlightAvailableSquares = (piece: Piece | undefined) => {
+  highlightAvailableSquares = (piece?: Piece) => {
     if (piece instanceof Piece) {
-      this.signalState(piece.availableMoves);
+      if (piece.side === this.getCurrentTurnSide()) {
+        this.signalState(piece.availableMoves);
+      }
     } else {
       this.signalState();
     };

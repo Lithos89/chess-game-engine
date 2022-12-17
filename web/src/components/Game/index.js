@@ -13,7 +13,7 @@ const Game = ({ game }) => {
 
   useEffect(() => {
     Chess.setGameObserver(setGameData, game);
-    setMoveController(game.moveController);
+    setMoveController(game);
     setGameLoaded(true);
   }, [game])
 
@@ -21,13 +21,21 @@ const Game = ({ game }) => {
   const selectPiece = useCallback((pos, piece) => {
     if (gameLoaded) {
       if (selectedPiecePos) {
+        console.log('a')
           if (pos !== selectedPiecePos) {
-            moveController.requestMove(selectedPiecePos, pos);
+            const isMoved = moveController.requestMove(selectedPiecePos, pos);
+
+            if (isMoved) {
+              setSelectedPiecePos(null);
+              moveController.selectPiece(pos);
+            }
+          } else {
+            setSelectedPiecePos(null);
+            moveController.selectPiece(pos);
           };
-          setSelectedPiecePos(null);
-          moveController.selectPiece(pos);
       } else {
-        if (piece) {
+        if (piece && piece.side === game.currentTurnSide) {
+          console.log('b')
           setSelectedPiecePos(pos);
           moveController.selectPiece(pos);
         };
@@ -38,7 +46,7 @@ const Game = ({ game }) => {
   return (
       gameLoaded && moveController && gameData && (
         <Fragment>
-          <Board squares={gameData} update={selectPiece} highlight={moveController.select} />
+          <Board squares={gameData} update={selectPiece}/>
           <button onClick={moveController.undo}> Undo </button>
         </Fragment>
       )

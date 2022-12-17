@@ -19,6 +19,7 @@ const Session = () => {
 
   const [matchLoaded, setMatchLoaded] = useState(false);
 
+
   // Initial Match Load
   useEffect(() => {
       match.startNewGame();

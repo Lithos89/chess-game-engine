@@ -11,7 +11,7 @@ const StyledSquare = styled.div`
 `;
 
 
-const Square = ({ color, position, piece, update, highlight, isHighlighted }) => {
+const Square = ({ color, position, piece, update, isHighlighted }) => {
 
   const isLight = color === 'light';
 
@@ -22,9 +22,7 @@ const Square = ({ color, position, piece, update, highlight, isHighlighted }) =>
 
   return (
     <StyledSquare primary={isLight} isHighlighted={isHighlighted} onClick={move}>
-      { piece &&
-          <Piece piece={piece} position={position} />
-      }
+      { piece && <Piece piece={piece} position={position} /> }
     </StyledSquare>
   );
 };

@@ -5,34 +5,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
   therefore being able to seperate the move logic with the move callbacks
 */
 var MoveController = /** @class */ (function () {
-    function MoveController(boardPositions, commitMove, highlightBoard, takebackMove) {
+    function MoveController(moveManager, boardManager) {
         var _this = this;
+        this.moveManager = moveManager;
+        this.boardManager = boardManager;
         this.selectPiece = function (position) {
             var _a;
-            var newSelectedPiece = (_a = _this.boardPositions[position]) === null || _a === void 0 ? void 0 : _a.piece;
+            var newSelectedPiece = (_a = _this.boardManager.boardSquares[position]) === null || _a === void 0 ? void 0 : _a.piece;
             if (newSelectedPiece && newSelectedPiece !== _this.selectedPiece) {
                 // Highlight board with the selected piece and keep track of the piece for 
-                _this.highlightBoard(newSelectedPiece);
+                _this.boardManager.highlightAvailableSquares(newSelectedPiece);
                 _this.selectedPiece = newSelectedPiece;
             }
             else {
                 // Unhighlight board and reset highlighted piece pointer
-                _this.highlightBoard();
+                _this.boardManager.highlightAvailableSquares();
                 _this.selectedPiece = null;
             }
         };
         this.requestMove = function (from, to) {
             var _a, _b;
-            var originPiece = (_a = _this.boardPositions[from]) === null || _a === void 0 ? void 0 : _a.piece;
+            var originPiece = (_a = _this.boardManager.boardSquares[from]) === null || _a === void 0 ? void 0 : _a.piece;
             // destpiece will be used when it comes to reflecting captures
-            var destPiece = (_b = _this.boardPositions[to]) === null || _b === void 0 ? void 0 : _b.piece;
+            var destPiece = (_b = _this.boardManager.boardSquares[to]) === null || _b === void 0 ? void 0 : _b.piece;
             try {
                 if (from === to) {
                     throw Error;
                 }
                 // this.boardPositions[to].piece = originPiece;
                 // this.boardPositions[from].piece = null;
-                _this.commitMove(from, to);
+                _this.moveManager.commitMove(from, to);
             }
             catch (_c) {
                 return false;
@@ -44,10 +46,10 @@ var MoveController = /** @class */ (function () {
             }
             // TODO: Add filter functions here that will evaluate if it is a viable move
         };
-        this.boardPositions = boardPositions;
-        this.commitMove = commitMove;
-        this.highlightBoard = highlightBoard;
-        this.undo = takebackMove;
+        // this.boardPositions = boardPositions;
+        // this.commitMove = commitMove;
+        // this.highlightBoard = highlightBoard;
+        // this.undo = takebackMove;
     }
     ;
     return MoveController;

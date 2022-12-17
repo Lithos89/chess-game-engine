@@ -23,7 +23,7 @@ const Board = ({ squares, update, highlight }) => {
 
             // console.log(square)
             return (
-              <Square key={position} color={square.color} position={position} piece={piece} update={update} highlight={highlight} isHighlighted={square.focus.highlighted} />
+              <Square key={position} color={square.color} position={position} piece={piece} update={update} isHighlighted={square.focus.highlighted} />
             )
           })
         }

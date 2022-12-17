@@ -1,18 +1,21 @@
+import { ShortPosition } from '../../logic/Terms';
 import { PieceKind, type Side } from '../../logic/Terms';
-import MoveController from '../move/MoveController';
-import BoardManager from '../board/BoardManager';
-export declare class Game {
+declare class Game {
     readonly id: string;
     readonly playerSide: Side;
     private currentTurnSide;
-    startingFormation: import("../../formation/structure/pieceCollection").PieceListings;
-    boardManager: BoardManager;
-    moveController: MoveController;
+    private startingFormation;
+    private boardManager;
+    private moveManager;
     captures: {
         [_side in Side]: {
             [_piece in PieceKind]: number;
         };
     };
     constructor(side: Side, id: string);
-    takeTurn: () => void;
+    private takeTurn;
+    protected highlightPiece: (position?: ShortPosition) => boolean;
+    protected move: (from: ShortPosition, to: ShortPosition) => boolean;
+    protected undo: () => void;
 }
+export default Game;

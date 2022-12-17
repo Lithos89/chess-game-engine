@@ -1,20 +1,19 @@
-import { type ShortPosition } from '../../logic/Terms';
+import { type ShortPosition, type Side } from '../../logic/Terms';
+import { type PieceListings } from '../../formation/structure/pieceCollection';
 import { BoardSquareCondensed } from '../../formation/structure/board';
 import { type BoardSquareListings } from '../../formation/structure/squareCollection';
 import Piece from '../../components/pieces';
-import MoveManager from '../move/MoveManager';
-import { Game } from '../game/Game';
 import Observer from '../../observers/Observer';
 import Observable from 'observers/interfaces/observable';
 declare class BoardManager implements Observable {
     boardSquares: BoardSquareListings;
-    moveManager: MoveManager;
     observer: Observer<BoardManager>;
-    readonly updateBoard: (params: any) => void;
-    constructor(game: Game);
+    private readonly getCurrentTurnSide;
+    constructor(startingFormation: PieceListings, currentTurnSideCallback: () => Side);
     compileBoard: (highlightedSquarePositions?: ShortPosition[]) => BoardSquareCondensed[];
     signalState: (params?: any[]) => void;
-    highlightAvailableSquares: (piece: Piece | undefined) => void;
+    updateBoard: () => void;
+    highlightAvailableSquares: (piece?: Piece) => void;
     private createPiece;
     private initializeBoard;
     private initializeSquares;

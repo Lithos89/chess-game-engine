@@ -1,19 +1,19 @@
-
 // Types, interfaces, constants, ...
 import { type Side, SIDES } from '../../logic/Terms';
 
 // Classes
-import { Game } from '../game/Game';
+import Game from '../game/Game';
 
 import Observer from '../../observers/Observer';
 import Observable from 'observers/interfaces/observable';
+import GameController from '../game/GameController';
 
 // *: Class that captures a series of games between an opponent
-export default class Match implements Observable {
+class Match implements Observable {
   private games: Game[] = [];
   private gameCount: number = 0;
 
-  public currentGame: Game;
+  public currentGame: GameController;
   private selectedGameIndex: number = 0;
 
   protected currentSide: Side;
@@ -57,10 +57,9 @@ export default class Match implements Observable {
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new Game(side, gameID);
+      const newGame = new GameController(side, gameID);
       yield newGame;
       this.storeGame(newGame);
-      console.info(this.currentGame);
       const _nextSideIndex = (SIDES.length - 1) - SIDES.indexOf(side);
       side = SIDES[_nextSideIndex];
     };
@@ -68,11 +67,12 @@ export default class Match implements Observable {
     return;
   };
 
-  private storeGame(game: Game) {
+  private storeGame(game: GameController) {
     this.games.push(game);
 
     // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
     this.currentGame = game;
+    
     this.currentSide = game.playerSide;
     this.gameCount += 1;
 
@@ -113,3 +113,5 @@ export default class Match implements Observable {
     this.signalState();
   };
 };
+
+export default Match;
