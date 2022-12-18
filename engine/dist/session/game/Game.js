@@ -4,16 +4,14 @@ var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
 var start_1 = require("../../formation/setups/start");
-var pieces_1 = require("../../components/pieces");
+var piece_1 = require("../../components/piece");
 // Game Management
 var BoardManager_1 = require("../board/BoardManager");
 var MoveManager_1 = require("../move/MoveManager");
-// Utils
-var utils_1 = require("../../utils");
-var flipped = (0, utils_1.flipFormation)(start_1.default);
 var Game = /** @class */ (function () {
     function Game(side, id) {
         var _this = this;
+        this.startingFormation = start_1.default;
         this.currentTurnSide = 'white';
         this.turnCount = 0;
         //* Returns whether the highlight was performed successfully
@@ -21,9 +19,8 @@ var Game = /** @class */ (function () {
             var _a;
             if ((0, lodash_1.isString)(position)) {
                 var selectedPiece = (_a = _this.boardManager.boardSquares[position]) === null || _a === void 0 ? void 0 : _a.piece;
-                if ((selectedPiece instanceof pieces_1.default) &&
-                    (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide)) {
-                    _this.boardManager.highlightAvailableMoves(selectedPiece);
+                if ((selectedPiece instanceof piece_1.default) && (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide)) {
+                    _this.boardManager.highlightMoves(selectedPiece);
                     return true;
                 }
                 else {
@@ -32,7 +29,7 @@ var Game = /** @class */ (function () {
                 ;
             }
             else {
-                _this.boardManager.highlightAvailableMoves();
+                _this.boardManager.highlightMoves();
                 return true;
             }
             ;
@@ -60,11 +57,8 @@ var Game = /** @class */ (function () {
         };
         this.id = id;
         this.playerSide = side;
-        var startingFormation = (0, lodash_1.isEqual)(side, 'white') ?
-            start_1.default :
-            flipped;
-        console.info(startingFormation);
-        this.boardManager = new BoardManager_1.default(startingFormation, function () { return _this.currentTurnSide; });
+        var altBoard = side === "white";
+        this.boardManager = new BoardManager_1.default(this.startingFormation, altBoard, function () { return _this.currentTurnSide; });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
         this.moveManager = new MoveManager_1.default(this.boardManager); // ?: See if I can get rid of the boardManager parameter
     }

@@ -1,10 +1,12 @@
 import { type ShortPosition, type Side } from '../../logic/Terms';
+import BoardManager from '../board/BoardManager';
 declare class Game {
     readonly id: string;
+    private readonly startingFormation;
     readonly playerSide: Side;
     private currentTurnSide;
     private turnCount;
-    private boardManager;
+    boardManager: BoardManager;
     private moveManager;
     constructor(side: Side, id: string);
     private takeTurn;

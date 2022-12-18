@@ -4,19 +4,19 @@ import { isNull } from 'lodash';
 // Types, interfaces, constants, ...
 import { type ShortPosition } from 'logic/Terms';
 
-// Classes
+// Game Management
 import Game from './Game';
 
 class GameController extends Game {
   private selectedSquarePos: ShortPosition | null = null;
 
-  // *: 
+  // *: Move highlighting management for selecting/deselecting a square with a piece
   public selectSquare(position: ShortPosition) {
-    console.log(position);
-    const newSelection = isNull(this.selectedSquarePos);
+    console.info(position);
+    const isNewSelection = isNull(this.selectedSquarePos);
 
     //* Selecting a square while no square is highlighted
-    if (newSelection) {
+    if (isNewSelection) {
       const didHighlight = this.attemptHighlight(position);
       
       if (didHighlight) 

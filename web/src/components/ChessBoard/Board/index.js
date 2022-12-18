@@ -38,7 +38,15 @@ const Board = ({ squares, update }) => {
         {
           squares.map(({position, square, piece }) => {
             return (
-              <Square key={position} color={square.color} position={position} piece={piece} update={update} isHighlighted={square.focus.highlighted} />
+              <Square
+                key={position}
+                color={square.color}
+                position={position}
+                piece={piece}
+                update={update}
+                isHighlighted={square.focus.highlighted}
+                action={square.focus.action}
+              />
             )
           })
         }

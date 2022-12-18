@@ -3,44 +3,34 @@ import { isEqual, isString } from 'lodash';
 
 // Types, interfaces, constants, ...
 import { type ShortPosition, type Side, SIDES } from '../../logic/Terms';
+import { PieceListings } from '../../formation/structure/pieceCollection';
 import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
 import Square from '../../components/Square';
-import Piece from '../../components/pieces';
+import Piece from '../../components/piece';
 
 // Game Management
 import BoardManager from '../board/BoardManager';
 import MoveManager from '../move/MoveManager';
-
-// Utils
-import { flipFormation } from '../../utils';
-
-
-const flipped = flipFormation(defaultStartingFormation);
-
-
+ 
 class Game {
   readonly id: string;
+  private readonly startingFormation: PieceListings = defaultStartingFormation;
 
   readonly playerSide: Side;
   private currentTurnSide: Side = 'white';
   private turnCount: number = 0;
 
-  private boardManager: BoardManager;
+  public boardManager: BoardManager; // !: Figure out a way to manage accessibility and state so that boardManager can be private
   private moveManager: MoveManager;
 
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
 
-    const startingFormation = isEqual(side, 'white') ? 
-      defaultStartingFormation :
-      flipped;
-
-    console.info(startingFormation);
-
-    this.boardManager = new BoardManager(startingFormation, () => this.currentTurnSide);
+    const altBoard = side === "white";
+    this.boardManager = new BoardManager(this.startingFormation, altBoard, () => this.currentTurnSide);
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
     this.moveManager = new MoveManager(this.boardManager); // ?: See if I can get rid of the boardManager parameter
@@ -56,17 +46,14 @@ class Game {
     if (isString(position)) {
       const selectedPiece = this.boardManager.boardSquares[position]?.piece;
 
-      if (
-        (selectedPiece instanceof Piece) &&
-        isEqual(selectedPiece.side, this.currentTurnSide)
-      ) {
-        this.boardManager.highlightAvailableMoves(selectedPiece);
+      if ((selectedPiece instanceof Piece) && isEqual(selectedPiece.side, this.currentTurnSide)) {
+        this.boardManager.highlightMoves(selectedPiece);
         return true;
       } else {
         return false;
       };
     } else {
-      this.boardManager.highlightAvailableMoves();
+      this.boardManager.highlightMoves();
       return true;
     };
   };

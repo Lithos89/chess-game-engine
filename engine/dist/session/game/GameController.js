@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
-// Classes
+// Game Management
 var Game_1 = require("./Game");
 var GameController = /** @class */ (function (_super) {
     __extends(GameController, _super);
@@ -25,12 +25,12 @@ var GameController = /** @class */ (function (_super) {
         _this.selectedSquarePos = null;
         return _this;
     }
-    // *: 
+    // *: Move highlighting management for selecting/deselecting a square with a piece
     GameController.prototype.selectSquare = function (position) {
-        console.log(position);
-        var newSelection = (0, lodash_1.isNull)(this.selectedSquarePos);
+        console.info(position);
+        var isNewSelection = (0, lodash_1.isNull)(this.selectedSquarePos);
         //* Selecting a square while no square is highlighted
-        if (newSelection) {
+        if (isNewSelection) {
             var didHighlight = this.attemptHighlight(position);
             if (didHighlight)
                 this.selectedSquarePos = position;

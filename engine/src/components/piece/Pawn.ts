@@ -5,17 +5,16 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import { search } from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/movement';
 
-class Bishop extends Piece {
-
+class Pawn extends Piece {
   constructor(side: Side) {
-    super(PieceKind.Bishop, side);
+    super(PieceKind.Pawn, side);
   };
 
   updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(search.diagonals);
+   this.availableMoves = super.getAvailablePositions(Search.file(false)) ;
   };
 };
 
-export default Bishop;
+export default Pawn;

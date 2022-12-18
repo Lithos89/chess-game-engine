@@ -1,7 +1,8 @@
 import { type Position, type ShortPosition } from '../Terms';
-export declare const search: {
+declare const search: {
     file: (bidirectional: boolean) => ({ row, col }: Position) => ShortPosition[];
     rank: ({ row, col }: Position) => ShortPosition[];
     diagonals: ({ row, col }: Position) => ShortPosition[];
     Ls: ({ row, col }: Position) => ShortPosition[];
 };
+export default search;

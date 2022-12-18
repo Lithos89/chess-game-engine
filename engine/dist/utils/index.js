@@ -4,26 +4,30 @@ exports.flipFormation = exports.convertPosition = void 0;
 // Types, interface, constants, ...
 var Terms_1 = require("../logic/Terms");
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
-function convertPosition(rawPosition) {
-    if (typeof rawPosition === 'string') {
-        return { row: rawPosition[1], col: rawPosition[0] };
+function convertPosition(position) {
+    if (typeof position === 'string') {
+        return { row: position[1], col: position[0] };
     }
-    else if (typeof rawPosition === 'object') {
-        return;
+    else if (typeof position === 'object') {
+        return "".concat(position.col).concat(position.row);
+    }
+    else {
+        throw Error('Unable to convert position of ' + position);
     }
     ;
 }
 exports.convertPosition = convertPosition;
 ;
+// *: Flips a piece configuartion to match the opposite side of the board
 function flipFormation(piecesFormation) {
-    var flippedPieces = {};
+    var altFormation = {};
     for (var pos in piecesFormation) {
         var piece = piecesFormation[pos];
         var newSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(piece.side)];
-        flippedPieces[pos] = { kind: piece.kind, side: newSide };
+        altFormation[pos] = { kind: piece.kind, side: newSide };
     }
     ;
-    return flippedPieces;
+    return altFormation;
 }
 exports.flipFormation = flipFormation;
 ;

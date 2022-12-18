@@ -1,12 +1,13 @@
 // Types, interfaces, constants, ...
 import { type Side, SIDES } from '../../logic/Terms';
 
-// Classes
+// Game Management
 import Game from '../game/Game';
-
-import Observer from '../../observers/Observer';
-import Observable from 'observers/interfaces/observable';
 import GameController from '../game/GameController';
+
+// State Management
+import Observer from '../../state/Observer';
+import Observable from 'state/observable';
 
 // *: Class that captures a series of games between an opponent
 class Match implements Observable {
@@ -68,11 +69,10 @@ class Match implements Observable {
   };
 
   private storeGame(game: GameController) {
-    this.games.push(game);
-
     // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
     this.currentGame = game;
-    
+    this.games.push(game);
+
     this.currentSide = game.playerSide;
     this.gameCount += 1;
 
@@ -88,13 +88,13 @@ class Match implements Observable {
     games: this.games.length,
   });
 
-  signalState = () => {
-    const matchInfo = this.getMatchStats()
+  signalState = (type?: string) => {
+    const matchInfo = this.getMatchStats();
     // ?: Will make state an object containing the nessecary info in the future
     const state = matchInfo;
 
     this.observer.commitState(state);
-  }
+  };
 
   private updateWins(result: Side | 'draw') {
     if (result === 'draw') {

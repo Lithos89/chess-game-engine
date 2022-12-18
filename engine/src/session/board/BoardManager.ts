@@ -1,20 +1,27 @@
 
+import { isNull } from 'lodash';
+
 // Types, interfaces, constants, ...
 import { BOARD_POSITIONS, PieceKind, type ShortPosition, type Side } from '../../logic/Terms';
-import { type PieceListings, PieceListing } from '../../formation/structure/pieceCollection';
 import { BoardSquareCondensed } from '../../formation/structure/board';
-import { type BoardSquareListings } from '../../formation/structure/squareCollection';
+import { type PieceListings } from '../../formation/structure/pieceCollection';
+import { PresentedSquare, type BoardSquareListings } from '../../formation/structure/squareCollection';
 
 // Components
 import Square, { type SquareColor } from '../../components/Square';
-import Piece from '../../components/pieces';
+import Piece from '../../components/piece';
 
 // State Management
-import Observer from '../../observers/Observer';
-import Observable from 'observers/interfaces/observable';
+import Observer from '../../state/Observer';
+import Observable from 'state/observable';
+
+// Utils
+import { flipFormation, convertPosition } from '../../utils';
+
 
 class BoardManager implements Observable {
   public boardSquares: BoardSquareListings = {};
+  private squareHighlighting: {[key in ShortPosition]? : PresentedSquare["focus"]} = {};
   private observer: Observer<BoardManager>;
 
   // TODO: Omit 'K' using some sort of typescript functionality for enums
@@ -25,55 +32,64 @@ class BoardManager implements Observable {
 
   private readonly getCurrentTurnSide: () => Side;
 
-  constructor(startingFormation: PieceListings, currentTurnSideCallback: () => Side) {
-
+  constructor(startingFormation: PieceListings, alt: boolean, currentTurnSideCallback: () => Side) {
     this.getCurrentTurnSide = currentTurnSideCallback;
     this.observer = new Observer(this);
-    this.initializeBoard(startingFormation);
+
+    this.initBoard(startingFormation, alt);
   };
 
 
   /*--------------------------------------------INITIALIZATION---------------------------------------------*/
 
-  // TODO: replace orientationflipped with the side that the player is on defaulting to white
-  private initializeBoard(boardConfiguration: PieceListings, side: Side = 'white') {
-    // ?: If I include a board flipping function, do it here and pass the new positions to initializeSquares?
-    this.initializeSquares(boardConfiguration);
+  private initBoard(pieceConfiguration: PieceListings, flipped: boolean = false) {
+    pieceConfiguration = flipped ? pieceConfiguration : flipFormation(pieceConfiguration);
+
+    const startingPieces = this.initPieces(pieceConfiguration);
+    this.initSquares(startingPieces);
+    this.notifyBoardUpdated();
   };
 
-  private initializeSquares(pieceMapping: PieceListings) {
+  private initPieces(pieceConfiguration: PieceListings): {[_pos in ShortPosition]? : Piece} {
+    const initialPieces: {[_pos in ShortPosition]? : Piece} = {};
+
+    for (const pos in pieceConfiguration) {
+      initialPieces[pos] = Piece.create(pieceConfiguration[pos]);
+    };
+
+    return initialPieces;
+  };
+
+  private initSquares(pieceMapping: {[_pos in ShortPosition]? : Piece}) {
     for (const tileIndex in BOARD_POSITIONS) {
       const position: ShortPosition  = BOARD_POSITIONS[tileIndex];
-
       const regex: RegExp = /b|d|f|h/;
       const isEvenRow: Boolean = regex.test(position);
 
-      const initialPiece: Piece | null = (typeof pieceMapping[position] === 'object') ? Piece.create(pieceMapping[position]) : null;
+      const initialPiece: Piece | null = pieceMapping[position] || null;
 
       const squareColor: SquareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
       const square: Square = new Square(position, squareColor, initialPiece);
-
       this.boardSquares[position] = square;
     };
-
-    this.signalState();
   };
 
 
   /*--------------------------------------------STATE MANAGEMENT---------------------------------------------*/
 
-  signalState = (params = []) => {
-    const boardState = this.compileBoard(params);
-    this.observer.commitState(boardState);
+  public signalState = (type?: string) => {
+    switch (type) {
+      default:
+        const boardState = this.compileBoard();
+        this.observer.commitState(boardState);
+        break;
+    };
   };
 
-  // TODO: Make this the single function that calls signalState and have this func be called instead to updateBoard
-  updateBoard = () => {
-    this.signalState();
-  };
+  public notifyBoardUpdated = () => { this.signalState('board') };
 
   // TODO: Fix the paramters so that it tracks the different highlighted action type
-  private compileBoard = (highlightedSquarePositions: ShortPosition[] = []): BoardSquareCondensed[] => {
+  private compileBoard = (): BoardSquareCondensed[] => {
     const processedBoard: BoardSquareCondensed[] = [];
 
     for (const position in this.boardSquares) {
@@ -81,17 +97,15 @@ class BoardManager implements Observable {
         position: position as ShortPosition,
         square: {
           color: this.boardSquares[position].color,
-          focus: {
-            highlighted: highlightedSquarePositions.includes(position as ShortPosition),
-            action: highlightedSquarePositions.includes(position as ShortPosition) ? 'move' : null,
-          },
+          focus:  (position in this.squareHighlighting) ? 
+            this.squareHighlighting[position as ShortPosition] : 
+            { highlighted: false, action: null },
         },
-        piece: 
-          this.boardSquares[position].piece ? 
+        piece: this.boardSquares[position].piece ? 
           {
             kind: this.boardSquares[position].piece.kind,
             side: this.boardSquares[position].piece.side,
-          }: null
+          } : null
       });
     };
 
@@ -101,14 +115,28 @@ class BoardManager implements Observable {
 
   /*--------------------------------------------HIGHLIGHTING---------------------------------------------*/
   
-  // board highlighting will be acomplished here as well through state updates that will affect boardSquares
-  highlightAvailableMoves = (piece?: Piece) => {
+  public highlightMoves = (piece?: Piece) => {
     if (piece instanceof Piece) {
       if (piece.side === this.getCurrentTurnSide()) {
-        this.signalState(piece.availableMoves);
-      }
+        //* Highlighting the available moves of the piece
+        for (const pos of piece.availableMoves) {
+          this.squareHighlighting[pos] = {
+            highlighted: true,
+            action: isNull(this.boardSquares[pos]?.piece) ? "move" : "capture",
+          };
+        };
+        
+        //* Highlighting the piece (using 'null' for now but may change)
+        this.squareHighlighting[convertPosition(piece.position) as ShortPosition] = {
+          highlighted: true,
+          action: null,
+        };
+
+        this.notifyBoardUpdated();
+      };
     } else {
-      this.signalState();
+      this.squareHighlighting = {};
+      this.notifyBoardUpdated();
     };
   };
 };

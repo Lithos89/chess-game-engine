@@ -2,7 +2,7 @@
 // Types, interfaces, constants, ...
 import { type Side } from '../logic/Terms';
 
-// Classes
+// Game Management
 import Match from './match/Match';
 
 /*
@@ -19,7 +19,7 @@ class Session {
   };
 
   // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
-  startNewMatch = (playerSide: Side = 'white'): Match => {
+  public startNewMatch = (playerSide: Side = 'white'): Match => {
     const match = new Match(playerSide);
     this.matches.push(match);
     this.updateCurrentMatch();
@@ -28,12 +28,12 @@ class Session {
   };
 
   // ?: Could make it so that it update the currently active matches, allowing for more than one match to be active at the same time
-  updateCurrentMatch(index: number = this.matches.length - 1) {
+  private updateCurrentMatch(index: number = this.matches.length - 1) {
     this.currentMatch = this.matches[index];
   };
 
   // ?: Could use an index system to get an active match from the active matches array
-  getCurrentMatch = (): Match => {
+  public getCurrentMatch = (): Match => {
     if (this.currentMatch instanceof Match) {
       return this.currentMatch;
     } else {

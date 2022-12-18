@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.search = void 0;
+// Types, interface, constants, ...
 var Terms_1 = require("../Terms");
 var searchFile = function (bidirectional) { return function (_a) {
     var row = _a.row, col = _a.col;
@@ -66,10 +66,11 @@ var searchLs = function (_a) {
     }
     return squaresFound;
 };
-exports.search = {
+var search = {
     file: searchFile,
     rank: searchRank,
     diagonals: searchDiagonals,
     Ls: searchLs,
 };
+exports.default = search;
 //# sourceMappingURL=movement.js.map

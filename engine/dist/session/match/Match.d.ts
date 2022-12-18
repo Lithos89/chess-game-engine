@@ -1,6 +1,6 @@
 import { type Side } from '../../logic/Terms';
-import Observable from 'observers/interfaces/observable';
 import GameController from '../game/GameController';
+import Observable from 'state/observable';
 declare class Match implements Observable {
     private games;
     private gameCount;
@@ -16,7 +16,7 @@ declare class Match implements Observable {
     private generateNextGame;
     private storeGame;
     private getMatchStats;
-    signalState: () => void;
+    signalState: (type?: string) => void;
     private updateWins;
 }
 export default Match;

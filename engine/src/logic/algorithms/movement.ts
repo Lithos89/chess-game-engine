@@ -1,3 +1,5 @@
+
+// Types, interface, constants, ...
 import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition } from '../Terms';
 
 const searchFile = (bidirectional: boolean) => ({row, col}: Position): ShortPosition[] => {
@@ -71,11 +73,13 @@ const searchLs = ({row, col}: Position): ShortPosition[] => {
   }
 
   return squaresFound;
-}
+};
 
-export const search = {
+const search = {
   file: searchFile,
   rank: searchRank,
   diagonals: searchDiagonals,
   Ls: searchLs,
 };
+
+export default search;

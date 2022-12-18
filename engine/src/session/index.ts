@@ -1,17 +1,21 @@
 
-// Classes
-import { Side } from 'logic/Terms';
-import Observer from '../observers/Observer';
-import Session from './Session';
+// Types, interfaces, constants, ...
+import { type Side } from '../logic/Terms';
 
-export function startSession():
-  // Return Type
-  {
-    newMatch: (playerSide: Side) => void,
-    //?: Add here more properties as the app progresses
-  }
-  // Function
-  {
+// Game Management
+import Session from './Session';
+import Match from './match/Match';
+
+// State Management
+import Observer from '../state/Observer';
+import Game from './game/Game';
+
+interface MatchController {
+  newMatch: (playerSide: Side) => void,
+  //?: Add here more properties as the app progresses
+};
+
+function startSession(): MatchController {
   const session = new Session();
 
   return ({
@@ -19,12 +23,13 @@ export function startSession():
   });
 };
 
-export function setMatchObserver(callback, match) {
+function setMatchObserver(callback: (state: any) => void, match: Match) {
   Observer.matchObservers.get(match).setCallback(callback);
 };
 
 // TODO: Need to remove class drilling by moving logic to the subclasses
-export function setGameObserver(callback, game) {
+function setGameObserver(callback: (state: any) => void, game: Game) {
   Observer.boardObservers.get(game.boardManager).setCallback(callback);
 };
 
+export default {startSession, setMatchObserver, setGameObserver};

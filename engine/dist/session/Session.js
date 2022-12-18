@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// Classes
+// Game Management
 var Match_1 = require("./match/Match");
 /*
   * session will be used so that broadcasts are appropriately handled

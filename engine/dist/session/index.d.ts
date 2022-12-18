@@ -1,6 +1,15 @@
-import { Side } from 'logic/Terms';
-export declare function startSession(): {
+import { type Side } from '../logic/Terms';
+import Match from './match/Match';
+import Game from './game/Game';
+interface MatchController {
     newMatch: (playerSide: Side) => void;
+}
+declare function startSession(): MatchController;
+declare function setMatchObserver(callback: (state: any) => void, match: Match): void;
+declare function setGameObserver(callback: (state: any) => void, game: Game): void;
+declare const _default: {
+    startSession: typeof startSession;
+    setMatchObserver: typeof setMatchObserver;
+    setGameObserver: typeof setGameObserver;
 };
-export declare function setMatchObserver(callback: any, match: any): void;
-export declare function setGameObserver(callback: any, game: any): void;
+export default _default;

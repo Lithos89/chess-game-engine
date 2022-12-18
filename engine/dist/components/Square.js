@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Utils
 var utils_1 = require("../utils");
 var Square = /** @class */ (function () {
+    // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
     function Square(position, color, piece) {
+        if (piece === void 0) { piece = null; }
         if (typeof position === 'string') {
             this.position = (0, utils_1.convertPosition)(position);
         }
@@ -13,10 +15,6 @@ var Square = /** @class */ (function () {
         this.color = color;
         this.setPiece(piece);
     }
-    Square.prototype.getPosition = function () {
-        return (0, utils_1.convertPosition)(this.position);
-    };
-    ;
     /*
       Possible cases to consider:
       1. Passing in an initialized piece
@@ -24,6 +22,7 @@ var Square = /** @class */ (function () {
       3. Passing in the string of the piece and then through a switch statement initializing the appropriate piece, thereby removing all the imports scattered across the app
   
     */
+    // TODO: This function still needs refinement to conform needs type support
     Square.prototype.setPiece = function (newPiece) {
         this.piece = newPiece;
         if (this.piece !== null) {
@@ -32,6 +31,7 @@ var Square = /** @class */ (function () {
         }
         this.abbrPiece = String(typeof newPiece);
     };
+    ;
     return Square;
 }());
 exports.default = Square;

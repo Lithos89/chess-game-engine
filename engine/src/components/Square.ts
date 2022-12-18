@@ -1,5 +1,5 @@
 import { Position, ShortPosition } from '../logic/Terms';
-import Piece from '../components/pieces/index';
+import Piece from './piece';
 
 // Utils
 import { convertPosition } from '../utils';
@@ -13,20 +13,17 @@ export default class Square {
   public piece: Piece;
   public abbrPiece: string;
 
-  constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
-  constructor(position: Position | ShortPosition, color: SquareColor, piece?: Piece) {
+  // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
+  constructor(position: Position | ShortPosition, color: SquareColor, piece: Piece = null) {
     if (typeof position === 'string') {
       this.position = convertPosition(position) as Position
     } else if (typeof position === 'object') {
       this.position = position;
     }
     this.color = color;
+
     this.setPiece(piece);
   }
-
-  getPosition(): ShortPosition {
-    return convertPosition(this.position) as ShortPosition;
-  };
 
   /*
     Possible cases to consider:
@@ -35,12 +32,14 @@ export default class Square {
     3. Passing in the string of the piece and then through a switch statement initializing the appropriate piece, thereby removing all the imports scattered across the app
 
   */
+
+  // TODO: This function still needs refinement to conform needs type support
   setPiece(newPiece: Piece) {
     this.piece = newPiece;
     if (this.piece !== null) {
-      this.piece.position = this.position
+      this.piece.position = this.position;
       this.piece.updateAvailableMoves();
     }
     this.abbrPiece = String(typeof newPiece);
-  }
+  };
 };

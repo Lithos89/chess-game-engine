@@ -29,8 +29,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var Terms_1 = require("../../logic/Terms");
-var Observer_1 = require("../../observers/Observer");
 var GameController_1 = require("../game/GameController");
+// State Management
+var Observer_1 = require("../../state/Observer");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(side) {
@@ -62,7 +63,7 @@ var Match = /** @class */ (function () {
             currentSide: _this.currentSide,
             games: _this.games.length,
         }); };
-        this.signalState = function () {
+        this.signalState = function (type) {
             var matchInfo = _this.getMatchStats();
             // ?: Will make state an object containing the nessecary info in the future
             var state = matchInfo;
@@ -100,9 +101,9 @@ var Match = /** @class */ (function () {
     };
     ;
     Match.prototype.storeGame = function (game) {
-        this.games.push(game);
         // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
         this.currentGame = game;
+        this.games.push(game);
         this.currentSide = game.playerSide;
         this.gameCount += 1;
         console.log(this.currentGame.id);

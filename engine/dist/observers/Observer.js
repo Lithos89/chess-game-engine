@@ -17,6 +17,7 @@ var Observer = /** @class */ (function () {
             else if (_this.manager instanceof BoardManager_1.default) {
                 console.info("Board state updated");
             }
+            ;
             _this.updateState(state);
         };
         this.manager = manager;

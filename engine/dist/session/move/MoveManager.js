@@ -1,8 +1,11 @@
 "use strict";
+// Types, interfaces, constants, ...
+// import { type ShortPosition } from '../../logic/Terms';
+// import { BoardSquareListings } from '../../formation/structure/squareCollection';
 Object.defineProperty(exports, "__esModule", { value: true });
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
-// Functions to include in this class
+//*: Functions to include in this class
 /*
   - Victory check
   - "Check" check
@@ -32,7 +35,7 @@ var MoveManager = /** @class */ (function () {
             _this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
             console.log(_this.moveLL.listMoves());
             // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration
-            _this.boardManager.updateBoard();
+            _this.boardManager.notifyBoardUpdated();
         };
     }
     ;

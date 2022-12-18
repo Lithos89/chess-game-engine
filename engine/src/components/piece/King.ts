@@ -5,7 +5,7 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import { search } from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/movement';
 
 class King extends Piece {
   constructor(side: Side) {
@@ -13,7 +13,7 @@ class King extends Piece {
   };
 
   updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(search.file(true), search.diagonals, search.rank);
+    this.availableMoves = super.getAvailablePositions(Search.file(true), Search.diagonals, Search.rank);
   };
 };
 
