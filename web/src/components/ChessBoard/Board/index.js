@@ -9,7 +9,7 @@ const Background = styled.div`
   display: flex;
   background-color: brown;
   flex-wrap: wrap;
-  width: 70%;
+  flex: 7;
   padding: 20px;
   /* border: 5px brown solid; */
 `;
