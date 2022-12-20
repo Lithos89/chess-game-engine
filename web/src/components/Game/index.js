@@ -4,8 +4,20 @@ import Chess from 'chess-engine';
 
 // Components
 import Board from '../ChessBoard/Board';
+import Menu from './Menu';
 
-const Game = ({ game }) => {
+// Styling
+import styled from 'styled-components';
+
+const Container = styled.div`
+  display: flex;
+  align-items: stretch;
+  background-color: #000;
+  padding: 10px;
+  margin: 0 15%;
+`;
+
+const Game = ({ game, resign, children }) => {
   const [gameData, setGameData] = useState([]);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
@@ -43,10 +55,12 @@ const Game = ({ game }) => {
 
   return (
       gameLoaded && moveController && gameData && (
-        <Fragment>
+        <Container>
           <Board squares={gameData} update={selectPiece}/>
-          <button onClick={moveController.undo}> Undo </button>
-        </Fragment>
+          <Menu undo={moveController.undo} resign={resign}>
+            {children}
+          </Menu>
+        </Container>
       )
   )
 }
