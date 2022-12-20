@@ -2,20 +2,6 @@ import { useState, useEffect, Fragment } from 'react';
 import Board from '../ChessBoard/Board';
 import Menu from './Menu';
 
-<<<<<<< Updated upstream
-const Game = ({ resetFunc, newSquares, showcase }) => {
-
-
-  // Move this into a function that is passed from the model
-  const [squares, setSquares] = useState(newSquares);
-
-
-  // const startNextGame = () => {
-  //   setCurrentGame(nextGame().value);
-  // };
-
-  const [refresh, setRefresh] = useState(false);
-=======
 // Styling
 import styled from 'styled-components';
 
@@ -32,7 +18,6 @@ const Game = ({ game, resign, children }) => {
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
   const [selectedPiecePos, setSelectedPiecePos] = useState(null);
->>>>>>> Stashed changes
 
   useEffect(() => {
     // console.log(refresh)
@@ -52,15 +37,6 @@ const Game = ({ game, resign, children }) => {
 
 
   return (
-<<<<<<< Updated upstream
-    <Fragment>
-      {squares && (
-        <Board squares={squares} update={setRefresh} />
-      )}
-      {/* <button onClick={() => { resetFunc(); setRefresh(true); }}> Restart </button> */}
-      <button onClick={() => { setSquares(resetFunc()); setRefresh(true); }}> Restart </button>
-    </Fragment>
-=======
       gameLoaded && moveController && gameData && (
         <Container>
           <Board squares={gameData} update={selectPiece}/>
@@ -69,7 +45,6 @@ const Game = ({ game, resign, children }) => {
           </Menu>
         </Container>
       )
->>>>>>> Stashed changes
   )
 }
 
