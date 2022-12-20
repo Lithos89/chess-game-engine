@@ -7,12 +7,13 @@ const MenuContainer = styled.div`
   background-color: #ccc;
 `;
 
-const Menu = ({ undo, resign, children }) => {
+const Menu = ({ undo, resign, moveLog, children }) => {
+
   return(
     <MenuContainer>
       {/* Controllers */}
       {children}
-      <MoveHistory />
+      <MoveHistory moveLog={moveLog} />
       <button onClick={undo}> Undo </button>
       <button onClick={resign}> Resign </button>
     </MenuContainer>

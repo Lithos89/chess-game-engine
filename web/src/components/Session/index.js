@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState} from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 // Modules
 import Chess from 'chess-engine';
@@ -12,6 +12,8 @@ import styled from 'styled-components';
 const Container = styled.div`
   background-color: #FAFAFA;
   height: 100vh;
+  display: flex;
+  align-items: center;
 `;
 
 const matchController = Chess.startSession();
