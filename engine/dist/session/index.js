@@ -18,7 +18,7 @@ function setMatchObserver(callback, match) {
 ;
 // TODO: Need to remove class drilling by moving logic to the subclasses
 function setGameObserver(callback, game) {
-    Observer_1.default.boardObservers.get(game.boardManager).setCallback(callback);
+    Observer_1.default.gameObservers.get(game).setCallback(callback);
 }
 ;
 exports.default = { startSession: startSession, setMatchObserver: setMatchObserver, setGameObserver: setGameObserver };

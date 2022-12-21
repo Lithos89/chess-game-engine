@@ -1,4 +1,5 @@
-import { ShortPosition } from './../../../dist/Terms.d';
+import Piece from '../../components/piece';
+import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/Terms';
 
 // Types, interfaces, constants, ...
 // import { type ShortPosition } from '../../logic/Terms';
@@ -29,7 +30,14 @@ import { convertPosition } from '../../utils';
 class MoveManager {
   public readonly moveLL: MoveHistoryLL = new MoveHistoryLL();
 
-  constructor(private boardManager: BoardManager) {};
+  public captures: {[_side in Side]: {[_piece in Exclude<PieceKind, 'k'>] : number}} = {
+    white: { p: 0, r: 0, h: 0, b: 0, q: 0},
+    black: { p: 0, r: 0, h: 0, b: 0, q: 0},
+  };
+
+  constructor(
+    private updateState: (type?: string) => void
+    ) {};
 
   public takebackMove = () => {
     this.moveLL.removeLastMove();
@@ -39,15 +47,7 @@ class MoveManager {
     // ?: Also, most likely since the player will be versing a bot, the function will take back the last two moves.
   };
 
-  public commitMove = (origin: Square, dest: Square): void => {
-    const originPiece = origin.piece;
-    origin.piece = null;
-
-    // destpiece will be used when it comes to reflecting captures
-    const destPiece = dest.piece;
-
-    this.moveLL.addMove(originPiece.logMove(convertPosition(dest.position) as ShortPosition, !!destPiece));
-
+  public getMoveHistory = () => {
     // !: Need to clean this up
     const tempList = this.moveLL.listMoves().reverse().map((v, i, arr) => {
       const isEven = i % 2 === 0;
@@ -60,15 +60,34 @@ class MoveManager {
       };
     }).filter((v) => v !== undefined);
 
-    this.boardManager.notifyMoveLogUpdated(tempList);
+    return tempList
+  };
+
+  private capture = (piece: Piece) => {
+    console.log(piece.side)
+    this.captures[SIDES[1 - SIDES.indexOf(piece.side)]][piece.kind] += 1;
+    this.updateState('capture');
+  }
+
+  public commitMove = (origin: Square, dest: Square): void => {
+    const originPiece = origin.piece;
+    origin.piece = null;
+
+    // destpiece will be used when it comes to reflecting captures
+    const destPiece = dest.piece;
+
+    if (destPiece !== null)
+      this.capture(destPiece)
+
+    this.moveLL.addMove(originPiece.logMove(convertPosition(dest.position) as ShortPosition, !!destPiece));
+
+    this.updateState('move-log');
 
     dest.setPiece(originPiece);
 
     // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
     console.log(this.moveLL.listMoves());
-
-    // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration
-    this.boardManager.notifyBoardUpdated();
+    this.updateState('board');
   };
 };
 

@@ -29,7 +29,7 @@ function setMatchObserver(callback: (state: any) => void, match: Match) {
 
 // TODO: Need to remove class drilling by moving logic to the subclasses
 function setGameObserver(callback: (state: any) => void, game: Game) {
-  Observer.boardObservers.get(game.boardManager).setCallback(callback);
+  Observer.gameObservers.get(game).setCallback(callback);
 };
 
 export default {startSession, setMatchObserver, setGameObserver};

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Terms_1 = require("../../logic/Terms");
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // Util
@@ -15,22 +16,21 @@ var utils_1 = require("../../utils");
 */
 // *: The purpose of MoveManager will be to keep track of available moves, forced plays, signal someone has won, execute legal moves, and more...
 var MoveManager = /** @class */ (function () {
-    function MoveManager(boardManager) {
+    function MoveManager(updateState) {
         var _this = this;
-        this.boardManager = boardManager;
+        this.updateState = updateState;
         this.moveLL = new MoveHistoryLL_1.default();
+        this.captures = {
+            white: { p: 0, r: 0, h: 0, b: 0, q: 0 },
+            black: { p: 0, r: 0, h: 0, b: 0, q: 0 },
+        };
         this.takebackMove = function () {
             _this.moveLL.removeLastMove();
             console.log(_this.moveLL.listMoves());
             // ?: Will also update the board with the new state reflecting the takeback
             // ?: Also, most likely since the player will be versing a bot, the function will take back the last two moves.
         };
-        this.commitMove = function (origin, dest) {
-            var originPiece = origin.piece;
-            origin.piece = null;
-            // destpiece will be used when it comes to reflecting captures
-            var destPiece = dest.piece;
-            _this.moveLL.addMove(originPiece.logMove((0, utils_1.convertPosition)(dest.position), !!destPiece));
+        this.getMoveHistory = function () {
             // !: Need to clean this up
             var tempList = _this.moveLL.listMoves().reverse().map(function (v, i, arr) {
                 var isEven = i % 2 === 0;
@@ -45,12 +45,26 @@ var MoveManager = /** @class */ (function () {
                 }
                 ;
             }).filter(function (v) { return v !== undefined; });
-            _this.boardManager.notifyMoveLogUpdated(tempList);
+            return tempList;
+        };
+        this.capture = function (piece) {
+            console.log(piece.side);
+            _this.captures[Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
+            _this.updateState('capture');
+        };
+        this.commitMove = function (origin, dest) {
+            var originPiece = origin.piece;
+            origin.piece = null;
+            // destpiece will be used when it comes to reflecting captures
+            var destPiece = dest.piece;
+            if (destPiece !== null)
+                _this.capture(destPiece);
+            _this.moveLL.addMove(originPiece.logMove((0, utils_1.convertPosition)(dest.position), !!destPiece));
+            _this.updateState('move-log');
             dest.setPiece(originPiece);
             // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
             console.log(_this.moveLL.listMoves());
-            // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration
-            _this.boardManager.notifyBoardUpdated();
+            _this.updateState('board');
         };
     }
     ;

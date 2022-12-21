@@ -1,11 +1,18 @@
+import { PieceKind, type Side } from '../../logic/Terms';
 import Square from 'components/Square';
 import MoveHistoryLL from './MoveHistoryLL';
-import BoardManager from '../board/BoardManager';
 declare class MoveManager {
-    private boardManager;
+    private updateState;
     readonly moveLL: MoveHistoryLL;
-    constructor(boardManager: BoardManager);
+    captures: {
+        [_side in Side]: {
+            [_piece in Exclude<PieceKind, 'k'>]: number;
+        };
+    };
+    constructor(updateState: (type?: string) => void);
     takebackMove: () => void;
+    getMoveHistory: () => string[][];
+    private capture;
     commitMove: (origin: Square, dest: Square) => void;
 }
 export default MoveManager;

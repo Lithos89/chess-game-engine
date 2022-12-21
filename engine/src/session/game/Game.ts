@@ -2,7 +2,7 @@
 import { isEqual, isString } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition, type Side, SIDES } from '../../logic/Terms';
+import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/Terms';
 import { PieceListings } from '../../formation/structure/pieceCollection';
 import defaultStartingFormation from '../../formation/setups/start';
 
@@ -13,8 +13,12 @@ import Piece from '../../components/piece';
 // Game Management
 import BoardManager from '../board/BoardManager';
 import MoveManager from '../move/MoveManager';
- 
-class Game {
+
+// State Management
+import Observer from '../../state/Observer';
+import Observable from 'state/observable';
+
+class Game implements Observable {
   readonly id: string;
   private readonly startingFormation: PieceListings = defaultStartingFormation;
 
@@ -22,19 +26,57 @@ class Game {
   private currentTurnSide: Side = 'white';
   private turnCount: number = 0;
 
-  public boardManager: BoardManager; // !: Figure out a way to manage accessibility and state so that boardManager can be private
+  private boardManager: BoardManager; // !: Figure out a way to manage accessibility and state so that boardManager can be private
   private moveManager: MoveManager;
+
+  private observer: Observer<Game>;
 
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
 
+    this.observer = new Observer(this);
+
     const altBoard = side === "white";
-    this.boardManager = new BoardManager(this.startingFormation, altBoard, () => this.currentTurnSide);
+    this.boardManager = new BoardManager(
+      this.startingFormation,
+      altBoard,
+      () => this.currentTurnSide,
+      () => this.signalState('board')
+    );
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-    this.moveManager = new MoveManager(this.boardManager); // ?: See if I can get rid of the boardManager parameter
+    this.moveManager = new MoveManager((type?: string) => this.signalState(type)); // ?: See if I can get rid of the boardManager parameter
   };
+
+  public signalState = (type?: string) => {
+    switch (type) {
+      case 'board': {
+        const boardState = this.boardManager.compileBoard();
+        this.observer.commitState(prevState => ({ ...prevState, board: boardState }));
+        break;
+      }
+      case 'capture': {
+        const captures = this.moveManager.captures;
+        this.observer.commitState(prevState => ({ ...prevState, captures }));
+        break;
+      }
+      case 'move-log': {
+        const moveHistory = this.moveManager.getMoveHistory();
+        this.observer.commitState(prevState => ({ ...prevState, moveLog: moveHistory }));
+        break;
+      }
+      default: {
+        const boardState = this.boardManager.compileBoard();
+        const moveHistory = this.moveManager.getMoveHistory();
+        this.observer.commitState({ board: boardState, moveLog: moveHistory });
+        break;
+      }
+    };
+  };
+
+
+  //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];

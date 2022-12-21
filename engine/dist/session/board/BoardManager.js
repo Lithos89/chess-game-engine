@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
@@ -17,42 +6,15 @@ var Terms_1 = require("../../logic/Terms");
 // Components
 var Square_1 = require("../../components/Square");
 var piece_1 = require("../../components/piece");
-// State Management
-var Observer_1 = require("../../state/Observer");
 // Utils
 var utils_1 = require("../../utils");
 var BoardManager = /** @class */ (function () {
-    function BoardManager(startingFormation, alt, currentTurnSideCallback) {
+    function BoardManager(startingFormation, alt, currentTurnSideCallback, updateState) {
         var _this = this;
+        this.updateState = updateState;
         this.boardSquares = {};
         this.squareHighlighting = {};
-        // TODO: Omit 'K' using some sort of typescript functionality for enums
-        this.captures = {
-            white: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
-            black: { p: 0, r: 0, h: 0, b: 0, q: 0, k: 0 },
-        };
         /*--------------------------------------------STATE MANAGEMENT---------------------------------------------*/
-        this.signalState = function (type, data) {
-            switch (type) {
-                case 'board': {
-                    var boardState_1 = _this.compileBoard();
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { board: boardState_1 })); });
-                    break;
-                }
-                case 'move-log': {
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { moveLog: data })); });
-                    break;
-                }
-                default: {
-                    var boardState = _this.compileBoard();
-                    _this.observer.commitState({ board: boardState });
-                    break;
-                }
-            }
-            ;
-        };
-        this.notifyBoardUpdated = function () { _this.signalState('board'); };
-        this.notifyMoveLogUpdated = function (log) { _this.signalState('move-log', log); };
         // TODO: Fix the paramters so that it tracks the different highlighted action type
         this.compileBoard = function () {
             var processedBoard = [];
@@ -94,18 +56,17 @@ var BoardManager = /** @class */ (function () {
                         highlighted: true,
                         action: null,
                     };
-                    _this.notifyBoardUpdated();
+                    _this.updateState();
                 }
                 ;
             }
             else {
                 _this.squareHighlighting = {};
-                _this.notifyBoardUpdated();
+                _this.updateState();
             }
             ;
         };
         this.getCurrentTurnSide = currentTurnSideCallback;
-        this.observer = new Observer_1.default(this);
         this.initBoard(startingFormation, alt);
     }
     ;
@@ -115,7 +76,7 @@ var BoardManager = /** @class */ (function () {
         pieceConfiguration = flipped ? pieceConfiguration : (0, utils_1.flipFormation)(pieceConfiguration);
         var startingPieces = this.initPieces(pieceConfiguration);
         this.initSquares(startingPieces);
-        this.notifyBoardUpdated();
+        // this.updateState();
     };
     ;
     BoardManager.prototype.initPieces = function (pieceConfiguration) {
