@@ -77,16 +77,28 @@ class BoardManager implements Observable {
 
   /*--------------------------------------------STATE MANAGEMENT---------------------------------------------*/
 
-  public signalState = (type?: string) => {
+  public signalState = (type?: string, data?: any) => {
     switch (type) {
-      default:
+      case 'board': {
         const boardState = this.compileBoard();
-        this.observer.commitState(boardState);
+        this.observer.commitState(prevState => ({...prevState, board: boardState}));
         break;
+      }
+      case 'move-log': {
+        this.observer.commitState(prevState => ({...prevState, moveLog: data}))
+        break;
+      }
+      default: {
+        const boardState = this.compileBoard();
+        this.observer.commitState({ board: boardState });
+        break;
+      }
     };
   };
 
   public notifyBoardUpdated = () => { this.signalState('board') };
+
+  public notifyMoveLogUpdated = (log) => { this.signalState('move-log', log) }
 
   // TODO: Fix the paramters so that it tracks the different highlighted action type
   private compileBoard = (): BoardSquareCondensed[] => {

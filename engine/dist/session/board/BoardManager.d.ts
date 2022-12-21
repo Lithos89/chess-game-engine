@@ -13,8 +13,9 @@ declare class BoardManager implements Observable {
     private initBoard;
     private initPieces;
     private initSquares;
-    signalState: (type?: string) => void;
+    signalState: (type?: string, data?: any) => void;
     notifyBoardUpdated: () => void;
+    notifyMoveLogUpdated: (log: any) => void;
     private compileBoard;
     highlightMoves: (piece?: Piece) => void;
 }

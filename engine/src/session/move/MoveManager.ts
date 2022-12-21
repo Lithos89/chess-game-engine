@@ -1,3 +1,4 @@
+import { ShortPosition } from './../../../dist/Terms.d';
 
 // Types, interfaces, constants, ...
 // import { type ShortPosition } from '../../logic/Terms';
@@ -9,6 +10,9 @@ import Square from 'components/Square';
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
 import BoardManager from '../board/BoardManager';
+
+// Util
+import { convertPosition } from '../../utils'; 
 
 
 //*: Functions to include in this class
@@ -23,7 +27,7 @@ import BoardManager from '../board/BoardManager';
 
 // *: The purpose of MoveManager will be to keep track of available moves, forced plays, signal someone has won, execute legal moves, and more...
 class MoveManager {
-  private readonly moveLL: MoveHistoryLL = new MoveHistoryLL();
+  public readonly moveLL: MoveHistoryLL = new MoveHistoryLL();
 
   constructor(private boardManager: BoardManager) {};
 
@@ -42,9 +46,25 @@ class MoveManager {
     // destpiece will be used when it comes to reflecting captures
     const destPiece = dest.piece;
 
+    this.moveLL.addMove(originPiece.logMove(convertPosition(dest.position) as ShortPosition, !!destPiece));
+
+    // !: Need to clean this up
+    const tempList = this.moveLL.listMoves().reverse().map((v, i, arr) => {
+      const isEven = i % 2 === 0;
+      if (isEven) {
+        if (arr[i+1] !== 'undefined') {
+          return [arr[i], arr[i+1]];
+        } else {
+          return [arr[i], ''];
+        };
+      };
+    }).filter((v) => v !== undefined);
+
+    this.boardManager.notifyMoveLogUpdated(tempList);
+
     dest.setPiece(originPiece);
 
-    this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
+    // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
     console.log(this.moveLL.listMoves());
 
     // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration

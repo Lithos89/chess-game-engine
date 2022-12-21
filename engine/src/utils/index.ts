@@ -6,9 +6,9 @@ import { type PieceListings } from '../formation/structure/pieceCollection';
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
 export function convertPosition(position: ShortPosition | Position): ShortPosition | Position {
   if (typeof position === 'string') {
-    return { row: position[1] as Row, col: position[0] as Column };
+    return { row: position[1] as Row, col: position[0] as Column } as Position;
   } else if (typeof position === 'object') {
-    return `${position.col}${position.row}`;
+    return `${position.col}${position.row}` as ShortPosition;
   } else {
     throw Error('Unable to convert position of ' + position);
   };

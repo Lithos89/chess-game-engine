@@ -33,7 +33,7 @@ class Observer<T extends Observable> {
     this.manager.signalState();
   };
 
-  public commitState = (state: any) => {
+  public commitState = (state: ((prevState) => {}) | {}) => {
     if (this.manager instanceof Match) {
       console.info("Match state updated");
     } else if (this.manager instanceof BoardManager) {

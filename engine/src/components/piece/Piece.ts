@@ -47,6 +47,14 @@ abstract class Piece {
 
     return availableMoves;
   };
+
+  // ?: See whether capture should have a default value, be optional, or be required.
+  logMove(to: ShortPosition, didCapture: boolean = false) {
+    const pieceAbbr = this.kind !== PieceKind.Pawn ? this.kind.toUpperCase() : '';
+    const captureMark = didCapture ? 'x' : '';
+
+    return pieceAbbr + captureMark + to;
+  };
 };
 
 export default Piece;

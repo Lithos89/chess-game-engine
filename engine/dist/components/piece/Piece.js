@@ -44,6 +44,14 @@ var Piece = /** @class */ (function () {
         return availableMoves;
     };
     ;
+    // ?: See whether capture should have a default value, be optional, or be required.
+    Piece.prototype.logMove = function (to, didCapture) {
+        if (didCapture === void 0) { didCapture = false; }
+        var pieceAbbr = this.kind !== Terms_1.PieceKind.Pawn ? this.kind.toUpperCase() : '';
+        var captureMark = didCapture ? 'x' : '';
+        return pieceAbbr + captureMark + to;
+    };
+    ;
     return Piece;
 }());
 ;

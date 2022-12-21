@@ -14,6 +14,10 @@ var MoveHistoryLL = /** @class */ (function () {
             }
             ;
         };
+        // ?: Depending on if MoveHistoryLL still implements 'Move', then add removeLastTurn so that you can undo not only the last player move, but also the computer move
+        // * I just realized that if the player is playing as the black pieces, then the move switch will be odd so I also need to account for that and can't just use the whole turn like I was doing before
+        // removeLastTurn = () => {
+        // };
         this.listMoves = function () {
             var moveList = [];
             var _head = _this.head;

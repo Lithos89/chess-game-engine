@@ -6,7 +6,7 @@ const Container = styled.div`
   position: static;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin: 0 auto;
   margin: 10px;
 `;
@@ -59,11 +59,10 @@ const MoveHistory = ({ moveLog }) => {
 
   return (
     <Container>
-      {
-        moveLog.map((move, i) => {
-          const turn = i + 1;
+      { moveLog &&
+        moveLog.reverse().map((move, i) => {
           return (
-            <MoveCell>
+            <MoveCell key={i}>
               <MoveIndex>{i + 1}.</MoveIndex>
               <MoveWhite>{move[0]}</MoveWhite>
               <MoveBlack>{move[1]}</MoveBlack>

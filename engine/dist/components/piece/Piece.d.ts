@@ -9,5 +9,6 @@ declare abstract class Piece {
     static create({ kind, side }: PieceListing): Piece;
     constructor(piece: PieceKind, side: Side);
     getAvailablePositions(...searchAlgorithms: ((_position: Position) => ShortPosition[])[]): ShortPosition[];
+    logMove(to: ShortPosition, didCapture?: boolean): string;
 }
 export default Piece;

@@ -1,10 +1,9 @@
 "use strict";
-// Types, interfaces, constants, ...
-// import { type ShortPosition } from '../../logic/Terms';
-// import { BoardSquareListings } from '../../formation/structure/squareCollection';
 Object.defineProperty(exports, "__esModule", { value: true });
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
+// Util
+var utils_1 = require("../../utils");
 //*: Functions to include in this class
 /*
   - Victory check
@@ -31,8 +30,24 @@ var MoveManager = /** @class */ (function () {
             origin.piece = null;
             // destpiece will be used when it comes to reflecting captures
             var destPiece = dest.piece;
+            _this.moveLL.addMove(originPiece.logMove((0, utils_1.convertPosition)(dest.position), !!destPiece));
+            // !: Need to clean this up
+            var tempList = _this.moveLL.listMoves().reverse().map(function (v, i, arr) {
+                var isEven = i % 2 === 0;
+                if (isEven) {
+                    if (arr[i + 1] !== 'undefined') {
+                        return [arr[i], arr[i + 1]];
+                    }
+                    else {
+                        return [arr[i], ''];
+                    }
+                    ;
+                }
+                ;
+            }).filter(function (v) { return v !== undefined; });
+            _this.boardManager.notifyMoveLogUpdated(tempList);
             dest.setPiece(originPiece);
-            _this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
+            // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
             console.log(_this.moveLL.listMoves());
             // TODO: Add some callback that will then update the client with the new board rather than returning like the primitive iteration
             _this.boardManager.notifyBoardUpdated();
