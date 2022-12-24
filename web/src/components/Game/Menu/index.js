@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import CapturesDisplay from './CapturesDisplay';
 import MoveHistory from './MoveHistory';
 
 const MenuContainer = styled.div`
@@ -7,13 +8,14 @@ const MenuContainer = styled.div`
   background-color: #ccc;
 `;
 
-const Menu = ({ undo, resign, moveLog, children }) => {
+const Menu = ({ undo, resign, moveLog, captures }) => {
 
   return(
     <MenuContainer>
       {/* Controllers */}
-      {children}
+      {/* {children} */}
       <MoveHistory moveLog={moveLog} />
+      {captures && <CapturesDisplay captures={captures}/>}
       <button onClick={undo}> Undo </button>
       <button onClick={resign}> Resign </button>
     </MenuContainer>
