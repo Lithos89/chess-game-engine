@@ -48,6 +48,8 @@ abstract class Piece {
       legalLines.push(...algo(this.position));
     };
 
+    console.log(legalLines)
+
     return legalLines;
   };
 

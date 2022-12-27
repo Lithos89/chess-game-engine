@@ -41,6 +41,7 @@ var Piece = /** @class */ (function () {
             legalLines.push.apply(legalLines, algo(this.position));
         }
         ;
+        console.log(legalLines);
         return legalLines;
     };
     ;

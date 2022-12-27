@@ -78,7 +78,7 @@ var Game = /** @class */ (function () {
             var originSquare = _this.boardManager.boardSquares[from];
             var destSquare = _this.boardManager.boardSquares[to];
             //* Move Validity checks
-            var isLegal = (_a = originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece) === null || _a === void 0 ? void 0 : _a.legalLines.flat().includes(to);
+            var isLegal = (_a = originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece) === null || _a === void 0 ? void 0 : _a.availableMoves.includes(to);
             var isValidSide = (0, lodash_1.isEqual)(originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece.side, _this.currentTurnSide);
             if (isLegal && isValidSide) {
                 _this.moveManager.commitMove(originSquare, destSquare);
@@ -96,7 +96,6 @@ var Game = /** @class */ (function () {
                 if (square.piece) {
                     var pieceSide = square.piece.side;
                     var playableLines = [];
-                    console.info(square.piece.legalLines);
                     for (var _i = 0, _a = square.piece.legalLines; _i < _a.length; _i++) {
                         var legalLine = _a[_i];
                         var playableLine = [];
@@ -106,7 +105,7 @@ var Game = /** @class */ (function () {
                                 playableLine.push(pos);
                             }
                             else {
-                                if (board[pos].piece.side !== pieceSide && board[pos].piece.kind !== Terms_1.PieceKind.Pawn) {
+                                if (board[pos].piece.side !== pieceSide && square.piece.kind !== Terms_1.PieceKind.Pawn) {
                                     playableLine.push(pos);
                                 }
                                 ;
@@ -122,6 +121,7 @@ var Game = /** @class */ (function () {
                 ;
             }
             ;
+            _this.signalState('board');
         };
         // TODO: Add more checks and functionality here
         this.undo = function () {

@@ -108,7 +108,7 @@ class Game implements Observable {
     const destSquare: Square = this.boardManager.boardSquares[to];
 
     //* Move Validity checks
-    const isLegal = originSquare?.piece?.legalLines.flat().includes(to);
+    const isLegal = originSquare?.piece?.availableMoves.includes(to);
     const isValidSide = isEqual(originSquare?.piece.side, this.currentTurnSide);
 
     if (isLegal && isValidSide) {
@@ -127,8 +127,6 @@ class Game implements Observable {
         const pieceSide = square.piece.side
         const playableLines: ShortPosition[][] = [];
 
-        console.info(square.piece.legalLines)
-
         for (const legalLine of square.piece.legalLines) {
           const playableLine: ShortPosition[] = [];
 
@@ -136,7 +134,7 @@ class Game implements Observable {
             if (board[pos].piece === null) {
               playableLine.push(pos);
             } else {
-              if (board[pos].piece.side !== pieceSide && board[pos].piece.kind !== PieceKind.Pawn) {
+              if (board[pos].piece.side !== pieceSide && square.piece.kind !== PieceKind.Pawn) {
                 playableLine.push(pos);
               };
               break;
@@ -148,6 +146,8 @@ class Game implements Observable {
         square.piece.availableMoves = playableLines.flat();
       };
     };
+
+    this.signalState('board');
   };
 
   // TODO: Add more checks and functionality here

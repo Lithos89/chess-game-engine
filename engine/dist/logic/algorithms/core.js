@@ -22,23 +22,25 @@ var searchDiagonals = function (max, direction) { return function (_a) {
     for (var _i = 0, rowSets_1 = rowSets; _i < rowSets_1.length; _i++) {
         var rowSet = rowSets_1[_i];
         var diagonalSection = [];
+        var diagonalSection1 = [];
+        var diagonalSection2 = [];
         for (var i in rowSet) {
             var distance = Number(i) + 1;
             if (distance > max)
                 break;
             // Side 1
             if (0 <= colIndex + distance && colIndex + distance < Terms_1.COLUMNS.length) {
-                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex + distance]).concat(rowSet[i]));
+                diagonalSection1.push("".concat(Terms_1.COLUMNS[colIndex + distance]).concat(rowSet[i]));
             }
             ;
             // Side 2
             if (0 <= colIndex - distance && colIndex - distance < Terms_1.COLUMNS.length) {
-                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex - distance]).concat(rowSet[i]));
+                diagonalSection2.push("".concat(Terms_1.COLUMNS[colIndex - distance]).concat(rowSet[i]));
             }
             ;
         }
         ;
-        diagonalSects.push(diagonalSection);
+        diagonalSects.push(diagonalSection1, diagonalSection2);
     }
     ;
     return diagonalSects;

@@ -24,20 +24,22 @@ const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({ro
 
   for (const rowSet of rowSets) {
     const diagonalSection: ShortPosition[] = [];
+    const diagonalSection1: ShortPosition[] = [];
+    const diagonalSection2: ShortPosition[] = [];
     for (const i in rowSet) {
       const distance = Number(i) + 1;
       if (distance > max) break;
 
       // Side 1
       if (0 <= colIndex + distance && colIndex + distance < COLUMNS.length) {
-        diagonalSection.push(`${COLUMNS[colIndex + distance]}${rowSet[i]}`); 
+        diagonalSection1.push(`${COLUMNS[colIndex + distance]}${rowSet[i]}`); 
       };
       // Side 2
       if (0 <= colIndex - distance && colIndex - distance < COLUMNS.length) {
-        diagonalSection.push(`${COLUMNS[colIndex - distance]}${rowSet[i]}`); 
+        diagonalSection2.push(`${COLUMNS[colIndex - distance]}${rowSet[i]}`); 
       };
     };
-    diagonalSects.push(diagonalSection);
+    diagonalSects.push(diagonalSection1, diagonalSection2);
   };
 
   return diagonalSects;
