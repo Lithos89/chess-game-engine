@@ -5,7 +5,7 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import Search from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/core';
 
 class Knight extends Piece {
 

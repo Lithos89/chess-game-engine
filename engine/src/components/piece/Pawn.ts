@@ -5,8 +5,8 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import Search from '../../logic/algorithms/movement';
-import {tempDiagGen, searchFile} from '../../logic/algorithms/control';
+// import Search from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/core';
 
 class Pawn extends Piece {
   moved: boolean = false;
@@ -19,7 +19,10 @@ class Pawn extends Piece {
     const direction = this.side === 'white' ? '+' : '-';
     const fileDistance = this.moved ? 1 : 2;
 
-    this.availableMoves = super.getAvailablePositions(searchFile(fileDistance, direction), tempDiagGen(1, direction)) ;
+    this.availableMoves = super.getAvailablePositions(
+      Search.file(fileDistance, direction),
+      // Search.diagonals(1, direction)
+    );
   };
 };
 

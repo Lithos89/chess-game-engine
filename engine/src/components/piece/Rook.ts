@@ -6,7 +6,7 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import Search from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/core';
 
 class Rook extends Piece {
   constructor(side: Side) {
@@ -14,7 +14,7 @@ class Rook extends Piece {
   };
 
   updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.file(true), Search.rank);
+    this.availableMoves = super.getAvailablePositions(Search.file(undefined), Search.rank(undefined));
   };
 };
 

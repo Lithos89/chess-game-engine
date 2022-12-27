@@ -6,7 +6,7 @@ import { PieceKind, type Side } from '../../logic/Terms';
 import Piece from './Piece';
 
 // Algorithms
-import Search from '../../logic/algorithms/movement';
+import Search from '../../logic/algorithms/core';
 
 class Bishop extends Piece {
 
@@ -15,7 +15,7 @@ class Bishop extends Piece {
   };
 
   updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.diagonals);
+    this.availableMoves = super.getAvailablePositions(Search.diagonals(undefined));
   };
 };
 

@@ -19,8 +19,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Terms_1 = require("../../logic/Terms");
 // Components
 var Piece_1 = require("./Piece");
-var control_1 = require("../../logic/algorithms/control");
-// this.side === 'white' ? '+' : '-'
+// Algorithms
+// import Search from '../../logic/algorithms/movement';
+var core_1 = require("../../logic/algorithms/core");
 var Pawn = /** @class */ (function (_super) {
     __extends(Pawn, _super);
     function Pawn(side) {
@@ -29,7 +30,7 @@ var Pawn = /** @class */ (function (_super) {
         _this.updateAvailableMoves = function () {
             var direction = _this.side === 'white' ? '+' : '-';
             var fileDistance = _this.moved ? 1 : 2;
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, (0, control_1.searchFile)(fileDistance, direction), (0, control_1.tempDiagGen)(1, direction));
+            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.file(fileDistance, direction));
         };
         return _this;
     }

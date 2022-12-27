@@ -20,13 +20,13 @@ var Terms_1 = require("../../logic/Terms");
 // Components
 var Piece_1 = require("./Piece");
 // Algorithms
-var movement_1 = require("../../logic/algorithms/movement");
+var core_1 = require("../../logic/algorithms/core");
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
     function King(side) {
         var _this = _super.call(this, Terms_1.PieceKind.King, side) || this;
         _this.updateAvailableMoves = function () {
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, movement_1.default.file(true), movement_1.default.diagonals, movement_1.default.rank);
+            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(1));
         };
         return _this;
     }
