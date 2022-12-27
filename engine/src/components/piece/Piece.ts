@@ -12,6 +12,7 @@ abstract class Piece {
   readonly side: Side;
   readonly kind: PieceKind;
   position: Position;
+  
   legalLines: ShortPosition[][];
   availableMoves: ShortPosition[];
 

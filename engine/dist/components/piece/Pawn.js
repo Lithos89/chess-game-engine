@@ -30,7 +30,7 @@ var Pawn = /** @class */ (function (_super) {
         _this.updateLegalLines = function () {
             var direction = _this.side === 'white' ? '+' : '-';
             var fileDistance = _this.moved ? 1 : 2;
-            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(fileDistance, direction));
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(fileDistance, direction), core_1.default.diagonals(1, direction));
         };
         return _this;
     }

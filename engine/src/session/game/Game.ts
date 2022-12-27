@@ -121,24 +121,39 @@ class Game implements Observable {
   };
 
   protected updateMoves = (board: BoardSquareListings) => {
-    for (const i in board) {
-      const square = board[i];
+    for (const boardPos in board) {
+      const square = board[boardPos];
       if (square.piece) {
         const pieceSide = square.piece.side
         const playableLines: ShortPosition[][] = [];
 
-        for (const legalLine of square.piece.legalLines) {
+        for (const i in square.piece.legalLines) {
+          const legalLine = square.piece.legalLines[i]
           const playableLine: ShortPosition[] = [];
 
-          for (const pos of legalLine) {
-            if (board[pos].piece === null) {
-              playableLine.push(pos);
+          // !: NEED TO CLEAN THIS UP!!!
+          for (const linePos of legalLine) {
+
+            if (square.piece.kind === PieceKind.Pawn) {
+              if (Number(i) > 0) {
+                if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
+                  playableLine.push(linePos);
+                }
+              } else {
+                if (board[linePos].piece === null) {
+                  playableLine.push(linePos);
+                };
+              }
             } else {
-              if (board[pos].piece.side !== pieceSide && square.piece.kind !== PieceKind.Pawn) {
-                playableLine.push(pos);
+              if (board[linePos].piece === null) {
+                playableLine.push(linePos);
+              } else {
+                if (board[linePos].piece.side !== pieceSide) {
+                  playableLine.push(linePos);
+                }
+                break;
               };
-              break;
-            };
+            }
           };
           
           playableLines.push(playableLine);

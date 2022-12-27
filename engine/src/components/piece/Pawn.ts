@@ -22,7 +22,7 @@ class Pawn extends Piece implements Movable {
 
     this.legalLines = super.getLegalLines(
       Search.file(fileDistance, direction),
-      // Search.diagonals(1, direction)
+      Search.diagonals(1, direction)
     );
   };
 };

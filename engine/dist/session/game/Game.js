@@ -91,27 +91,42 @@ var Game = /** @class */ (function () {
             ;
         };
         this.updateMoves = function (board) {
-            for (var i in board) {
-                var square = board[i];
+            for (var boardPos in board) {
+                var square = board[boardPos];
                 if (square.piece) {
                     var pieceSide = square.piece.side;
                     var playableLines = [];
-                    for (var _i = 0, _a = square.piece.legalLines; _i < _a.length; _i++) {
-                        var legalLine = _a[_i];
+                    for (var i in square.piece.legalLines) {
+                        var legalLine = square.piece.legalLines[i];
                         var playableLine = [];
-                        for (var _b = 0, legalLine_1 = legalLine; _b < legalLine_1.length; _b++) {
-                            var pos = legalLine_1[_b];
-                            if (board[pos].piece === null) {
-                                playableLine.push(pos);
+                        // !: NEED TO CLEAN THIS UP!!!
+                        for (var _i = 0, legalLine_1 = legalLine; _i < legalLine_1.length; _i++) {
+                            var linePos = legalLine_1[_i];
+                            if (square.piece.kind === Terms_1.PieceKind.Pawn) {
+                                if (Number(i) > 0) {
+                                    if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
+                                        playableLine.push(linePos);
+                                    }
+                                }
+                                else {
+                                    if (board[linePos].piece === null) {
+                                        playableLine.push(linePos);
+                                    }
+                                    ;
+                                }
                             }
                             else {
-                                if (board[pos].piece.side !== pieceSide && square.piece.kind !== Terms_1.PieceKind.Pawn) {
-                                    playableLine.push(pos);
+                                if (board[linePos].piece === null) {
+                                    playableLine.push(linePos);
+                                }
+                                else {
+                                    if (board[linePos].piece.side !== pieceSide) {
+                                        playableLine.push(linePos);
+                                    }
+                                    break;
                                 }
                                 ;
-                                break;
                             }
-                            ;
                         }
                         ;
                         playableLines.push(playableLine);
