@@ -30,18 +30,22 @@ var Piece = /** @class */ (function () {
     };
     ;
     ;
-    Piece.prototype.getAvailablePositions = function () {
+    Piece.prototype.getLegalLines = function () {
         var searchAlgorithms = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             searchAlgorithms[_i] = arguments[_i];
         }
-        var availableMoves = [];
+        var legalLines = [];
         for (var _a = 0, searchAlgorithms_1 = searchAlgorithms; _a < searchAlgorithms_1.length; _a++) {
             var algo = searchAlgorithms_1[_a];
-            availableMoves.push.apply(availableMoves, algo(this.position));
+            legalLines.push.apply(legalLines, algo(this.position));
         }
         ;
-        return availableMoves;
+        return legalLines;
+    };
+    ;
+    Piece.prototype.isMovable = function () {
+        return Object.prototype.hasOwnProperty.call(this, "moved");
     };
     ;
     // ?: See whether capture should have a default value, be optional, or be required.

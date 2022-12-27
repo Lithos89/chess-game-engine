@@ -1,7 +1,9 @@
 import { type Side } from '../../logic/Terms';
 import Piece from './Piece';
-declare class King extends Piece {
+import Movable from 'session/move/interfaces/movable';
+declare class King extends Piece implements Movable {
+    moved: boolean;
     constructor(side: Side);
-    updateAvailableMoves: () => void;
+    updateLegalLines: () => void;
 }
 export default King;

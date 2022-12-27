@@ -25,8 +25,9 @@ var Rook = /** @class */ (function (_super) {
     __extends(Rook, _super);
     function Rook(side) {
         var _this = _super.call(this, Terms_1.PieceKind.Rook, side) || this;
-        _this.updateAvailableMoves = function () {
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.file(undefined), core_1.default.rank(undefined));
+        _this.moved = false;
+        _this.updateLegalLines = function () {
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(undefined), core_1.default.rank(undefined));
         };
         return _this;
     }

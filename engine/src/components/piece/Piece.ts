@@ -6,13 +6,16 @@ import { type Side, PieceKind, type ShortPosition, type Position } from '../../l
 // Components
 import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
 
+import Movable from 'session/move/interfaces/movable';
+
 abstract class Piece {
   readonly side: Side;
   readonly kind: PieceKind;
   position: Position;
+  legalLines: ShortPosition[][];
   availableMoves: ShortPosition[];
 
-  abstract updateAvailableMoves(): void;
+  abstract updateLegalLines(): void;
 
   static create({ kind, side }: PieceListing): Piece {
     switch (kind) {
@@ -38,14 +41,18 @@ abstract class Piece {
     this.side = side;
   };
 
-  getAvailablePositions(...searchAlgorithms: ((_position: Position) => ShortPosition[])[]): ShortPosition[] {
-    const availableMoves: ShortPosition[] = [];
+  getLegalLines(...searchAlgorithms: ((_position: Position) => ShortPosition[][])[]): ShortPosition[][] {
+    const legalLines: ShortPosition[][] = [];
 
     for (const algo of searchAlgorithms) {
-      availableMoves.push(...algo(this.position));
+      legalLines.push(...algo(this.position));
     };
 
-    return availableMoves;
+    return legalLines;
+  };
+
+  isMovable(): this is Movable {
+    return Object.prototype.hasOwnProperty.call(this, "moved")
   };
 
   // ?: See whether capture should have a default value, be optional, or be required.

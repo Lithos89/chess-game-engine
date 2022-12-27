@@ -1,8 +1,9 @@
 import { type Side } from '../../logic/Terms';
 import Piece from './Piece';
-declare class Pawn extends Piece {
+import Movable from 'session/move/interfaces/movable';
+declare class Pawn extends Piece implements Movable {
     moved: boolean;
     constructor(side: Side);
-    updateAvailableMoves: () => void;
+    updateLegalLines: () => void;
 }
 export default Pawn;

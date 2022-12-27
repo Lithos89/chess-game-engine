@@ -25,8 +25,8 @@ var Knight = /** @class */ (function (_super) {
     __extends(Knight, _super);
     function Knight(side) {
         var _this = _super.call(this, Terms_1.PieceKind.Knight, side) || this;
-        _this.updateAvailableMoves = function () {
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.Ls);
+        _this.updateLegalLines = function () {
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.Ls);
         };
         return _this;
     }

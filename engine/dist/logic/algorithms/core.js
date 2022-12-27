@@ -18,26 +18,30 @@ var searchDiagonals = function (max, direction) { return function (_a) {
     else {
         rowSets = [Terms_1.ROWS.slice(0, rowIndex).reverse(), Terms_1.ROWS.slice(rowIndex + 1)];
     }
-    var diagonals = [];
+    var diagonalSects = [];
     for (var _i = 0, rowSets_1 = rowSets; _i < rowSets_1.length; _i++) {
         var rowSet = rowSets_1[_i];
         var diagonalSection = [];
         for (var i in rowSet) {
-            if (Number(i) >= max)
+            var distance = Number(i) + 1;
+            if (distance > max)
                 break;
-            var diagDist = Number(i) + 1;
-            if (0 <= colIndex + diagDist && colIndex + diagDist < Terms_1.COLUMNS.length) {
-                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex + diagDist]).concat(rowSet[i]));
+            // Side 1
+            if (0 <= colIndex + distance && colIndex + distance < Terms_1.COLUMNS.length) {
+                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex + distance]).concat(rowSet[i]));
             }
             ;
-            if (0 <= colIndex - diagDist && colIndex - diagDist < Terms_1.COLUMNS.length) {
-                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex - diagDist]).concat(rowSet[i]));
+            // Side 2
+            if (0 <= colIndex - distance && colIndex - distance < Terms_1.COLUMNS.length) {
+                diagonalSection.push("".concat(Terms_1.COLUMNS[colIndex - distance]).concat(rowSet[i]));
             }
             ;
         }
-        diagonals.push(diagonalSection);
+        ;
+        diagonalSects.push(diagonalSection);
     }
-    return diagonals.flat();
+    ;
+    return diagonalSects;
 }; };
 // function * diag(max: number | undefined, direction?: '+' | '-') {
 //   const {row, col}: Position = yield;
@@ -58,11 +62,11 @@ var searchFile = function (max, direction) { return function (_a) {
     }
     ;
     if ((0, lodash_1.isUndefined)(max)) {
-        return goodRows.flat().map(function (row) { return "".concat(col).concat(row); });
+        return goodRows.map(function (v) { return v.map(function (row) { return "".concat(col).concat(row); }); });
     }
     else {
-        return goodRows.flatMap(function (fileSect) { return fileSect.filter(function (_, i) { return i < max; }); })
-            .map(function (row) { return "".concat(col).concat(row); });
+        return goodRows.map(function (v) { return v.filter(function (_, i) { return i < max; })
+            .map(function (row) { return "".concat(col).concat(row); }); });
     }
     ;
 }; };
@@ -82,11 +86,11 @@ var searchRank = function (max, direction) { return function (_a) {
     }
     ;
     if ((0, lodash_1.isUndefined)(max)) {
-        return goodColumns.flat().map(function (col) { return "".concat(col).concat(row); });
+        return goodColumns.map(function (v) { return v.map(function (col) { return "".concat(col).concat(row); }); });
     }
     else {
-        return goodColumns.flatMap(function (fileSect) { return fileSect.filter(function (_, i) { return i < max; }); })
-            .map(function (col) { return "".concat(col).concat(row); });
+        return goodColumns.map(function (v) { return v.filter(function (_, i) { return i < max; })
+            .map(function (col) { return "".concat(col).concat(row); }); });
     }
     ;
 }; };
@@ -100,25 +104,20 @@ var searchLs = function (_a) {
     // row + 2, col +- 1
     // row - 2, col +-1
     var row_col = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [-1, 2], [-1, -2], [1, -2]];
-    try {
-        for (var _i = 0, row_col_1 = row_col; _i < row_col_1.length; _i++) {
-            var _b = row_col_1[_i], _row = _b[0], _col = _b[1];
-            var newRow = rowIndex + _row;
-            var newCol = colIndex + _col;
-            if (newRow >= 0 && newRow < Terms_1.ROWS.length) {
-                if (newCol >= 0 && newCol < Terms_1.COLUMNS.length) {
-                    squaresFound.push("".concat(Terms_1.COLUMNS[newCol]).concat(Terms_1.ROWS[newRow]));
-                }
-                ;
+    for (var _i = 0, row_col_1 = row_col; _i < row_col_1.length; _i++) {
+        var _b = row_col_1[_i], _row = _b[0], _col = _b[1];
+        var newRow = rowIndex + _row;
+        var newCol = colIndex + _col;
+        if (newRow >= 0 && newRow < Terms_1.ROWS.length) {
+            if (newCol >= 0 && newCol < Terms_1.COLUMNS.length) {
+                squaresFound.push("".concat(Terms_1.COLUMNS[newCol]).concat(Terms_1.ROWS[newRow]));
             }
             ;
         }
         ;
     }
-    finally {
-        console.log("Squares Found: " + squaresFound);
-        return squaresFound;
-    }
+    ;
+    return squaresFound.map(function (v) { return [v]; });
 };
 var Search = {
     diagonals: searchDiagonals,

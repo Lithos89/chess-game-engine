@@ -27,10 +27,10 @@ var Pawn = /** @class */ (function (_super) {
     function Pawn(side) {
         var _this = _super.call(this, Terms_1.PieceKind.Pawn, side) || this;
         _this.moved = false;
-        _this.updateAvailableMoves = function () {
+        _this.updateLegalLines = function () {
             var direction = _this.side === 'white' ? '+' : '-';
             var fileDistance = _this.moved ? 1 : 2;
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.file(fileDistance, direction));
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(fileDistance, direction));
         };
         return _this;
     }

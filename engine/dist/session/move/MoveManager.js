@@ -26,7 +26,7 @@ var MoveManager = /** @class */ (function () {
         };
         this.takebackMove = function () {
             _this.moveLL.removeLastMove();
-            console.log(_this.moveLL.listMoves());
+            console.info(_this.moveLL.listMoves());
             // ?: Will also update the board with the new state reflecting the takeback
             // ?: Also, most likely since the player will be versing a bot, the function will take back the last two moves.
         };
@@ -48,22 +48,22 @@ var MoveManager = /** @class */ (function () {
             return tempList;
         };
         this.capture = function (piece) {
-            console.log(piece.side);
             _this.captures[Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
             _this.updateState('capture');
         };
         this.commitMove = function (origin, dest) {
             var originPiece = origin.piece;
             origin.piece = null;
-            // destpiece will be used when it comes to reflecting captures
             var destPiece = dest.piece;
             if (destPiece !== null)
                 _this.capture(destPiece);
             _this.moveLL.addMove(originPiece.logMove((0, utils_1.convertPosition)(dest.position), !!destPiece));
             _this.updateState('move-log');
+            if (originPiece.isMovable() && originPiece.moved === false)
+                originPiece.moved = true;
             dest.setPiece(originPiece);
             // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
-            console.log(_this.moveLL.listMoves());
+            // console.log(this.moveLL.listMoves());
             _this.updateState('board');
         };
     }

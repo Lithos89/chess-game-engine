@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 // Types, interface, constants, ...
 import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition } from '../Terms';
 
-const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[] => {
+const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
   // NOTE: For now, I am going to treat the values from 0 - 7 since this is what I documented when I was constructing my algo and if I find that it is simpler after to just use 1-8 than then I will make the modification
 
   const colIndex = COLUMNS.indexOf(col);
@@ -40,7 +40,7 @@ const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({ro
     diagonalSects.push(diagonalSection);
   };
 
-  return diagonalSects.flat();
+  return diagonalSects;
 };
 
 // function * diag(max: number | undefined, direction?: '+' | '-') {
@@ -49,7 +49,7 @@ const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({ro
 
 // }
 
-const searchFile = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[] => {
+const searchFile = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
   const squaresFound: ShortPosition[] = [];
 
   let goodRows: Row[][];
@@ -64,14 +64,14 @@ const searchFile = (max: number | undefined, direction?: '+' | '-') => ({row, co
   };
   
   if (isUndefined(max)) {
-    return goodRows.flat().map(row => `${col}${row}`) as ShortPosition[]
+    return goodRows.map(v => v.map(row => `${col}${row}`) as ShortPosition[])
   } else {
-    return goodRows.flatMap(fileSect => fileSect.filter((_, i) => i < max))
-      .map(row => `${col}${row}`) as ShortPosition[]
+    return goodRows.map(v => v.filter((_, i) => i < max)
+      .map(row => `${col}${row}`) as ShortPosition[]);
   };
 };
 
-const searchRank = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[] => {
+const searchRank = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
   const squaresFound: ShortPosition[] = [];
 
   let goodColumns: Column[][];
@@ -86,14 +86,14 @@ const searchRank = (max: number | undefined, direction?: '+' | '-') => ({row, co
   };
   
   if (isUndefined(max)) {
-    return goodColumns.flat().map(col => `${col}${row}`) as ShortPosition[]
+    return goodColumns.map(v => v.map(col => `${col}${row}`) as ShortPosition[])
   } else {
-    return goodColumns.flatMap(fileSect => fileSect.filter((_, i) => i < max))
-      .map(col => `${col}${row}`) as ShortPosition[]
+    return goodColumns.map(v => v.filter((_, i) => i < max)
+      .map(col => `${col}${row}`) as ShortPosition[]);
   };
 };
 
-const searchLs = ({row, col}: Position): ShortPosition[] => {
+const searchLs = ({row, col}: Position): ShortPosition[][] => {
   const squaresFound: ShortPosition[] = [];
 
   const colIndex = COLUMNS.indexOf(col)
@@ -118,7 +118,7 @@ const searchLs = ({row, col}: Position): ShortPosition[] => {
     };
   };
 
-  return squaresFound;
+  return squaresFound.map(v => [v]);
 };
 
 const Search = {

@@ -14,8 +14,8 @@ class Bishop extends Piece {
     super(PieceKind.Bishop, side);
   };
 
-  updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.diagonals(undefined));
+  updateLegalLines = () => {
+    this.legalLines = super.getLegalLines(Search.diagonals(undefined));
   };
 };
 

@@ -76,7 +76,7 @@ class Match implements Observable {
     this.currentSide = game.playerSide;
     this.gameCount += 1;
 
-    console.log(this.currentGame.id);
+    console.info(this.currentGame.id);
   };
 
   

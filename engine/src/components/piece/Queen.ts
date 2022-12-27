@@ -13,8 +13,8 @@ class Queen extends Piece {
     super(PieceKind.Queen, side);
   };
 
-  updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.diagonals(undefined), Search.file(undefined), Search.rank(undefined));
+  updateLegalLines = () => {
+    this.legalLines = super.getLegalLines(Search.diagonals(undefined), Search.file(undefined), Search.rank(undefined));
   };
 };
 

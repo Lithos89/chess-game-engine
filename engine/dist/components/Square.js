@@ -27,7 +27,7 @@ var Square = /** @class */ (function () {
         this.piece = newPiece;
         if (this.piece !== null) {
             this.piece.position = this.position;
-            this.piece.updateAvailableMoves();
+            this.piece.updateLegalLines();
         }
         this.abbrPiece = String(typeof newPiece);
     };

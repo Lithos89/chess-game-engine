@@ -13,8 +13,8 @@ class Knight extends Piece {
     super(PieceKind.Knight, side);
   };
 
-  updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.Ls);
+  updateLegalLines = () => {
+    this.legalLines = super.getLegalLines(Search.Ls);
   };
 };
 

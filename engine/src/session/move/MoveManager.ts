@@ -14,6 +14,7 @@ import BoardManager from '../board/BoardManager';
 
 // Util
 import { convertPosition } from '../../utils'; 
+import Movable from './interfaces/movable';
 
 
 //*: Functions to include in this class
@@ -41,7 +42,7 @@ class MoveManager {
 
   public takebackMove = () => {
     this.moveLL.removeLastMove();
-    console.log(this.moveLL.listMoves());
+    console.info(this.moveLL.listMoves());
 
     // ?: Will also update the board with the new state reflecting the takeback
     // ?: Also, most likely since the player will be versing a bot, the function will take back the last two moves.
@@ -64,7 +65,6 @@ class MoveManager {
   };
 
   private capture = (piece: Piece) => {
-    console.log(piece.side)
     this.captures[SIDES[1 - SIDES.indexOf(piece.side)]][piece.kind] += 1;
     this.updateState('capture');
   }
@@ -73,7 +73,6 @@ class MoveManager {
     const originPiece = origin.piece;
     origin.piece = null;
 
-    // destpiece will be used when it comes to reflecting captures
     const destPiece = dest.piece;
 
     if (destPiece !== null)
@@ -83,10 +82,13 @@ class MoveManager {
 
     this.updateState('move-log');
 
+    if (originPiece.isMovable() && originPiece.moved === false)
+      originPiece.moved = true;
+
     dest.setPiece(originPiece);
 
     // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
-    console.log(this.moveLL.listMoves());
+    // console.log(this.moveLL.listMoves());
     this.updateState('board');
   };
 };

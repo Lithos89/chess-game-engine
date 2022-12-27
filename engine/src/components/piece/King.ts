@@ -6,14 +6,17 @@ import Piece from './Piece';
 
 // Algorithms
 import Search from '../../logic/algorithms/core';
+import Movable from 'session/move/interfaces/movable';
 
-class King extends Piece {
+class King extends Piece implements Movable {
+  moved: boolean = false;
+
   constructor(side: Side) {
     super(PieceKind.King, side);
   };
 
-  updateAvailableMoves = () => {
-    this.availableMoves = super.getAvailablePositions(Search.file(1), Search.diagonals(1), Search.rank(1));
+  updateLegalLines = () => {
+    this.legalLines = super.getLegalLines(Search.file(1), Search.diagonals(1), Search.rank(1));
   };
 };
 

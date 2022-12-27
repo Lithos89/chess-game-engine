@@ -4,6 +4,7 @@ import { isEqual, isString } from 'lodash';
 // Types, interfaces, constants, ...
 import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/Terms';
 import { PieceListings } from '../../formation/structure/pieceCollection';
+import { BoardSquareListings } from 'formation/structure/squareCollection';
 import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
@@ -26,7 +27,7 @@ class Game implements Observable {
   private currentTurnSide: Side = 'white';
   private turnCount: number = 0;
 
-  private boardManager: BoardManager; // !: Figure out a way to manage accessibility and state so that boardManager can be private
+  private boardManager: BoardManager;
   private moveManager: MoveManager;
 
   private observer: Observer<Game>;
@@ -47,6 +48,7 @@ class Game implements Observable {
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
     this.moveManager = new MoveManager((type?: string) => this.signalState(type)); // ?: See if I can get rid of the boardManager parameter
+    this.updateMoves(this.boardManager.boardSquares);
   };
 
   public signalState = (type?: string) => {
@@ -79,6 +81,7 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
+    this.updateMoves(this.boardManager.boardSquares);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
   };
@@ -105,7 +108,7 @@ class Game implements Observable {
     const destSquare: Square = this.boardManager.boardSquares[to];
 
     //* Move Validity checks
-    const isLegal = originSquare?.piece?.availableMoves.includes(to);
+    const isLegal = originSquare?.piece?.legalLines.flat().includes(to);
     const isValidSide = isEqual(originSquare?.piece.side, this.currentTurnSide);
 
     if (isLegal && isValidSide) {
@@ -114,6 +117,36 @@ class Game implements Observable {
       return true;
     } else {
       return false;
+    };
+  };
+
+  protected updateMoves = (board: BoardSquareListings) => {
+    for (const i in board) {
+      const square = board[i];
+      if (square.piece) {
+        const pieceSide = square.piece.side
+        const playableLines: ShortPosition[][] = [];
+
+        console.info(square.piece.legalLines)
+
+        for (const legalLine of square.piece.legalLines) {
+          const playableLine: ShortPosition[] = [];
+
+          for (const pos of legalLine) {
+            if (board[pos].piece === null) {
+              playableLine.push(pos);
+            } else {
+              if (board[pos].piece.side !== pieceSide && board[pos].piece.kind !== PieceKind.Pawn) {
+                playableLine.push(pos);
+              };
+              break;
+            };
+          };
+          
+          playableLines.push(playableLine);
+        }
+        square.piece.availableMoves = playableLines.flat();
+      };
     };
   };
 

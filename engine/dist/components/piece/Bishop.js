@@ -25,8 +25,8 @@ var Bishop = /** @class */ (function (_super) {
     __extends(Bishop, _super);
     function Bishop(side) {
         var _this = _super.call(this, Terms_1.PieceKind.Bishop, side) || this;
-        _this.updateAvailableMoves = function () {
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.diagonals(undefined));
+        _this.updateLegalLines = function () {
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.diagonals(undefined));
         };
         return _this;
     }

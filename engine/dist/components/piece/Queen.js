@@ -25,8 +25,8 @@ var Queen = /** @class */ (function (_super) {
     __extends(Queen, _super);
     function Queen(side) {
         var _this = _super.call(this, Terms_1.PieceKind.Queen, side) || this;
-        _this.updateAvailableMoves = function () {
-            _this.availableMoves = _super.prototype.getAvailablePositions.call(_this, core_1.default.diagonals(undefined), core_1.default.file(undefined), core_1.default.rank(undefined));
+        _this.updateLegalLines = function () {
+            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.diagonals(undefined), core_1.default.file(undefined), core_1.default.rank(undefined));
         };
         return _this;
     }

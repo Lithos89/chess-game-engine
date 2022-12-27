@@ -106,7 +106,7 @@ var Match = /** @class */ (function () {
         this.games.push(game);
         this.currentSide = game.playerSide;
         this.gameCount += 1;
-        console.log(this.currentGame.id);
+        console.info(this.currentGame.id);
     };
     ;
     Match.prototype.updateWins = function (result) {

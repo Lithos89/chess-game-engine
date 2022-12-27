@@ -78,7 +78,7 @@ var Game = /** @class */ (function () {
             var originSquare = _this.boardManager.boardSquares[from];
             var destSquare = _this.boardManager.boardSquares[to];
             //* Move Validity checks
-            var isLegal = (_a = originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece) === null || _a === void 0 ? void 0 : _a.availableMoves.includes(to);
+            var isLegal = (_a = originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece) === null || _a === void 0 ? void 0 : _a.legalLines.flat().includes(to);
             var isValidSide = (0, lodash_1.isEqual)(originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece.side, _this.currentTurnSide);
             if (isLegal && isValidSide) {
                 _this.moveManager.commitMove(originSquare, destSquare);
@@ -87,6 +87,39 @@ var Game = /** @class */ (function () {
             }
             else {
                 return false;
+            }
+            ;
+        };
+        this.updateMoves = function (board) {
+            for (var i in board) {
+                var square = board[i];
+                if (square.piece) {
+                    var pieceSide = square.piece.side;
+                    var playableLines = [];
+                    console.info(square.piece.legalLines);
+                    for (var _i = 0, _a = square.piece.legalLines; _i < _a.length; _i++) {
+                        var legalLine = _a[_i];
+                        var playableLine = [];
+                        for (var _b = 0, legalLine_1 = legalLine; _b < legalLine_1.length; _b++) {
+                            var pos = legalLine_1[_b];
+                            if (board[pos].piece === null) {
+                                playableLine.push(pos);
+                            }
+                            else {
+                                if (board[pos].piece.side !== pieceSide && board[pos].piece.kind !== Terms_1.PieceKind.Pawn) {
+                                    playableLine.push(pos);
+                                }
+                                ;
+                                break;
+                            }
+                            ;
+                        }
+                        ;
+                        playableLines.push(playableLine);
+                    }
+                    square.piece.availableMoves = playableLines.flat();
+                }
+                ;
             }
             ;
         };
@@ -101,10 +134,12 @@ var Game = /** @class */ (function () {
         this.boardManager = new BoardManager_1.default(this.startingFormation, altBoard, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
         this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }); // ?: See if I can get rid of the boardManager parameter
+        this.updateMoves(this.boardManager.boardSquares);
     }
     ;
     //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
     Game.prototype.takeTurn = function () {
+        this.updateMoves(this.boardManager.boardSquares);
         this.currentTurnSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
     };
