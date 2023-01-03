@@ -1,4 +1,4 @@
-import { type Side } from '../logic/Terms';
+import { type Side } from '../logic/terms';
 import Match from './match/Match';
 import Game from './game/Game';
 interface MatchController {

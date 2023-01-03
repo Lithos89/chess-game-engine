@@ -1,7 +1,7 @@
 
 // Types, interfaces, constants, ...
 import { PieceListing } from 'formation/structure/pieceCollection';
-import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/Terms';
+import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/terms';
 
 // Components
 import Pawn from './Pawn';

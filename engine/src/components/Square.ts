@@ -1,4 +1,4 @@
-import { Position, ShortPosition } from '../logic/Terms';
+import { Position, ShortPosition } from '../logic/terms';
 import Piece from './piece';
 
 // Utils

@@ -1,24 +1,29 @@
 
 // Types, interfaces, constants, ...
 import { PieceListing } from 'formation/structure/pieceCollection';
-import { type Side, PieceKind, type ShortPosition, type Position } from '../../logic/Terms';
+import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/terms';
+// Class intefaces
+import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Components
 import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
 
-import Movable from 'session/move/interfaces/movable';
+
+// Legal line of movement (positions) ordered from start to finish
+type MoveLine = ShortPosition[]; // !: See if this is used anywhere else and maybe export by moving to interfaces
+type MoveAlgorithm = (_position: Position) => MoveLine[];
 
 abstract class Piece {
-  readonly side: Side;
-  readonly kind: PieceKind;
-  position: Position;
-  
-  legalLines: ShortPosition[][];
-  availableMoves: ShortPosition[];
+  public readonly side: Side;
+  public readonly kind: PieceKind;
+  public position: Position;
 
-  abstract updateLegalLines(): void;
+  public legalLines: MoveLine[]; // Legal lines of movement
+  public availableMoves: ShortPosition[];
 
-  static create({ kind, side }: PieceListing): Piece {
+  abstract movementAlgorithms: MoveAlgorithm[];
+
+  public static create({ kind, side }: PieceListing): Piece {
     switch (kind) {
       case PieceKind.Pawn:
         return new Pawn(side);
@@ -41,24 +46,25 @@ abstract class Piece {
     this.kind = piece;
     this.side = side;
   };
-
-  getLegalLines(...searchAlgorithms: ((_position: Position) => ShortPosition[][])[]): ShortPosition[][] {
-    const legalLines: ShortPosition[][] = [];
-
-    for (const algo of searchAlgorithms) {
-      legalLines.push(...algo(this.position));
-    };
-
-    console.log(legalLines)
-
-    return legalLines;
+  
+  public isMultiBehavioral(): this is DynamicBehavior {
+    // TODO: See if hasOwnProperty can be used for interface method and attatched here
+    return Object.prototype.hasOwnProperty.call(this, "moved");
   };
 
-  isMovable(): this is Movable {
-    return Object.prototype.hasOwnProperty.call(this, "moved")
+  public updateLegalLines() {
+    if (this.isMultiBehavioral()) {
+      const _movementAlgorithms = this.loadMoveAlgorithms();
+      this.legalLines = _movementAlgorithms.flatMap(algo => algo(this.position));
+    } else if (this.movementAlgorithms !== null) {
+      this.legalLines = this.movementAlgorithms.flatMap(algo => algo(this.position));
+    } else {
+      throw Error;
+    };
   };
 
   // ?: See whether capture should have a default value, be optional, or be required.
+  // !: Logmove is a horrible name for how the method works, make sure to change
   logMove(to: ShortPosition, didCapture: boolean = false) {
     const pieceAbbr = this.kind !== PieceKind.Pawn ? this.kind.toUpperCase() : '';
     const captureMark = didCapture ? 'x' : '';

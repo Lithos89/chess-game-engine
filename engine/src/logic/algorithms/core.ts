@@ -2,12 +2,60 @@
 import { isUndefined } from 'lodash';
 
 // Types, interface, constants, ...
-import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition } from '../Terms';
+import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition, type BoardDirection } from '../terms';
+import { type MoveLine } from './types';
 
-const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
-  // NOTE: For now, I am going to treat the values from 0 - 7 since this is what I documented when I was constructing my algo and if I find that it is simpler after to just use 1-8 than then I will make the modification
+// Utils
+import { indexInRange } from '../../utils';
+
+const searchDiagonals = (max?: number | undefined, direction?: BoardDirection) => ({row, col}: Position): MoveLine[] => {
+  if (max !== undefined && max < 1) {
+    throw Error("Invalid max parameter, please provide only natural numbers");
+  };
 
   const colIndex = COLUMNS.indexOf(col);
+  const rowIndex = ROWS.indexOf(row);
+
+  let rowSets: Row[][]; // 1 or 2 sets of rows from current row to first or last row on board
+
+  if (direction === '+') {
+    rowSets = [ROWS.slice(rowIndex + 1)];
+  } else if (direction === '-') {
+    rowSets = [ROWS.slice(0, rowIndex).reverse()];
+  } else {
+    rowSets = [ROWS.slice(0, rowIndex).reverse(), ROWS.slice(rowIndex + 1)];
+  };
+
+  const diagonalLines: MoveLine[] = [];
+
+  // Get diagonal for each SELECTED vertical portion of the board
+  for (const rowSet of rowSets) {
+    const upperDiagonal: MoveLine = [];
+    const lowerDiagonal: MoveLine = [];
+
+    let distance = 1;
+    while(distance <= rowSet.length && (max === undefined || distance <= max)) {
+      const i = distance - 1;
+      
+      // Upper Horizontal of Board
+      if (indexInRange(colIndex + distance, COLUMNS))
+        upperDiagonal.push(`${COLUMNS[colIndex + distance]}${rowSet[i]}`); 
+
+      // Lower Horizontal of Board
+      if (indexInRange(colIndex - distance, COLUMNS))
+        lowerDiagonal.push(`${COLUMNS[colIndex - distance]}${rowSet[i]}`);
+
+      distance += 1;
+    };
+
+    diagonalLines.push(upperDiagonal, lowerDiagonal);
+  };
+
+  return diagonalLines;
+};
+
+const searchFile = (max?: number | undefined, direction?: BoardDirection) => ({row, col}: Position): MoveLine[] => {
+  const verticalLines: MoveLine[] = [];
   const rowIndex = ROWS.indexOf(row);
 
   let rowSets: Row[][];
@@ -18,108 +66,94 @@ const searchDiagonals = (max: number | undefined, direction?: '+' | '-') => ({ro
     rowSets = [ROWS.slice(0, rowIndex).reverse()];
   } else {
     rowSets = [ROWS.slice(0, rowIndex).reverse(), ROWS.slice(rowIndex + 1)];
-  }
+  };
+  
+  if (isUndefined(max)) {
+    for (const rowSet of rowSets) {
+      const fileLine: ShortPosition[] = [];
 
-  const diagonalSects: ShortPosition[][] = [];
-
-  for (const rowSet of rowSets) {
-    const diagonalSection: ShortPosition[] = [];
-    const diagonalSection1: ShortPosition[] = [];
-    const diagonalSection2: ShortPosition[] = [];
-    for (const i in rowSet) {
-      const distance = Number(i) + 1;
-      if (distance > max) break;
-
-      // Side 1
-      if (0 <= colIndex + distance && colIndex + distance < COLUMNS.length) {
-        diagonalSection1.push(`${COLUMNS[colIndex + distance]}${rowSet[i]}`); 
+      for (const _row of rowSet) {
+        fileLine.push(`${col}${_row}`);
       };
-      // Side 2
-      if (0 <= colIndex - distance && colIndex - distance < COLUMNS.length) {
-        diagonalSection2.push(`${COLUMNS[colIndex - distance]}${rowSet[i]}`); 
-      };
+      verticalLines.push(fileLine);
     };
-    diagonalSects.push(diagonalSection1, diagonalSection2);
+  } else {
+    for (const rowSet of rowSets) {
+      const fileLine: ShortPosition[] = [];
+      const truncatedRowSet = rowSet.slice(0, max);
+
+      for (const _row of truncatedRowSet) {
+        fileLine.push(`${col}${_row}`);
+      };
+      verticalLines.push(fileLine);
+    };
   };
 
-  return diagonalSects;
+  return verticalLines;
 };
 
-// function * diag(max: number | undefined, direction?: '+' | '-') {
-//   const {row, col}: Position = yield;
+const searchRank = (max?: number | undefined, direction?: BoardDirection) => ({row, col}: Position): MoveLine[] => {
+  const horizontalLines: MoveLine[] = [];
+  const colIndex = COLUMNS.indexOf(col);
 
-
-// }
-
-const searchFile = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
-  const squaresFound: ShortPosition[] = [];
-
-  let goodRows: Row[][];
-  const _row = ROWS.indexOf(row);
+  let colSets: Column[][];
 
   if (direction === '+') {
-    goodRows = [ROWS.slice(_row + 1)];
+    colSets = [COLUMNS.slice(colIndex + 1)];
   } else if (direction === '-') {
-    goodRows = [ROWS.slice(0, _row).reverse()];
+    colSets = [COLUMNS.slice(0, colIndex).reverse()];
   } else {
-    goodRows = [ROWS.slice(0, _row).reverse(), ROWS.slice(_row + 1)];
+    colSets = [COLUMNS.slice(0, colIndex).reverse(), COLUMNS.slice(colIndex + 1)];
   };
   
   if (isUndefined(max)) {
-    return goodRows.map(v => v.map(row => `${col}${row}`) as ShortPosition[])
+    for (const colSet of colSets) {
+      const rankLine: ShortPosition[] = [];
+
+      for (const _col of colSet) {
+        rankLine.push(`${_col}${row}`);
+      };
+      horizontalLines.push(rankLine);
+    };
   } else {
-    return goodRows.map(v => v.filter((_, i) => i < max)
-      .map(row => `${col}${row}`) as ShortPosition[]);
+    for (const colSet of colSets) {
+      const rankLine: ShortPosition[] = [];
+      const truncatedColSet = colSet.slice(0, max);
+
+      for (const _col of truncatedColSet) {
+        rankLine.push(`${_col}${row}`);
+      };
+      horizontalLines.push(rankLine);
+    };
   };
+
+  return horizontalLines;
 };
 
-const searchRank = (max: number | undefined, direction?: '+' | '-') => ({row, col}: Position): ShortPosition[][] => {
-  const squaresFound: ShortPosition[] = [];
-
-  let goodColumns: Column[][];
-  const _col = COLUMNS.indexOf(col);
-
-  if (direction === '+') {
-    goodColumns = [COLUMNS.slice(_col + 1)];
-  } else if (direction === '-') {
-    goodColumns = [COLUMNS.slice(0, _col).reverse()];
-  } else {
-    goodColumns = [COLUMNS.slice(0, _col).reverse(), COLUMNS.slice(_col + 1)];
-  };
-  
-  if (isUndefined(max)) {
-    return goodColumns.map(v => v.map(col => `${col}${row}`) as ShortPosition[])
-  } else {
-    return goodColumns.map(v => v.filter((_, i) => i < max)
-      .map(col => `${col}${row}`) as ShortPosition[]);
-  };
-};
-
-const searchLs = ({row, col}: Position): ShortPosition[][] => {
+const searchLs = () => ({row, col}: Position): MoveLine[] => {
+  //* T meaning translation in this context
   const squaresFound: ShortPosition[] = [];
 
   const colIndex = COLUMNS.indexOf(col)
   const rowIndex = ROWS.indexOf(row)
 
-  // col + 2, row +- 1
-  // col - 2, row +- 1
+  // [row, col] L translation vectors
+  const translations = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [-1, 2], [-1, -2], [1, -2]];
   
-  // row + 2, col +- 1
-  // row - 2, col +-1
+  // pos indices + translations (broadcasted)
+  const posT = translations.map(T => [rowIndex + T[0], colIndex + T[1]]);
 
-  const row_col = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [-1, 2], [-1, -2], [1, -2]];
-  
-  for (const [_row, _col] of row_col) {
-    const newRow = rowIndex + _row;
-    const newCol = colIndex + _col;
+  for (const [rowT, colT] of posT) {
 
-    if (newRow >= 0 && newRow < ROWS.length) {
-      if (newCol >= 0 && newCol < COLUMNS.length) {
-        squaresFound.push(`${COLUMNS[newCol]}${ROWS[newRow]}` as ShortPosition);
-      };
+    if(indexInRange(rowT, ROWS) && indexInRange(colT, COLUMNS)) {
+      const rowPrime = ROWS[rowT];
+      const colPrime = COLUMNS[colT];
+
+      squaresFound.push(`${colPrime}${rowPrime}` as ShortPosition);
     };
   };
 
+  // Convert to 2-dimensional array to match other algorithm outputs
   return squaresFound.map(v => [v]);
 };
 
@@ -128,6 +162,6 @@ const Search = {
   file: searchFile,
   rank: searchRank,
   Ls: searchLs,
-}
+};
 
 export default Search;

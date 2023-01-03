@@ -13,7 +13,7 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 var start_1 = require("../../formation/setups/start");
 var piece_1 = require("../../components/piece");
 // Game Management
@@ -102,7 +102,7 @@ var Game = /** @class */ (function () {
                         // !: NEED TO CLEAN THIS UP!!!
                         for (var _i = 0, legalLine_1 = legalLine; _i < legalLine_1.length; _i++) {
                             var linePos = legalLine_1[_i];
-                            if (square.piece.kind === Terms_1.PieceKind.Pawn) {
+                            if (square.piece.kind === terms_1.PieceKind.Pawn) {
                                 if (Number(i) > 0) {
                                     if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
                                         playableLine.push(linePos);
@@ -155,7 +155,7 @@ var Game = /** @class */ (function () {
     //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
     Game.prototype.takeTurn = function () {
         this.updateMoves(this.boardManager.boardSquares);
-        this.currentTurnSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(this.currentTurnSide)];
+        this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
     };
     ;

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Components
 var Square_1 = require("../../components/Square");
 var piece_1 = require("../../components/piece");
@@ -89,8 +89,8 @@ var BoardManager = /** @class */ (function () {
     };
     ;
     BoardManager.prototype.initSquares = function (pieceMapping) {
-        for (var tileIndex in Terms_1.BOARD_POSITIONS) {
-            var position = Terms_1.BOARD_POSITIONS[tileIndex];
+        for (var tileIndex in terms_1.BOARD_POSITIONS) {
+            var position = terms_1.BOARD_POSITIONS[tileIndex];
             var regex = /b|d|f|h/;
             var isEvenRow = regex.test(position);
             var initialPiece = pieceMapping[position] || null;

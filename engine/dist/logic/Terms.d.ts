@@ -13,6 +13,7 @@ export type Position = {
 export declare const SIDES: readonly ["white", "black"];
 type SideTuple = typeof SIDES;
 export type Side = SideTuple[number];
+export type BoardDirection = '+' | '-';
 export declare enum PieceKind {
     Pawn = "p",
     Rook = "r",

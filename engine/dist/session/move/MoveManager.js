@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // Util
@@ -48,7 +48,7 @@ var MoveManager = /** @class */ (function () {
             return tempList;
         };
         this.capture = function (piece) {
-            _this.captures[Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
+            _this.captures[terms_1.SIDES[1 - terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
             _this.updateState('capture');
         };
         this.commitMove = function (origin, dest) {
@@ -59,7 +59,7 @@ var MoveManager = /** @class */ (function () {
                 _this.capture(destPiece);
             _this.moveLL.addMove(originPiece.logMove((0, utils_1.convertPosition)(dest.position), !!destPiece));
             _this.updateState('move-log');
-            if (originPiece.isMovable() && originPiece.moved === false)
+            if (originPiece.isMultiBehavioral() && originPiece.moved === false)
                 originPiece.moved = true;
             dest.setPiece(originPiece);
             // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);

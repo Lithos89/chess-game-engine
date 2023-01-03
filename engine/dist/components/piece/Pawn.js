@@ -16,23 +16,27 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Components
 var Piece_1 = require("./Piece");
 // Algorithms
-// import Search from '../../logic/algorithms/movement';
 var core_1 = require("../../logic/algorithms/core");
 var Pawn = /** @class */ (function (_super) {
     __extends(Pawn, _super);
+    // TODO: Fix direction so it works on the alt board orientation
     function Pawn(side) {
-        var _this = _super.call(this, Terms_1.PieceKind.Pawn, side) || this;
+        var _this = _super.call(this, terms_1.PieceKind.Pawn, side) || this;
+        _this.direction = _this.side === 'white' ? '+' : '-';
         _this.moved = false;
-        _this.updateLegalLines = function () {
-            var direction = _this.side === 'white' ? '+' : '-';
+        _this.loadMoveAlgorithms = function () {
             var fileDistance = _this.moved ? 1 : 2;
-            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(fileDistance, direction), core_1.default.diagonals(1, direction));
+            return [
+                core_1.default.file(fileDistance, _this.direction),
+                core_1.default.diagonals(1, _this.direction)
+            ];
         };
         return _this;
+        // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
     }
     ;
     return Pawn;

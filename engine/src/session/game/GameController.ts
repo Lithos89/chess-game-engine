@@ -2,7 +2,7 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition } from 'logic/Terms';
+import { type ShortPosition } from 'logic/terms';
 
 // Game Management
 import Game from './Game';

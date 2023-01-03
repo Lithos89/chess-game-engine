@@ -1,4 +1,4 @@
-import { type Side } from '../../logic/Terms';
+import { type Side } from '../../logic/terms';
 import { BoardSquareCondensed } from '../../formation/structure/board';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
 import { type BoardSquareListings } from '../../formation/structure/squareCollection';

@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Components
 var Piece_1 = require("./Piece");
 // Algorithms
@@ -24,10 +24,8 @@ var core_1 = require("../../logic/algorithms/core");
 var Bishop = /** @class */ (function (_super) {
     __extends(Bishop, _super);
     function Bishop(side) {
-        var _this = _super.call(this, Terms_1.PieceKind.Bishop, side) || this;
-        _this.updateLegalLines = function () {
-            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.diagonals(undefined));
-        };
+        var _this = _super.call(this, terms_1.PieceKind.Bishop, side) || this;
+        _this.movementAlgorithms = [core_1.default.diagonals()];
         return _this;
     }
     ;

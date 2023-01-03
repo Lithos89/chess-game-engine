@@ -1,6 +1,6 @@
 
 // Types, interface, constants, ...
-import { type Row, type Column, type ShortPosition, type Position, SIDES } from '../logic/Terms';
+import { type Row, type Column, type ShortPosition, type Position, SIDES } from '../logic/terms';
 import { type PieceListings } from '../formation/structure/pieceCollection';
 
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
@@ -26,4 +26,8 @@ export function flipFormation(piecesFormation: PieceListings): PieceListings {
   };
 
   return altFormation;
+};
+
+export function indexInRange(index: number, array: readonly any[] | any[]) {
+  return index >= 0 && index < array.length;
 };

@@ -28,7 +28,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 var GameController_1 = require("../game/GameController");
 // State Management
 var Observer_1 = require("../../state/Observer");
@@ -52,7 +52,7 @@ var Match = /** @class */ (function () {
         // TODO: Will need to change this to act like resigning (freezing the current game)
         this.resignGame = function () {
             // *: Give the victory to the opponent
-            var _opponentSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(_this.currentSide)];
+            var _opponentSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(_this.currentSide)];
             _this.updateWins(_opponentSide);
             // ?: For now, resigning starts the next game.
             _this.startNewGame();
@@ -90,8 +90,8 @@ var Match = /** @class */ (function () {
                 case 2:
                     _a.sent();
                     this.storeGame(newGame);
-                    _nextSideIndex = (Terms_1.SIDES.length - 1) - Terms_1.SIDES.indexOf(side);
-                    side = Terms_1.SIDES[_nextSideIndex];
+                    _nextSideIndex = (terms_1.SIDES.length - 1) - terms_1.SIDES.indexOf(side);
+                    side = terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
                 case 3:
                     ;

@@ -1,6 +1,6 @@
 
 // Types, interfaces, constants, ...
-import { type Side } from '../logic/Terms';
+import { type Side } from '../logic/terms';
 
 // Game Management
 import Session from './Session';

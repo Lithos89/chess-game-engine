@@ -1,9 +1,10 @@
-import { type Side } from '../../logic/Terms';
+import { type Side } from '../../logic/terms';
 import Piece from './Piece';
-import Movable from 'session/move/interfaces/movable';
-declare class King extends Piece implements Movable {
+import DynamicBehavior from './interfaces/dynamicBehavior';
+declare class King extends Piece implements DynamicBehavior {
+    movementAlgorithms: null;
     moved: boolean;
     constructor(side: Side);
-    updateLegalLines: () => void;
+    loadMoveAlgorithms: () => (({ row, col }: import("../../logic/terms").Position) => import("../../logic/algorithms/types").MoveLine[])[];
 }
 export default King;

@@ -32,6 +32,12 @@ export const SIDES = ['white', 'black'] as const;
 type SideTuple = typeof SIDES;
 export type Side = SideTuple[number];
 
+export type BoardDirection = '+' | '-';
+/*
+  TODO: Review this definition as BoardDirection is better implemented
+  + is defined as the direction in which the white pawns advance in an odd numbered game
+  - is defined as the direction in which the black pawns advance in an odd numbered game
+*/
 
 // PIECE SPECIFIC
 export enum PieceKind {

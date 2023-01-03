@@ -1,4 +1,4 @@
-import { PieceKind, type Side } from '../../logic/Terms';
+import { PieceKind, type Side } from '../../logic/terms';
 import Square from 'components/Square';
 import MoveHistoryLL from './MoveHistoryLL';
 declare class MoveManager {

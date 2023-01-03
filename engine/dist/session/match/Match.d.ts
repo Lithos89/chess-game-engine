@@ -1,4 +1,4 @@
-import { type Side } from '../../logic/Terms';
+import { type Side } from '../../logic/terms';
 import GameController from '../game/GameController';
 import Observable from 'state/observable';
 declare class Match implements Observable {

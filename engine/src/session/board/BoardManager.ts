@@ -2,7 +2,7 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { BOARD_POSITIONS, type ShortPosition, type Side } from '../../logic/Terms';
+import { BOARD_POSITIONS, type ShortPosition, type Side } from '../../logic/terms';
 import { BoardSquareCondensed } from '../../formation/structure/board';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
 import { PresentedSquare, type BoardSquareListings } from '../../formation/structure/squareCollection';

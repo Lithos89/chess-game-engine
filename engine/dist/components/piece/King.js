@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Components
 var Piece_1 = require("./Piece");
 // Algorithms
@@ -24,10 +24,14 @@ var core_1 = require("../../logic/algorithms/core");
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
     function King(side) {
-        var _this = _super.call(this, Terms_1.PieceKind.King, side) || this;
+        var _this = _super.call(this, terms_1.PieceKind.King, side) || this;
         _this.moved = false;
-        _this.updateLegalLines = function () {
-            _this.legalLines = _super.prototype.getLegalLines.call(_this, core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(1));
+        _this.loadMoveAlgorithms = function () {
+            return [
+                core_1.default.file(1),
+                core_1.default.diagonals(1),
+                core_1.default.rank(1)
+            ];
         };
         return _this;
     }

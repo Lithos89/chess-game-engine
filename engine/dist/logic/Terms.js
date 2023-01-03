@@ -16,6 +16,11 @@ exports.BOARD_POSITIONS = [
 ];
 // SIDE SPECIFIC
 exports.SIDES = ['white', 'black'];
+/*
+  TODO: Review this definition as BoardDirection is better implemented
+  + is defined as the direction in which the white pawns advance in an odd numbered game
+  - is defined as the direction in which the black pawns advance in an odd numbered game
+*/
 // PIECE SPECIFIC
 var PieceKind;
 (function (PieceKind) {
@@ -27,4 +32,4 @@ var PieceKind;
     PieceKind["King"] = "k";
 })(PieceKind = exports.PieceKind || (exports.PieceKind = {}));
 ;
-//# sourceMappingURL=Terms.js.map
+//# sourceMappingURL=terms.js.map

@@ -1,4 +1,4 @@
-import { type ShortPosition } from 'logic/Terms';
+import { type ShortPosition } from 'logic/terms';
 import Game from './Game';
 declare class GameController extends Game {
     private selectedSquarePos;

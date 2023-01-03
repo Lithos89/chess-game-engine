@@ -1,4 +1,4 @@
-import { type Position, type ShortPosition } from '../Terms';
+import { type Position, type ShortPosition } from '../terms';
 declare const search: {
     file: (bidirectional: boolean) => ({ row, col }: Position) => ShortPosition[];
     rank: ({ row, col }: Position) => ShortPosition[];

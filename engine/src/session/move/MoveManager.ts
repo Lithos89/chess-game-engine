@@ -1,5 +1,5 @@
 import Piece from '../../components/piece';
-import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/Terms';
+import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/terms';
 
 // Types, interfaces, constants, ...
 // import { type ShortPosition } from '../../logic/Terms';
@@ -13,8 +13,7 @@ import MoveHistoryLL from './MoveHistoryLL';
 import BoardManager from '../board/BoardManager';
 
 // Util
-import { convertPosition } from '../../utils'; 
-import Movable from './interfaces/movable';
+import { convertPosition } from '../../utils';
 
 
 //*: Functions to include in this class
@@ -38,7 +37,7 @@ class MoveManager {
 
   constructor(
     private updateState: (type?: string) => void
-    ) {};
+  ) {};
 
   public takebackMove = () => {
     this.moveLL.removeLastMove();
@@ -49,8 +48,10 @@ class MoveManager {
   };
 
   public getMoveHistory = () => {
+    const moveList = this.moveLL.listMoves();
+    const moveListAscending = moveList.reverse()
     // !: Need to clean this up
-    const tempList = this.moveLL.listMoves().reverse().map((v, i, arr) => {
+    const tempList = moveListAscending.map((v, i, arr) => {
       const isEven = i % 2 === 0;
       if (isEven) {
         if (arr[i+1] !== 'undefined') {
@@ -82,7 +83,7 @@ class MoveManager {
 
     this.updateState('move-log');
 
-    if (originPiece.isMovable() && originPiece.moved === false)
+    if (originPiece.isMultiBehavioral() && originPiece.moved === false)
       originPiece.moved = true;
 
     dest.setPiece(originPiece);

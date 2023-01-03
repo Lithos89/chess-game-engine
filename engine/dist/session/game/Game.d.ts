@@ -1,4 +1,4 @@
-import { type ShortPosition, type Side } from '../../logic/Terms';
+import { type ShortPosition, type Side } from '../../logic/terms';
 import { BoardSquareListings } from 'formation/structure/squareCollection';
 import Observable from 'state/observable';
 declare class Game implements Observable {

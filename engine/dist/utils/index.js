@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.flipFormation = exports.convertPosition = void 0;
+exports.indexInRange = exports.flipFormation = exports.convertPosition = void 0;
 // Types, interface, constants, ...
-var Terms_1 = require("../logic/Terms");
+var terms_1 = require("../logic/terms");
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
 function convertPosition(position) {
     if (typeof position === 'string') {
@@ -23,12 +23,17 @@ function flipFormation(piecesFormation) {
     var altFormation = {};
     for (var pos in piecesFormation) {
         var piece = piecesFormation[pos];
-        var newSide = Terms_1.SIDES[1 - Terms_1.SIDES.indexOf(piece.side)];
+        var newSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(piece.side)];
         altFormation[pos] = { kind: piece.kind, side: newSide };
     }
     ;
     return altFormation;
 }
 exports.flipFormation = flipFormation;
+;
+function indexInRange(index, array) {
+    return index >= 0 && index < array.length;
+}
+exports.indexInRange = indexInRange;
 ;
 //# sourceMappingURL=index.js.map

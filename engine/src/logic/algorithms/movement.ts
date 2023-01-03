@@ -1,6 +1,6 @@
 
 // Types, interface, constants, ...
-import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition } from '../Terms';
+import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition } from '../terms';
 
 const searchFile = (bidirectional: boolean) => ({row, col}: Position): ShortPosition[] => {
   const squaresFound: ShortPosition[] = [];

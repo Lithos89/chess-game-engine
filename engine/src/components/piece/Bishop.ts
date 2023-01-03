@@ -1,6 +1,6 @@
 
 // Types, interfaces, constants, ...
-import { PieceKind, type Side } from '../../logic/Terms';
+import { PieceKind, type Side } from '../../logic/terms';
 
 // Components
 import Piece from './Piece';
@@ -9,13 +9,10 @@ import Piece from './Piece';
 import Search from '../../logic/algorithms/core';
 
 class Bishop extends Piece {
+  public movementAlgorithms = [Search.diagonals()];
 
   constructor(side: Side) {
     super(PieceKind.Bishop, side);
-  };
-
-  updateLegalLines = () => {
-    this.legalLines = super.getLegalLines(Search.diagonals(undefined));
   };
 };
 

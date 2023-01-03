@@ -2,7 +2,7 @@
 import { isEqual, isString } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/Terms';
+import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/terms';
 import { PieceListings } from '../../formation/structure/pieceCollection';
 import { BoardSquareListings } from 'formation/structure/squareCollection';
 import defaultStartingFormation from '../../formation/setups/start';

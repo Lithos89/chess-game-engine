@@ -1,23 +1,29 @@
 // Types, interfaces, constants, ...
-import { PieceKind, type Side } from '../../logic/Terms';
+import { PieceKind, type Side } from '../../logic/terms';
 
 // Components
 import Piece from './Piece';
 
 // Algorithms
 import Search from '../../logic/algorithms/core';
-import Movable from 'session/move/interfaces/movable';
+import DynamicBehavior from './interfaces/dynamicBehavior';
 
-class King extends Piece implements Movable {
-  moved: boolean = false;
+class King extends Piece implements DynamicBehavior {
+  public movementAlgorithms: null;
+  public moved: boolean = false;
 
   constructor(side: Side) {
     super(PieceKind.King, side);
   };
 
-  updateLegalLines = () => {
-    this.legalLines = super.getLegalLines(Search.file(1), Search.diagonals(1), Search.rank(1));
-  };
+  loadMoveAlgorithms = () => {
+
+    return [
+      Search.file(1),
+      Search.diagonals(1),
+      Search.rank(1)
+    ];
+  }
 };
 
 export default King;

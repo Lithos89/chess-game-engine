@@ -1,5 +1,5 @@
 import { type PieceListings } from '../structure/pieceCollection';
-import { PieceKind } from '../../logic/Terms';
+import { PieceKind } from '../../logic/terms';
 
 // ? In the future, consider converting this file into JSON (see if there is some sort of type specification that I am allowed to set)
 // ? and then create some sort of transpiler to map it to a type annotated object

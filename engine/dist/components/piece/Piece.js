@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Terms_1 = require("../../logic/Terms");
+var terms_1 = require("../../logic/terms");
 // Components
 var index_1 = require("./index");
 var Piece = /** @class */ (function () {
@@ -11,17 +11,17 @@ var Piece = /** @class */ (function () {
     Piece.create = function (_a) {
         var kind = _a.kind, side = _a.side;
         switch (kind) {
-            case Terms_1.PieceKind.Pawn:
+            case terms_1.PieceKind.Pawn:
                 return new index_1.Pawn(side);
-            case Terms_1.PieceKind.Rook:
+            case terms_1.PieceKind.Rook:
                 return new index_1.Rook(side);
-            case Terms_1.PieceKind.Knight:
+            case terms_1.PieceKind.Knight:
                 return new index_1.Knight(side);
-            case Terms_1.PieceKind.Bishop:
+            case terms_1.PieceKind.Bishop:
                 return new index_1.Bishop(side);
-            case Terms_1.PieceKind.Queen:
+            case terms_1.PieceKind.Queen:
                 return new index_1.Queen(side);
-            case Terms_1.PieceKind.King:
+            case terms_1.PieceKind.King:
                 return new index_1.King(side);
             default:
                 throw new Error("Unable to create piece with kind: ".concat(kind, ", side: ").concat(side));
@@ -30,29 +30,31 @@ var Piece = /** @class */ (function () {
     };
     ;
     ;
-    Piece.prototype.getLegalLines = function () {
-        var searchAlgorithms = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            searchAlgorithms[_i] = arguments[_i];
-        }
-        var legalLines = [];
-        for (var _a = 0, searchAlgorithms_1 = searchAlgorithms; _a < searchAlgorithms_1.length; _a++) {
-            var algo = searchAlgorithms_1[_a];
-            legalLines.push.apply(legalLines, algo(this.position));
-        }
-        ;
-        console.log(legalLines);
-        return legalLines;
-    };
-    ;
-    Piece.prototype.isMovable = function () {
+    Piece.prototype.isMultiBehavioral = function () {
+        // TODO: See if hasOwnProperty can be used for interface method and attatched here
         return Object.prototype.hasOwnProperty.call(this, "moved");
     };
     ;
+    Piece.prototype.updateLegalLines = function () {
+        var _this = this;
+        if (this.isMultiBehavioral()) {
+            var _movementAlgorithms = this.loadMoveAlgorithms();
+            this.legalLines = _movementAlgorithms.flatMap(function (algo) { return algo(_this.position); });
+        }
+        else if (this.movementAlgorithms !== null) {
+            this.legalLines = this.movementAlgorithms.flatMap(function (algo) { return algo(_this.position); });
+        }
+        else {
+            throw Error;
+        }
+        ;
+    };
+    ;
     // ?: See whether capture should have a default value, be optional, or be required.
+    // !: Logmove is a horrible name for how the method works, make sure to change
     Piece.prototype.logMove = function (to, didCapture) {
         if (didCapture === void 0) { didCapture = false; }
-        var pieceAbbr = this.kind !== Terms_1.PieceKind.Pawn ? this.kind.toUpperCase() : '';
+        var pieceAbbr = this.kind !== terms_1.PieceKind.Pawn ? this.kind.toUpperCase() : '';
         var captureMark = didCapture ? 'x' : '';
         return pieceAbbr + captureMark + to;
     };
