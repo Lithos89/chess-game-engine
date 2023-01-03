@@ -1,16 +1,17 @@
-import Piece from '../../components/piece';
-import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/terms';
+
+import { isEmpty, isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-// import { type ShortPosition } from '../../logic/Terms';
-// import { BoardSquareListings } from '../../formation/structure/squareCollection';
+import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/terms';
+import { BoardSquareListings } from '../../formation/structure/squareCollection';
+import { MoveLine } from 'logic/algorithms/types';
 
 // Components
 import Square from 'components/Square';
+import Piece from '../../components/piece';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
-import BoardManager from '../board/BoardManager';
 
 // Util
 import { convertPosition } from '../../utils';
@@ -49,9 +50,9 @@ class MoveManager {
 
   public getMoveHistory = () => {
     const moveList = this.moveLL.listMoves();
-    const moveListAscending = moveList.reverse()
+    const moveListAscending = moveList.reverse();
     // !: Need to clean this up
-    const tempList = moveListAscending.map((v, i, arr) => {
+    const compiledMoves = moveListAscending.map((v, i, arr) => {
       const isEven = i % 2 === 0;
       if (isEven) {
         if (arr[i+1] !== 'undefined') {
@@ -62,7 +63,7 @@ class MoveManager {
       };
     }).filter((v) => v !== undefined);
 
-    return tempList
+    return compiledMoves
   };
 
   private capture = (piece: Piece) => {
@@ -90,6 +91,55 @@ class MoveManager {
 
     // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
     // console.log(this.moveLL.listMoves());
+    this.updateState('board');
+  };
+
+  // *: Loops over each square on the board to update each piece with their respective available moves
+  public updateMoves = (board: BoardSquareListings) => {
+    for (const boardPos in board) {
+      const square = board[boardPos];
+      const piece: Piece | null = square.piece;
+
+      if (isNull(piece)) { continue };
+
+      const pieceSide = piece.side;
+      const playableLines: MoveLine[] = [];
+      const uniqueCapturing = !isEmpty(piece.captureAlgorithms); // Piece can still move there without capturing
+
+      for (const legalLine of piece.legalLines) { 
+        const playableLine: MoveLine = [];
+
+        for (const linePos of legalLine) {
+          const squareIsEmpty: boolean = board[linePos].piece === null;
+          const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== pieceSide && !uniqueCapturing;
+
+          if (squareIsEmpty || simpleCaptureAvailable)
+            playableLine.push(linePos);
+          else
+            break;
+        };
+        
+        playableLines.push(playableLine);
+      };
+
+      if (uniqueCapturing) {
+        for (const captureLine of piece.captureLines) {
+          const playableLine: MoveLine = [];
+
+          for (const linePos of captureLine) {
+            if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
+              playableLine.push(linePos);
+            } else {
+              break;
+            };
+          };
+
+          playableLines.push(playableLine);
+        };
+      };
+
+      piece.availableMoves = playableLines.flat();
+    };
     this.updateState('board');
   };
 };

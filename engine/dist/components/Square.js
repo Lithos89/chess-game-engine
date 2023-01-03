@@ -6,12 +6,10 @@ var Square = /** @class */ (function () {
     // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
     function Square(position, color, piece) {
         if (piece === void 0) { piece = null; }
-        if (typeof position === 'string') {
+        if (typeof position === 'string')
             this.position = (0, utils_1.convertPosition)(position);
-        }
-        else if (typeof position === 'object') {
+        else if (typeof position === 'object')
             this.position = position;
-        }
         this.color = color;
         this.setPiece(piece);
     }
@@ -27,7 +25,7 @@ var Square = /** @class */ (function () {
         this.piece = newPiece;
         if (this.piece !== null) {
             this.piece.position = this.position;
-            this.piece.updateLegalLines();
+            this.piece.updateLines();
         }
         this.abbrPiece = String(typeof newPiece);
     };

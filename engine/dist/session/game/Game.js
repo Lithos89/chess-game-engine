@@ -90,54 +90,6 @@ var Game = /** @class */ (function () {
             }
             ;
         };
-        this.updateMoves = function (board) {
-            for (var boardPos in board) {
-                var square = board[boardPos];
-                if (square.piece) {
-                    var pieceSide = square.piece.side;
-                    var playableLines = [];
-                    for (var i in square.piece.legalLines) {
-                        var legalLine = square.piece.legalLines[i];
-                        var playableLine = [];
-                        // !: NEED TO CLEAN THIS UP!!!
-                        for (var _i = 0, legalLine_1 = legalLine; _i < legalLine_1.length; _i++) {
-                            var linePos = legalLine_1[_i];
-                            if (square.piece.kind === terms_1.PieceKind.Pawn) {
-                                if (Number(i) > 0) {
-                                    if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
-                                        playableLine.push(linePos);
-                                    }
-                                }
-                                else {
-                                    if (board[linePos].piece === null) {
-                                        playableLine.push(linePos);
-                                    }
-                                    ;
-                                }
-                            }
-                            else {
-                                if (board[linePos].piece === null) {
-                                    playableLine.push(linePos);
-                                }
-                                else {
-                                    if (board[linePos].piece.side !== pieceSide) {
-                                        playableLine.push(linePos);
-                                    }
-                                    break;
-                                }
-                                ;
-                            }
-                        }
-                        ;
-                        playableLines.push(playableLine);
-                    }
-                    square.piece.availableMoves = playableLines.flat();
-                }
-                ;
-            }
-            ;
-            _this.signalState('board');
-        };
         // TODO: Add more checks and functionality here
         this.undo = function () {
             _this.moveManager.takebackMove();
@@ -148,13 +100,13 @@ var Game = /** @class */ (function () {
         var altBoard = side === "white";
         this.boardManager = new BoardManager_1.default(this.startingFormation, altBoard, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-        this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }); // ?: See if I can get rid of the boardManager parameter
-        this.updateMoves(this.boardManager.boardSquares);
+        this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); });
+        this.moveManager.updateMoves(this.boardManager.boardSquares);
     }
     ;
     //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
     Game.prototype.takeTurn = function () {
-        this.updateMoves(this.boardManager.boardSquares);
+        this.moveManager.updateMoves(this.boardManager.boardSquares);
         this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
     };

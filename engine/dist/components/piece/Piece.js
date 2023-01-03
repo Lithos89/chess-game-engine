@@ -1,10 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = require("lodash");
 var terms_1 = require("../../logic/terms");
 // Components
 var index_1 = require("./index");
 var Piece = /** @class */ (function () {
     function Piece(piece, side) {
+        // If captureAlgorithms left empty, then same logic as movement algorithms
+        this.captureAlgorithms = [];
         this.kind = piece;
         this.side = side;
     }
@@ -35,7 +38,7 @@ var Piece = /** @class */ (function () {
         return Object.prototype.hasOwnProperty.call(this, "moved");
     };
     ;
-    Piece.prototype.updateLegalLines = function () {
+    Piece.prototype.updateLines = function () {
         var _this = this;
         if (this.isMultiBehavioral()) {
             var _movementAlgorithms = this.loadMoveAlgorithms();
@@ -48,6 +51,8 @@ var Piece = /** @class */ (function () {
             throw Error;
         }
         ;
+        if (!(0, lodash_1.isEmpty)(this.captureAlgorithms))
+            this.captureLines = this.captureAlgorithms.flatMap(function (algo) { return algo(_this.position); });
     };
     ;
     // ?: See whether capture should have a default value, be optional, or be required.

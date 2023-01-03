@@ -1,17 +1,15 @@
 
+import { isEmpty } from 'lodash';
+
 // Types, interfaces, constants, ...
 import { PieceListing } from 'formation/structure/pieceCollection';
 import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/terms';
-// Class intefaces
+import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
+  // Class intefaces
 import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Components
 import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
-
-
-// Legal line of movement (positions) ordered from start to finish
-type MoveLine = ShortPosition[]; // !: See if this is used anywhere else and maybe export by moving to interfaces
-type MoveAlgorithm = (_position: Position) => MoveLine[];
 
 abstract class Piece {
   public readonly side: Side;
@@ -19,10 +17,13 @@ abstract class Piece {
   public position: Position;
 
   public legalLines: MoveLine[]; // Legal lines of movement
+  public captureLines: MoveLine[];
   public availableMoves: ShortPosition[];
 
+  // If captureAlgorithms left empty, then same logic as movement algorithms
+  public captureAlgorithms: MoveAlgorithm[] = [];
   abstract movementAlgorithms: MoveAlgorithm[];
-
+  
   public static create({ kind, side }: PieceListing): Piece {
     switch (kind) {
       case PieceKind.Pawn:
@@ -52,7 +53,7 @@ abstract class Piece {
     return Object.prototype.hasOwnProperty.call(this, "moved");
   };
 
-  public updateLegalLines() {
+  public updateLines() {
     if (this.isMultiBehavioral()) {
       const _movementAlgorithms = this.loadMoveAlgorithms();
       this.legalLines = _movementAlgorithms.flatMap(algo => algo(this.position));
@@ -61,6 +62,9 @@ abstract class Piece {
     } else {
       throw Error;
     };
+
+    if (!isEmpty(this.captureAlgorithms))
+      this.captureLines = this.captureAlgorithms.flatMap(algo => algo(this.position));
   };
 
   // ?: See whether capture should have a default value, be optional, or be required.

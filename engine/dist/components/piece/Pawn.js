@@ -23,20 +23,18 @@ var Piece_1 = require("./Piece");
 var core_1 = require("../../logic/algorithms/core");
 var Pawn = /** @class */ (function (_super) {
     __extends(Pawn, _super);
-    // TODO: Fix direction so it works on the alt board orientation
     function Pawn(side) {
         var _this = _super.call(this, terms_1.PieceKind.Pawn, side) || this;
+        // TODO: Fix direction so it works on the alt board orientation
         _this.direction = _this.side === 'white' ? '+' : '-';
         _this.moved = false;
         _this.loadMoveAlgorithms = function () {
             var fileDistance = _this.moved ? 1 : 2;
-            return [
-                core_1.default.file(fileDistance, _this.direction),
-                core_1.default.diagonals(1, _this.direction)
-            ];
+            return [core_1.default.file(fileDistance, _this.direction)];
         };
-        return _this;
         // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
+        _this.captureAlgorithms = [core_1.default.diagonals(1, _this.direction)];
+        return _this;
     }
     ;
     return Pawn;

@@ -15,13 +15,12 @@ export default class Square {
 
   // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
   constructor(position: Position | ShortPosition, color: SquareColor, piece: Piece = null) {
-    if (typeof position === 'string') {
-      this.position = convertPosition(position) as Position
-    } else if (typeof position === 'object') {
+    if (typeof position === 'string')
+      this.position = convertPosition(position) as Position;
+    else if (typeof position === 'object')
       this.position = position;
-    }
-    this.color = color;
 
+    this.color = color;
     this.setPiece(piece);
   }
 
@@ -38,7 +37,7 @@ export default class Square {
     this.piece = newPiece;
     if (this.piece !== null) {
       this.piece.position = this.position;
-      this.piece.updateLegalLines();
+      this.piece.updateLines();
     }
     this.abbrPiece = String(typeof newPiece);
   };

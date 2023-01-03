@@ -3,8 +3,7 @@ import { isEqual, isString } from 'lodash';
 
 // Types, interfaces, constants, ...
 import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/terms';
-import { PieceListings } from '../../formation/structure/pieceCollection';
-import { BoardSquareListings } from 'formation/structure/squareCollection';
+import { type PieceListings } from '../../formation/structure/pieceCollection';
 import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
@@ -47,8 +46,8 @@ class Game implements Observable {
     );
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-    this.moveManager = new MoveManager((type?: string) => this.signalState(type)); // ?: See if I can get rid of the boardManager parameter
-    this.updateMoves(this.boardManager.boardSquares);
+    this.moveManager = new MoveManager((type?: string) => this.signalState(type));
+    this.moveManager.updateMoves(this.boardManager.boardSquares);
   };
 
   public signalState = (type?: string) => {
@@ -81,7 +80,7 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
-    this.updateMoves(this.boardManager.boardSquares);
+    this.moveManager.updateMoves(this.boardManager.boardSquares);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
   };
@@ -118,51 +117,6 @@ class Game implements Observable {
     } else {
       return false;
     };
-  };
-
-  protected updateMoves = (board: BoardSquareListings) => {
-    for (const boardPos in board) {
-      const square = board[boardPos];
-      if (square.piece) {
-        const pieceSide = square.piece.side
-        const playableLines: ShortPosition[][] = [];
-
-        for (const i in square.piece.legalLines) {
-          const legalLine = square.piece.legalLines[i]
-          const playableLine: ShortPosition[] = [];
-
-          // !: NEED TO CLEAN THIS UP!!!
-          for (const linePos of legalLine) {
-
-            if (square.piece.kind === PieceKind.Pawn) {
-              if (Number(i) > 0) {
-                if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
-                  playableLine.push(linePos);
-                }
-              } else {
-                if (board[linePos].piece === null) {
-                  playableLine.push(linePos);
-                };
-              }
-            } else {
-              if (board[linePos].piece === null) {
-                playableLine.push(linePos);
-              } else {
-                if (board[linePos].piece.side !== pieceSide) {
-                  playableLine.push(linePos);
-                }
-                break;
-              };
-            }
-          };
-          
-          playableLines.push(playableLine);
-        }
-        square.piece.availableMoves = playableLines.flat();
-      };
-    };
-
-    this.signalState('board');
   };
 
   // TODO: Add more checks and functionality here

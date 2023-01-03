@@ -1,5 +1,6 @@
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type BoardDirection } from '../../logic/terms';
+import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
 // Class interfaces
 import DynamicBehavior from './interfaces/dynamicBehavior';
 
@@ -11,26 +12,23 @@ import Search from '../../logic/algorithms/core';
 
 
 class Pawn extends Piece implements DynamicBehavior {
+  // TODO: Fix direction so it works on the alt board orientation
   private readonly direction: BoardDirection = this.side === 'white' ? '+' : '-';
 
-  // !: Temporarily set to 1, FIX BEFORE ANY NEW FEATURES
   public movementAlgorithms: null;
-  moved: boolean = false;
-  // TODO: Fix direction so it works on the alt board orientation
+  public moved: boolean = false;
 
   constructor(side: Side) {
     super(PieceKind.Pawn, side);
     // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
+    this.captureAlgorithms = [Search.diagonals(1, this.direction)];
   };
 
   public loadMoveAlgorithms = () => {
     const fileDistance = this.moved ? 1 : 2;
 
-    return [
-      Search.file(fileDistance, this.direction),
-      Search.diagonals(1, this.direction)
-    ];
-  }
+    return [Search.file(fileDistance, this.direction)];
+  };
 };
 
 export default Pawn;
