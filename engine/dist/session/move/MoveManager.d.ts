@@ -1,6 +1,6 @@
 import { PieceKind, type Side } from '../../logic/terms';
 import { BoardSquareListings } from '../../formation/structure/squareCollection';
-import Square from 'components/Square';
+import Square from '../../components/Square';
 import MoveHistoryLL from './MoveHistoryLL';
 declare class MoveManager {
     private updateState;
@@ -16,5 +16,8 @@ declare class MoveManager {
     private capture;
     commitMove: (origin: Square, dest: Square) => void;
     updateMoves: (board: BoardSquareListings, sideLastMoved?: Side) => void;
+    tempUpdateMoves(board: BoardSquareListings, sideLastMoved?: Side): void;
+    private tempUpdateSideBasicPieces;
+    private tempUpdateKings;
 }
 export default MoveManager;

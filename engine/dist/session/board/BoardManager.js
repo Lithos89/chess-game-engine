@@ -99,7 +99,7 @@ var BoardManager = /** @class */ (function () {
             //     this.whiteKing = piece as King;
             //   else
             //     this.blackKing = piece as King;
-            // }
+            // };
             var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
             var square = new Square_1.default(position, squareColor, piece);
             this.boardSquares[position] = square;

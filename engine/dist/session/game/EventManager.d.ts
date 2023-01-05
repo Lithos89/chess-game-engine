@@ -5,10 +5,9 @@ import Piece from "components/piece";
 interface Attack {
     attackPiece: Piece;
     frontAttackLine: MoveLine;
-    fullAttackLine: MoveLine;
 }
 declare class EventManager {
-    static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine, fullAttackLine }: Attack, side: Side): boolean;
+    static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side): boolean;
     static victoryCheck(board: BoardSquareListings): void;
 }
 export default EventManager;

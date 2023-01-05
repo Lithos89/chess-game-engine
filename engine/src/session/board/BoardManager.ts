@@ -64,7 +64,7 @@ class BoardManager {
       //     this.whiteKing = piece as King;
       //   else
       //     this.blackKing = piece as King;
-      // }
+      // };
 
       const squareColor: SquareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
       const square: Square = new Square(position, squareColor, piece);

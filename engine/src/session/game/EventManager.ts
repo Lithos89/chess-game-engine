@@ -14,15 +14,12 @@ import { convertPosition } from "../../utils";
 
 interface Attack {
   attackPiece: Piece,
-  frontAttackLine: MoveLine,
-  fullAttackLine: MoveLine
+  frontAttackLine: MoveLine
 };
 
 class EventManager {
 
-  static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine, fullAttackLine }: Attack, side: Side): boolean {
-
-    const controlledSquares: Set<ShortPosition> = new Set();
+  static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side): boolean {
 
     const preventitiveMoves: ShortPosition[] = []
 
@@ -35,42 +32,30 @@ class EventManager {
       const square = board[boardPos];
       const piece: Piece | null = square.piece;
 
-      if (isNull(piece)) { continue };
+      if (isNull(piece) || piece.side === side) { continue };
 
-      if (piece.side === side) {
-        //* ATTACKING
+      //* DEFENDING
+      if (piece.kind === PieceKind.King) { king = piece as King; continue}
 
-        for (const move of piece.availableMoves) {
-          controlledSquares.add(move);
+      const playableMoves: ShortPosition[] = [];
+
+      for (const move of piece.availableMoves) {
+        // Block the attack line or capture the piece
+        if (frontAttackLine.includes(move) || move === convertPosition(attackPiece.position)) {
+          preventitiveMoves.push(move);
+          playableMoves.push(move);
         };
+      };
+      piece.availableMoves = playableMoves;
 
-      } else {
-        //* DEFENDING
-        if (piece.kind === PieceKind.King) { king = piece as King; continue}
-
-        const playableMoves: ShortPosition[] = [];
-
-        for (const move of piece.availableMoves) {
-          // Block the attack line or capture the piece
-          if (frontAttackLine.includes(move) || move === convertPosition(attackPiece.position)) {
-            preventitiveMoves.push(move);
-            playableMoves.push(move);
-          };
-        };
-        piece.availableMoves = playableMoves;
-      } 
     }
 
     const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
-
-    try {
-      controlledSquares.forEach((pos) => kingMoves.delete(pos))
-      attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
-    } finally {
-      king.availableMoves = Array.from(kingMoves);
-    }
-
-    // kingMoves.delete(controlledSquares.values())
+    
+    // Remove the positions that are still in the attacking piece's lines of attack
+    attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
+    
+    king.availableMoves = Array.from(kingMoves);
 
 
     return isEmpty(king.availableMoves) && isEmpty(preventitiveMoves);
