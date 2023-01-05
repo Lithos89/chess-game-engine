@@ -6,6 +6,7 @@ declare abstract class Piece {
     readonly side: Side;
     readonly kind: PieceKind;
     position: Position;
+    isProtected: boolean;
     legalLines: MoveLine[];
     captureLines: MoveLine[];
     availableMoves: ShortPosition[];

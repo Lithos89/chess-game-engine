@@ -15,6 +15,7 @@ abstract class Piece {
   public readonly side: Side;
   public readonly kind: PieceKind;
   public position: Position;
+  public isProtected: boolean = false;
 
   public legalLines: MoveLine[]; // Legal lines of movement
   public captureLines: MoveLine[];

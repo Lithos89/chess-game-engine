@@ -12,6 +12,7 @@ import Piece from '../../components/piece';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
+import EventManager from '../game/EventManager';
 
 // Util
 import { convertPosition } from '../../utils';
@@ -96,11 +97,17 @@ class MoveManager {
 
   // *: Loops over each square on the board to update each piece with their respective available moves
   public updateMoves = (board: BoardSquareListings) => {
+    const checks = []
+
+    const protectedPieces = [];
+
     for (const boardPos in board) {
       const square = board[boardPos];
       const piece: Piece | null = square.piece;
 
       if (isNull(piece)) { continue };
+
+      if (!protectedPieces.includes(piece)) piece.isProtected = false;
 
       const pieceSide = piece.side;
       const playableLines: MoveLine[] = [];
@@ -113,10 +120,26 @@ class MoveManager {
           const squareIsEmpty: boolean = board[linePos].piece === null;
           const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== pieceSide && !uniqueCapturing;
 
-          if (squareIsEmpty || simpleCaptureAvailable)
+          if (squareIsEmpty) {
             playableLine.push(linePos);
-          else
+          } else if (simpleCaptureAvailable) {
+            if (board[linePos].piece?.kind === PieceKind.King) {
+              checks.push({ attackPiece: piece, frontAttackLine: playableLine, fullAttackLine: legalLine})
+            } else {
+              if (piece.kind === PieceKind.King) {
+                if (!board[linePos].piece.isProtected) {
+                  playableLine.push(linePos);
+                }
+              } else {
+                playableLine.push(linePos);
+              }
+            }
+              break;
+          } else {
+            board[linePos].piece.isProtected = true;
+            protectedPieces.push(board[linePos].piece);
             break;
+          }
         };
         
         playableLines.push(playableLine);
@@ -130,6 +153,10 @@ class MoveManager {
             if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
               playableLine.push(linePos);
             } else {
+              if (board[linePos].piece) {
+                board[linePos].piece.isProtected = true;
+                protectedPieces.push(board[linePos].piece);
+              }
               break;
             };
           };
@@ -140,6 +167,16 @@ class MoveManager {
 
       piece.availableMoves = playableLines.flat();
     };
+
+    if (!isEmpty(checks)) {
+      const isCheckmate = checks.map((v, i) => EventManager.forceCheckResolve(board, v, "white")).some(Boolean);
+
+      if (isCheckmate) {
+        console.info("Checkmate");
+      } else {
+        console.info("Check")
+      }
+    }
     this.updateState('board');
   };
 };

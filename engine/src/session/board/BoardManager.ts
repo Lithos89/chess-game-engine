@@ -2,14 +2,14 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { BOARD_POSITIONS, type ShortPosition, type Side } from '../../logic/terms';
+import { BOARD_POSITIONS, PieceKind, type ShortPosition, type Side } from '../../logic/terms';
 import { BoardSquareCondensed } from '../../formation/structure/board';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
 import { PresentedSquare, type BoardSquareListings } from '../../formation/structure/squareCollection';
 
 // Components
 import Square, { type SquareColor } from '../../components/Square';
-import Piece from '../../components/piece';
+import Piece, { King } from '../../components/piece';
 
 // Utils
 import { flipFormation, convertPosition } from '../../utils';
@@ -18,6 +18,9 @@ import { flipFormation, convertPosition } from '../../utils';
 class BoardManager {
   public boardSquares: BoardSquareListings = {};
   private squareHighlighting: {[key in ShortPosition]? : PresentedSquare["focus"]} = {};
+
+  public whiteKing: King;
+  public blackKing: King;
 
   private readonly getCurrentTurnSide: () => Side;
 
@@ -54,10 +57,17 @@ class BoardManager {
       const regex: RegExp = /b|d|f|h/;
       const isEvenRow: Boolean = regex.test(position);
 
-      const initialPiece: Piece | null = pieceMapping[position] || null;
+      const piece: Piece | null = pieceMapping[position] || null;
+
+      // if (piece.kind === PieceKind.King) {
+      //   if (piece.side === "white")
+      //     this.whiteKing = piece as King;
+      //   else
+      //     this.blackKing = piece as King;
+      // }
 
       const squareColor: SquareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
-      const square: Square = new Square(position, squareColor, initialPiece);
+      const square: Square = new Square(position, squareColor, piece);
       this.boardSquares[position] = square;
     };
   };

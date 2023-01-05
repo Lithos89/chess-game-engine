@@ -93,9 +93,15 @@ var BoardManager = /** @class */ (function () {
             var position = terms_1.BOARD_POSITIONS[tileIndex];
             var regex = /b|d|f|h/;
             var isEvenRow = regex.test(position);
-            var initialPiece = pieceMapping[position] || null;
+            var piece = pieceMapping[position] || null;
+            // if (piece.kind === PieceKind.King) {
+            //   if (piece.side === "white")
+            //     this.whiteKing = piece as King;
+            //   else
+            //     this.blackKing = piece as King;
+            // }
             var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
-            var square = new Square_1.default(position, squareColor, initialPiece);
+            var square = new Square_1.default(position, squareColor, piece);
             this.boardSquares[position] = square;
         }
         ;

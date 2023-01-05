@@ -6,6 +6,7 @@ var terms_1 = require("../../logic/terms");
 var index_1 = require("./index");
 var Piece = /** @class */ (function () {
     function Piece(piece, side) {
+        this.isProtected = false;
         // If captureAlgorithms left empty, then same logic as movement algorithms
         this.captureAlgorithms = [];
         this.kind = piece;
