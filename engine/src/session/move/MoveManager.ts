@@ -8,7 +8,7 @@ import { MoveLine } from 'logic/algorithms/types';
 
 // Components
 import Square from 'components/Square';
-import Piece from '../../components/piece';
+import Piece, { King } from '../../components/piece';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
@@ -99,13 +99,27 @@ class MoveManager {
   public updateMoves = (board: BoardSquareListings) => {
     const checks = []
 
-    const protectedPieces = [];
+    const whiteControlled = new Set();
+    const blackControlled = new Set();
+
+    const protectedPieces: Piece[] = [];
+    let whiteKing: King;
+    let blackKing: King;
 
     for (const boardPos in board) {
       const square = board[boardPos];
       const piece: Piece | null = square.piece;
 
       if (isNull(piece)) { continue };
+
+      if (piece.kind === PieceKind.King) {
+        if (piece.side === 'white')
+          whiteKing = piece as King;
+        else if (piece.side === 'black') {
+          blackKing = piece as King;
+        }
+        continue;
+      }
 
       if (!protectedPieces.includes(piece)) piece.isProtected = false;
 
@@ -121,18 +135,17 @@ class MoveManager {
           const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== pieceSide && !uniqueCapturing;
 
           if (squareIsEmpty) {
+            if (piece.side === "white") {
+              whiteControlled.add(linePos);
+            } else {
+              blackControlled.add(linePos);
+            }
             playableLine.push(linePos);
           } else if (simpleCaptureAvailable) {
             if (board[linePos].piece?.kind === PieceKind.King) {
               checks.push({ attackPiece: piece, frontAttackLine: playableLine, fullAttackLine: legalLine})
             } else {
-              if (piece.kind === PieceKind.King) {
-                if (!board[linePos].piece.isProtected) {
-                  playableLine.push(linePos);
-                }
-              } else {
-                playableLine.push(linePos);
-              }
+              playableLine.push(linePos);
             }
               break;
           } else {
@@ -156,6 +169,12 @@ class MoveManager {
               if (board[linePos].piece) {
                 board[linePos].piece.isProtected = true;
                 protectedPieces.push(board[linePos].piece);
+              } else {
+                if (piece.side === "white") {
+                  whiteControlled.add(linePos);
+                } else {
+                  blackControlled.add(linePos);
+                };
               }
               break;
             };
@@ -167,6 +186,46 @@ class MoveManager {
 
       piece.availableMoves = playableLines.flat();
     };
+
+    for (const piece of [whiteKing, blackKing]) {
+      const playableLines: MoveLine[] = [];
+
+      console.info(blackControlled)
+      console.info(whiteControlled)
+      const badSquares = piece.side === "white" ? blackControlled : whiteControlled;
+
+      for (const legalLine of piece.legalLines) { 
+        const playableLine: MoveLine = [];
+
+        for (const linePos of legalLine) {
+          const squareIsEmpty: boolean = board[linePos].piece === null;
+          const simpleCaptureAvailable: boolean = !isNull(board[linePos].piece) && board[linePos].piece?.side !== piece.side;
+
+          if (squareIsEmpty && !badSquares.has(linePos)) {
+            console.info("linepos: ", linePos);
+            console.info("set: ", badSquares);
+            playableLine.push(linePos);
+          } else if (simpleCaptureAvailable) {
+            if (!board[linePos].piece?.isProtected) {
+              playableLine.push(linePos);
+            }
+            break;
+          } else {
+            if (board[linePos].piece) {
+              board[linePos].piece.isProtected = true;
+              protectedPieces.push(board[linePos].piece);
+            };
+            break;
+          }
+        };
+        
+        playableLines.push(playableLine);
+      };
+
+      piece.availableMoves = playableLines.flat();
+    }
+
+
 
     if (!isEmpty(checks)) {
       const isCheckmate = checks.map((v, i) => EventManager.forceCheckResolve(board, v, "white")).some(Boolean);

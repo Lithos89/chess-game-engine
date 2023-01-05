@@ -73,9 +73,13 @@ var MoveManager = /** @class */ (function () {
         };
         // *: Loops over each square on the board to update each piece with their respective available moves
         this.updateMoves = function (board) {
-            var _a, _b;
+            var _a, _b, _c, _d;
             var checks = [];
+            var whiteControlled = new Set();
+            var blackControlled = new Set();
             var protectedPieces = [];
+            var whiteKing;
+            var blackKing;
             for (var boardPos in board) {
                 var square = board[boardPos];
                 var piece = square.piece;
@@ -83,19 +87,33 @@ var MoveManager = /** @class */ (function () {
                     continue;
                 }
                 ;
+                if (piece.kind === terms_1.PieceKind.King) {
+                    if (piece.side === 'white')
+                        whiteKing = piece;
+                    else if (piece.side === 'black') {
+                        blackKing = piece;
+                    }
+                    continue;
+                }
                 if (!protectedPieces.includes(piece))
                     piece.isProtected = false;
                 var pieceSide = piece.side;
                 var playableLines = [];
                 var uniqueCapturing = !(0, lodash_1.isEmpty)(piece.captureAlgorithms); // Piece can still move there without capturing
-                for (var _i = 0, _c = piece.legalLines; _i < _c.length; _i++) {
-                    var legalLine = _c[_i];
+                for (var _i = 0, _e = piece.legalLines; _i < _e.length; _i++) {
+                    var legalLine = _e[_i];
                     var playableLine = [];
-                    for (var _d = 0, legalLine_1 = legalLine; _d < legalLine_1.length; _d++) {
-                        var linePos = legalLine_1[_d];
+                    for (var _f = 0, legalLine_1 = legalLine; _f < legalLine_1.length; _f++) {
+                        var linePos = legalLine_1[_f];
                         var squareIsEmpty = board[linePos].piece === null;
                         var simpleCaptureAvailable = ((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.side) !== pieceSide && !uniqueCapturing;
                         if (squareIsEmpty) {
+                            if (piece.side === "white") {
+                                whiteControlled.add(linePos);
+                            }
+                            else {
+                                blackControlled.add(linePos);
+                            }
                             playableLine.push(linePos);
                         }
                         else if (simpleCaptureAvailable) {
@@ -103,14 +121,7 @@ var MoveManager = /** @class */ (function () {
                                 checks.push({ attackPiece: piece, frontAttackLine: playableLine, fullAttackLine: legalLine });
                             }
                             else {
-                                if (piece.kind === terms_1.PieceKind.King) {
-                                    if (!board[linePos].piece.isProtected) {
-                                        playableLine.push(linePos);
-                                    }
-                                }
-                                else {
-                                    playableLine.push(linePos);
-                                }
+                                playableLine.push(linePos);
                             }
                             break;
                         }
@@ -125,11 +136,11 @@ var MoveManager = /** @class */ (function () {
                 }
                 ;
                 if (uniqueCapturing) {
-                    for (var _e = 0, _f = piece.captureLines; _e < _f.length; _e++) {
-                        var captureLine = _f[_e];
+                    for (var _g = 0, _h = piece.captureLines; _g < _h.length; _g++) {
+                        var captureLine = _h[_g];
                         var playableLine = [];
-                        for (var _g = 0, captureLine_1 = captureLine; _g < captureLine_1.length; _g++) {
-                            var linePos = captureLine_1[_g];
+                        for (var _j = 0, captureLine_1 = captureLine; _j < captureLine_1.length; _j++) {
+                            var linePos = captureLine_1[_j];
                             if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
                                 playableLine.push(linePos);
                             }
@@ -137,6 +148,15 @@ var MoveManager = /** @class */ (function () {
                                 if (board[linePos].piece) {
                                     board[linePos].piece.isProtected = true;
                                     protectedPieces.push(board[linePos].piece);
+                                }
+                                else {
+                                    if (piece.side === "white") {
+                                        whiteControlled.add(linePos);
+                                    }
+                                    else {
+                                        blackControlled.add(linePos);
+                                    }
+                                    ;
                                 }
                                 break;
                             }
@@ -151,6 +171,45 @@ var MoveManager = /** @class */ (function () {
                 piece.availableMoves = playableLines.flat();
             }
             ;
+            for (var _k = 0, _l = [whiteKing, blackKing]; _k < _l.length; _k++) {
+                var piece = _l[_k];
+                var playableLines = [];
+                console.info(blackControlled);
+                console.info(whiteControlled);
+                var badSquares = piece.side === "white" ? blackControlled : whiteControlled;
+                for (var _m = 0, _o = piece.legalLines; _m < _o.length; _m++) {
+                    var legalLine = _o[_m];
+                    var playableLine = [];
+                    for (var _p = 0, legalLine_2 = legalLine; _p < legalLine_2.length; _p++) {
+                        var linePos = legalLine_2[_p];
+                        var squareIsEmpty = board[linePos].piece === null;
+                        var simpleCaptureAvailable = !(0, lodash_1.isNull)(board[linePos].piece) && ((_c = board[linePos].piece) === null || _c === void 0 ? void 0 : _c.side) !== piece.side;
+                        if (squareIsEmpty && !badSquares.has(linePos)) {
+                            console.info("linepos: ", linePos);
+                            console.info("set: ", badSquares);
+                            playableLine.push(linePos);
+                        }
+                        else if (simpleCaptureAvailable) {
+                            if (!((_d = board[linePos].piece) === null || _d === void 0 ? void 0 : _d.isProtected)) {
+                                playableLine.push(linePos);
+                            }
+                            break;
+                        }
+                        else {
+                            if (board[linePos].piece) {
+                                board[linePos].piece.isProtected = true;
+                                protectedPieces.push(board[linePos].piece);
+                            }
+                            ;
+                            break;
+                        }
+                    }
+                    ;
+                    playableLines.push(playableLine);
+                }
+                ;
+                piece.availableMoves = playableLines.flat();
+            }
             if (!(0, lodash_1.isEmpty)(checks)) {
                 var isCheckmate = checks.map(function (v, i) { return EventManager_1.default.forceCheckResolve(board, v, "white"); }).some(Boolean);
                 if (isCheckmate) {
