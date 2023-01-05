@@ -106,7 +106,7 @@ var Game = /** @class */ (function () {
     ;
     //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
     Game.prototype.takeTurn = function () {
-        this.moveManager.updateMoves(this.boardManager.boardSquares);
+        this.moveManager.updateMoves(this.boardManager.boardSquares, this.currentTurnSide);
         this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
     };

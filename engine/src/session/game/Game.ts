@@ -80,7 +80,7 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
-    this.moveManager.updateMoves(this.boardManager.boardSquares);
+    this.moveManager.updateMoves(this.boardManager.boardSquares, this.currentTurnSide);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
   };

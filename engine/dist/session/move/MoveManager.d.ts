@@ -15,6 +15,6 @@ declare class MoveManager {
     getMoveHistory: () => string[][];
     private capture;
     commitMove: (origin: Square, dest: Square) => void;
-    updateMoves: (board: BoardSquareListings) => void;
+    updateMoves: (board: BoardSquareListings, sideLastMoved?: Side) => void;
 }
 export default MoveManager;

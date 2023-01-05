@@ -56,6 +56,12 @@ var MoveManager = /** @class */ (function () {
             _this.captures[terms_1.SIDES[1 - terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
             _this.updateState('capture');
         };
+        // Idea for algorithm to find out if a piece is pinned
+        /*
+          For each piece, go through it's line of attack and see if the queen is in part of the line. Then if the queen is a part of that line
+          go through all the squares bettween the piece and the queen. Then count the number of pieces that are between the two.
+          If there is more than one piece, then restrict the pinned pieces moves to those that are between the two pieces.
+        */
         this.commitMove = function (origin, dest) {
             var originPiece = origin.piece;
             origin.piece = null;
@@ -72,7 +78,7 @@ var MoveManager = /** @class */ (function () {
             _this.updateState('board');
         };
         // *: Loops over each square on the board to update each piece with their respective available moves
-        this.updateMoves = function (board) {
+        this.updateMoves = function (board, sideLastMoved) {
             var _a, _b, _c, _d;
             var checks = [];
             var whiteControlled = new Set();
@@ -108,11 +114,13 @@ var MoveManager = /** @class */ (function () {
                         var squareIsEmpty = board[linePos].piece === null;
                         var simpleCaptureAvailable = ((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.side) !== pieceSide && !uniqueCapturing;
                         if (squareIsEmpty) {
-                            if (piece.side === "white") {
-                                whiteControlled.add(linePos);
-                            }
-                            else {
-                                blackControlled.add(linePos);
+                            if (piece.kind !== terms_1.PieceKind.Pawn) {
+                                if (piece.side === "white") {
+                                    whiteControlled.add(linePos);
+                                }
+                                else {
+                                    blackControlled.add(linePos);
+                                }
                             }
                             playableLine.push(linePos);
                         }
@@ -126,8 +134,10 @@ var MoveManager = /** @class */ (function () {
                             break;
                         }
                         else {
-                            board[linePos].piece.isProtected = true;
-                            protectedPieces.push(board[linePos].piece);
+                            if (piece.kind !== terms_1.PieceKind.Pawn) {
+                                board[linePos].piece.isProtected = true;
+                                protectedPieces.push(board[linePos].piece);
+                            }
                             break;
                         }
                     }
@@ -171,6 +181,7 @@ var MoveManager = /** @class */ (function () {
                 piece.availableMoves = playableLines.flat();
             }
             ;
+            //* King Updating (still have to account for the fact that the )
             for (var _k = 0, _l = [whiteKing, blackKing]; _k < _l.length; _k++) {
                 var piece = _l[_k];
                 var playableLines = [];
@@ -185,9 +196,20 @@ var MoveManager = /** @class */ (function () {
                         var squareIsEmpty = board[linePos].piece === null;
                         var simpleCaptureAvailable = !(0, lodash_1.isNull)(board[linePos].piece) && ((_c = board[linePos].piece) === null || _c === void 0 ? void 0 : _c.side) !== piece.side;
                         if (squareIsEmpty && !badSquares.has(linePos)) {
-                            console.info("linepos: ", linePos);
-                            console.info("set: ", badSquares);
-                            playableLine.push(linePos);
+                            if (piece.side === "white") {
+                                if (!blackKing.legalLines.flat().includes(linePos)) {
+                                    console.info("linepos: ", linePos);
+                                    console.info("set: ", badSquares);
+                                    playableLine.push(linePos);
+                                }
+                            }
+                            else {
+                                if (!whiteKing.legalLines.flat().includes(linePos)) {
+                                    console.info("linepos: ", linePos);
+                                    console.info("set: ", badSquares);
+                                    playableLine.push(linePos);
+                                }
+                            }
                         }
                         else if (simpleCaptureAvailable) {
                             if (!((_d = board[linePos].piece) === null || _d === void 0 ? void 0 : _d.isProtected)) {
@@ -210,8 +232,9 @@ var MoveManager = /** @class */ (function () {
                 ;
                 piece.availableMoves = playableLines.flat();
             }
+            //* Check / Checkmate related
             if (!(0, lodash_1.isEmpty)(checks)) {
-                var isCheckmate = checks.map(function (v, i) { return EventManager_1.default.forceCheckResolve(board, v, "white"); }).some(Boolean);
+                var isCheckmate = checks.map(function (v, i) { return EventManager_1.default.forceCheckResolve(board, v, sideLastMoved); }).some(Boolean);
                 if (isCheckmate) {
                     console.info("Checkmate");
                 }

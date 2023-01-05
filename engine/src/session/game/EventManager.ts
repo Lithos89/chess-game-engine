@@ -21,13 +21,14 @@ interface Attack {
 class EventManager {
 
   static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine, fullAttackLine }: Attack, side: Side): boolean {
-    const _boardCopy = board;
 
     const controlledSquares: Set<ShortPosition> = new Set();
 
-    const otherMoves: ShortPosition[] = [];
+    const preventitiveMoves: ShortPosition[] = []
 
     let king: King;
+
+    console.info(attackPiece);
 
     //* Blocking or capturing
     for (const boardPos in board) {
@@ -36,15 +37,15 @@ class EventManager {
 
       if (isNull(piece)) { continue };
 
-
-      if (piece.side !== side) {
-        // ATTACKING
+      if (piece.side === side) {
+        //* ATTACKING
 
         for (const move of piece.availableMoves) {
           controlledSquares.add(move);
         };
+
       } else {
-        // DEFENDING
+        //* DEFENDING
         if (piece.kind === PieceKind.King) { king = piece as King; continue}
 
         const playableMoves: ShortPosition[] = [];
@@ -52,24 +53,27 @@ class EventManager {
         for (const move of piece.availableMoves) {
           // Block the attack line or capture the piece
           if (frontAttackLine.includes(move) || move === convertPosition(attackPiece.position)) {
+            preventitiveMoves.push(move);
             playableMoves.push(move);
           };
         };
         piece.availableMoves = playableMoves;
-        otherMoves.push(...playableMoves)
       } 
     }
 
     const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
-    controlledSquares.forEach((pos) => kingMoves.delete(pos))
 
+    try {
+      controlledSquares.forEach((pos) => kingMoves.delete(pos))
+      attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
+    } finally {
+      king.availableMoves = Array.from(kingMoves);
+    }
 
-    fullAttackLine.forEach((pos) => kingMoves.delete(pos))
     // kingMoves.delete(controlledSquares.values())
 
-    king.availableMoves = Array.from(kingMoves);
 
-    return isEmpty(king.availableMoves) && isEmpty(otherMoves);
+    return isEmpty(king.availableMoves) && isEmpty(preventitiveMoves);
     
   };
 

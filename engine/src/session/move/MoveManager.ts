@@ -72,6 +72,13 @@ class MoveManager {
     this.updateState('capture');
   }
 
+  // Idea for algorithm to find out if a piece is pinned
+  /*
+    For each piece, go through it's line of attack and see if the queen is in part of the line. Then if the queen is a part of that line
+    go through all the squares bettween the piece and the queen. Then count the number of pieces that are between the two.
+    If there is more than one piece, then restrict the pinned pieces moves to those that are between the two pieces.
+  */
+
   public commitMove = (origin: Square, dest: Square): void => {
     const originPiece = origin.piece;
     origin.piece = null;
@@ -96,7 +103,7 @@ class MoveManager {
   };
 
   // *: Loops over each square on the board to update each piece with their respective available moves
-  public updateMoves = (board: BoardSquareListings) => {
+  public updateMoves = (board: BoardSquareListings, sideLastMoved?: Side) => {
     const checks = []
 
     const whiteControlled = new Set();
@@ -135,10 +142,12 @@ class MoveManager {
           const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== pieceSide && !uniqueCapturing;
 
           if (squareIsEmpty) {
-            if (piece.side === "white") {
-              whiteControlled.add(linePos);
-            } else {
-              blackControlled.add(linePos);
+            if (piece.kind !== PieceKind.Pawn) {
+              if (piece.side === "white") {
+                whiteControlled.add(linePos);
+              } else {
+                blackControlled.add(linePos);
+              }
             }
             playableLine.push(linePos);
           } else if (simpleCaptureAvailable) {
@@ -149,8 +158,10 @@ class MoveManager {
             }
               break;
           } else {
-            board[linePos].piece.isProtected = true;
-            protectedPieces.push(board[linePos].piece);
+            if (piece.kind !== PieceKind.Pawn) {
+              board[linePos].piece.isProtected = true;
+              protectedPieces.push(board[linePos].piece);
+            }
             break;
           }
         };
@@ -187,6 +198,8 @@ class MoveManager {
       piece.availableMoves = playableLines.flat();
     };
 
+    //* King Updating (still have to account for the fact that the )
+
     for (const piece of [whiteKing, blackKing]) {
       const playableLines: MoveLine[] = [];
 
@@ -201,10 +214,20 @@ class MoveManager {
           const squareIsEmpty: boolean = board[linePos].piece === null;
           const simpleCaptureAvailable: boolean = !isNull(board[linePos].piece) && board[linePos].piece?.side !== piece.side;
 
-          if (squareIsEmpty && !badSquares.has(linePos)) {
-            console.info("linepos: ", linePos);
-            console.info("set: ", badSquares);
-            playableLine.push(linePos);
+          if (squareIsEmpty && !badSquares.has(linePos) ) {
+            if (piece.side === "white") {
+              if (!blackKing.legalLines.flat().includes(linePos)) {
+                console.info("linepos: ", linePos);
+                console.info("set: ", badSquares);
+                playableLine.push(linePos);
+              }
+            } else {
+              if (!whiteKing.legalLines.flat().includes(linePos)) {
+                console.info("linepos: ", linePos);
+                console.info("set: ", badSquares);
+                playableLine.push(linePos);
+              }
+            }
           } else if (simpleCaptureAvailable) {
             if (!board[linePos].piece?.isProtected) {
               playableLine.push(linePos);
@@ -225,10 +248,9 @@ class MoveManager {
       piece.availableMoves = playableLines.flat();
     }
 
-
-
+    //* Check / Checkmate related
     if (!isEmpty(checks)) {
-      const isCheckmate = checks.map((v, i) => EventManager.forceCheckResolve(board, v, "white")).some(Boolean);
+      const isCheckmate = checks.map((v, i) => EventManager.forceCheckResolve(board, v, sideLastMoved)).some(Boolean);
 
       if (isCheckmate) {
         console.info("Checkmate");
