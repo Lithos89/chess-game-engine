@@ -48,7 +48,7 @@ class Game implements Observable {
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
     this.moveManager = new MoveManager((type?: string) => this.signalState(type));
     // this.moveManager.updateMoves(this.boardManager.boardSquares);
-    this.moveManager.tempUpdateMoves(this.boardManager.boardSquares);
+    this.moveManager.updateMoves(this.boardManager.boardSquares);
   };
 
   public signalState = (type?: string) => {
@@ -81,7 +81,7 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
-    this.moveManager.tempUpdateMoves(this.boardManager.boardSquares, this.currentTurnSide);
+    this.moveManager.updateMoves(this.boardManager.boardSquares, this.currentTurnSide);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
   };

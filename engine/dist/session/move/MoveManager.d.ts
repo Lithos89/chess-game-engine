@@ -15,9 +15,9 @@ declare class MoveManager {
     getMoveHistory: () => string[][];
     private capture;
     commitMove: (origin: Square, dest: Square) => void;
-    updateMoves: (board: BoardSquareListings, sideLastMoved?: Side) => void;
-    tempUpdateMoves(board: BoardSquareListings, sideLastMoved?: Side): void;
-    private tempUpdateSideBasicPieces;
-    private tempUpdateKings;
+    updateMoves(board: BoardSquareListings, sideLastMoved?: Side): void;
+    private loopLines;
+    private updateSideBasicPieces;
+    private updateKings;
 }
 export default MoveManager;

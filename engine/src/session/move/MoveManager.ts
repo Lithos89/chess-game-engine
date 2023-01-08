@@ -1,5 +1,5 @@
 
-import { isEmpty, isNull } from 'lodash';
+import { isEmpty, isNull, isUndefined } from 'lodash';
 
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/terms';
@@ -107,169 +107,7 @@ class MoveManager {
   };
 
   // *: Loops over each square on the board to update each piece with their respective available moves
-  public updateMoves = (board: BoardSquareListings, sideLastMoved?: Side) => {
-    //* King related stuff
-    const checks: Attack[] = [];
-
-    const whiteControlled: Set<ShortPosition> = new Set();
-    const blackControlled: Set<ShortPosition> = new Set();
-    const protectedPieces: Piece[] = [];
-
-    // TODO: See if I am better able to handle this logic so taht I don't have to store the kings in a variable
-    let whiteKing: King;
-    let blackKing: King;
-
-    //*
-
-    for (const boardPos in board) {
-      const square = board[boardPos];
-      const piece: Piece | null = square.piece;
-
-      if (isNull(piece)) { continue };
-
-      if (piece.kind === PieceKind.King) {
-        if (piece.side === 'white')
-          whiteKing = piece as King;
-        else if (piece.side === 'black') {
-          blackKing = piece as King;
-        };
-        continue;
-      };
-
-      // Reset the protection of the piece if it is not already set to be protected across this update
-      if (!protectedPieces.includes(piece))
-        piece.isProtected = false;
-
-
-      const pieceSide = piece.side;
-      const playableLines: MoveLine[] = [];
-      const altCapturing = !isEmpty(piece.captureAlgorithms); // If a piece can still move there without capturing
-
-      for (const legalLine of piece.legalLines) { 
-        const playableLine: MoveLine = [];
-
-        for (const linePos of legalLine) {
-          const squareIsEmpty: boolean = board[linePos].piece === null;
-          const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== pieceSide && !altCapturing;
-
-          if (squareIsEmpty) {
-            if (piece.kind !== PieceKind.Pawn) {
-              if (piece.side === "white") {
-                whiteControlled.add(linePos);
-              } else {
-                blackControlled.add(linePos);
-              };
-            };
-            playableLine.push(linePos);
-          } else if (simpleCaptureAvailable) {
-            if (board[linePos].piece?.kind === PieceKind.King) {
-              checks.push({ attackPiece: piece, frontAttackLine: playableLine });
-            } else {
-              playableLine.push(linePos);
-            }
-              break;
-          } else {
-            if (piece.kind !== PieceKind.Pawn) {
-              board[linePos].piece.isProtected = true;
-              protectedPieces.push(board[linePos].piece);
-            }
-            break;
-          }
-        };
-        
-        playableLines.push(playableLine);
-      };
-
-      if (altCapturing) {
-        for (const captureLine of piece.captureLines) {
-          const playableLine: MoveLine = [];
-
-          for (const linePos of captureLine) {
-            if (board[linePos].piece !== null && board[linePos].piece.side !== pieceSide) {
-              playableLine.push(linePos);
-            } else {
-              if (board[linePos].piece) {
-                board[linePos].piece.isProtected = true;
-                protectedPieces.push(board[linePos].piece);
-              } else {
-                if (piece.side === "white") {
-                  whiteControlled.add(linePos);
-                } else {
-                  blackControlled.add(linePos);
-                };
-              };
-              break;
-            };
-          };
-
-          playableLines.push(playableLine);
-        };
-      };
-
-      piece.availableMoves = playableLines.flat();
-    };
-
-    //* King Updating
-
-    const updateKing = function (king: King, controlledSquares: Set<ShortPosition>) {
-      const playableLines: MoveLine[] = [];
-
-      for (const legalLine of king.legalLines) { 
-        const playableLine: MoveLine = [];
-
-        for (const linePos of legalLine) {
-          const squareIsEmpty: boolean = board[linePos].piece === null;
-          const simpleCaptureAvailable: boolean = !isNull(board[linePos].piece) && board[linePos].piece?.side !== king.side;
-
-          if (squareIsEmpty && !controlledSquares.has(linePos) ) {
-            if (king.side === "white") {
-              if (!blackKing.legalLines.flat(2).includes(linePos)) {
-                playableLine.push(linePos);
-              }
-            } else {
-              if (!whiteKing.legalLines.flat(2).includes(linePos)) {
-                playableLine.push(linePos);
-              }
-            }
-          } else if (simpleCaptureAvailable) {
-            if (!board[linePos].piece?.isProtected) {
-              playableLine.push(linePos);
-            }
-            break;
-          } else {
-            if (board[linePos].piece) {
-              board[linePos].piece.isProtected = true;
-              protectedPieces.push(board[linePos].piece);
-            };
-            break;
-          }
-        };
-        
-        playableLines.push(playableLine);
-      };
-
-      king.availableMoves = playableLines.flat();
-    }
-
-    updateKing(whiteKing, blackControlled);
-    updateKing(blackKing, whiteControlled)
-
-    //* Check / Checkmate related
-    if (!isEmpty(checks) && sideLastMoved) {
-      const isCheckmate = checks.map((attack) => EventManager.forceCheckResolve(board, attack, sideLastMoved)).some(Boolean);
-
-      if (isCheckmate) {
-        console.info("Checkmate");
-      } else {
-        console.info("Check");
-      }
-    }
-    this.updateState('board');
-  };
-
-
-  public tempUpdateMoves(board: BoardSquareListings, sideLastMoved?: Side) {
-
+  public updateMoves(board: BoardSquareListings, sideLastMoved?: Side) {
     const basicPieces: { [side in Side]: Piece[] } = {
       white: [],
       black: []
@@ -298,17 +136,17 @@ class MoveManager {
     };
 
     // White
-    const [whiteChecks, whiteControlled] = this.tempUpdateSideBasicPieces(board, basicPieces.white, "white");
+    const [whiteChecks, whiteControlled] = this.updateSideBasicPieces(board, basicPieces.white, "white");
 
     // Black
-    const [blackChecks, blackControlled] = this.tempUpdateSideBasicPieces(board, basicPieces.black, "black");
+    const [blackChecks, blackControlled] = this.updateSideBasicPieces(board, basicPieces.black, "black");
 
-    this.tempUpdateKings(board, kings as { [side in Side] : King}, { white: whiteControlled, black: blackControlled} as {[side in Side]: Set<ShortPosition>});
+    this.updateKings(board, kings as { [side in Side] : King}, { white: whiteControlled, black: blackControlled} as {[side in Side]: Set<ShortPosition>});
 
-    const checks = sideLastMoved === "white" ? Array.from(whiteChecks) : Array.from(blackChecks);
+    const checks = sideLastMoved === "white" ? whiteChecks : blackChecks;
 
-    if (!isEmpty(checks) && sideLastMoved) {
-      const isCheckmate = (checks).map((attack) => EventManager.forceCheckResolve(board, attack, sideLastMoved)).some(Boolean);
+    if (!isEmpty(checks) && !isUndefined(sideLastMoved)) {
+      const isCheckmate = (Array.from(checks)).map((attack) => EventManager.forceCheckResolve(board, attack, sideLastMoved)).some(Boolean);
 
       if (isCheckmate) {
         console.info("Checkmate");
@@ -319,8 +157,41 @@ class MoveManager {
     this.updateState('board');
   };
 
-  private tempUpdateSideBasicPieces = (board: BoardSquareListings, pieces: Piece[], side: Side) => {
-    const checks = [];
+  private loopLines = (piece: Piece, callback: (linePos: ShortPosition, playableLine: MoveLine) => boolean, callBack2?: (linePos: ShortPosition, playableLine: MoveLine) => boolean) => {
+    const playableLines: MoveLine[] = [];
+    const altCapturing = !isEmpty(piece.captureAlgorithms); // If a piece can still move there without capturing
+
+    for (const legalLine of piece.legalLines) { 
+      const playableLine: MoveLine = [];
+      for (const linePos of legalLine) {
+        const continueLine = callback(linePos, playableLine)
+
+        if (!continueLine)
+          break;
+      };
+      playableLines.push(playableLine);
+    };
+
+    if (altCapturing && !isUndefined(callBack2)) {
+      for (const captureLine of piece.captureLines) {
+        const playableLine: MoveLine = [];
+
+        for (const linePos of captureLine) {
+          const continueLine = callBack2(linePos, playableLine);
+
+          if (!continueLine)
+            break;
+        };
+
+        playableLines.push(playableLine);
+      };
+    };
+
+    piece.availableMoves = playableLines.flat();
+  };
+
+  private updateSideBasicPieces = (board: BoardSquareListings, pieces: Piece[], side: Side): [Attack[], Set<ShortPosition>] => {
+    const checks: Attack[] = [];
     const controlledSquares: Set<ShortPosition> = new Set();
     const protectedPieces: Piece[] = [];
 
@@ -328,70 +199,57 @@ class MoveManager {
       if (!protectedPieces.includes(piece))
           piece.isProtected = false;
 
-
-      const playableLines: MoveLine[] = [];
       const altCapturing = !isEmpty(piece.captureAlgorithms); // If a piece can still move there without capturing
 
-      for (const legalLine of piece.legalLines) { 
-        const playableLine: MoveLine = [];
+      this.loopLines(piece, (linePos, playableLine) => {
+        const squareIsEmpty: boolean = board[linePos].piece === null;
+        const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== side && !altCapturing;
 
-        for (const linePos of legalLine) {
-          const squareIsEmpty: boolean = board[linePos].piece === null;
-          const simpleCaptureAvailable: boolean = board[linePos].piece?.side !== side && !altCapturing;
-
-          if (squareIsEmpty) {
-            if (piece.kind !== PieceKind.Pawn) {
-              controlledSquares.add(linePos)
-            };
-            playableLine.push(linePos);
-          } else if (simpleCaptureAvailable) {
-            if (board[linePos].piece?.kind === PieceKind.King) {
-              checks.push({ attackPiece: piece, frontAttackLine: playableLine });
-            } else {
-              playableLine.push(linePos);
-            }
-              break;
-          } else {
-            if (piece.kind !== PieceKind.Pawn) {
-              board[linePos].piece.isProtected = true;
-              protectedPieces.push(board[linePos].piece);
-            }
-            break;
-          }
-        };
-        
-        playableLines.push(playableLine);
-      };
-
-      if (altCapturing) {
-        for (const captureLine of piece.captureLines) {
-          const playableLine: MoveLine = [];
-
-          for (const linePos of captureLine) {
-            if (board[linePos].piece !== null && board[linePos].piece.side !== side) {
-              playableLine.push(linePos);
-            } else {
-              if (board[linePos].piece) {
-                board[linePos].piece.isProtected = true;
-                protectedPieces.push(board[linePos].piece);
-              } else {
-                controlledSquares.add(linePos);
-              };
-              break;
-            };
+        if (squareIsEmpty) {
+          if (piece.kind !== PieceKind.Pawn) {
+            controlledSquares.add(linePos)
           };
-
-          playableLines.push(playableLine);
+          playableLine.push(linePos);
+          return true;
+        } else if (simpleCaptureAvailable) {
+          if (board[linePos].piece?.kind === PieceKind.King) {
+            checks.push({ attackPiece: piece, frontAttackLine: playableLine });
+          } else {
+            playableLine.push(linePos);
+          }
+            return false;
+        } else {
+          if (piece.kind !== PieceKind.Pawn) {
+            board[linePos].piece.isProtected = true;
+            protectedPieces.push(board[linePos].piece);
+          }
+          return false;
+        }
+      }, (linePos, playableLine) => {
+        if (board[linePos].piece !== null && board[linePos].piece.side !== side) {
+          if (board[linePos].piece?.kind === PieceKind.King) {
+            checks.push({ attackPiece: piece, frontAttackLine: playableLine });
+            return false;
+          } else {
+            playableLine.push(linePos);
+            return true;
+          }
+        } else {
+          if (board[linePos].piece) {
+            board[linePos].piece.isProtected = true;
+            protectedPieces.push(board[linePos].piece);
+          } else {
+            controlledSquares.add(linePos);
+          };
+          return false;
         };
-      };
-
-      piece.availableMoves = playableLines.flat();
+      });
     };
 
     return [checks, controlledSquares];
-  }
+  };
 
-  private tempUpdateKings = (board: BoardSquareListings, kings: { [side in Side] : King}, controlledSquares: { [side in Side] : Set<ShortPosition>}) => {
+  private updateKings = (board: BoardSquareListings, kings: { [side in Side] : King}, controlledSquares: { [side in Side] : Set<ShortPosition>}) => {
     for (const i in SIDES) {
       const side = SIDES[i];
       const king = kings[side];
@@ -399,39 +257,28 @@ class MoveManager {
       const enemySide = SIDES[1 - Number(i)];
       const enemyKing = kings[enemySide];
 
-      const playableLines: MoveLine[] = [];
+      this.loopLines(king, (linePos, playableLine) => {
+        const squareIsEmpty: boolean = board[linePos].piece === null;
+        const simpleCaptureAvailable: boolean = !isNull(board[linePos].piece) && board[linePos].piece?.side !== king.side;
 
-      for (const legalLine of king.legalLines) { 
-        const playableLine: MoveLine = [];
-
-        for (const linePos of legalLine) {
-          const squareIsEmpty: boolean = board[linePos].piece === null;
-          const simpleCaptureAvailable: boolean = !isNull(board[linePos].piece) && board[linePos].piece?.side !== king.side;
-
-          if (squareIsEmpty && !controlledSquares[enemySide].has(linePos)) {
-            if (!enemyKing.legalLines.flat(2).includes(linePos)) {
-              playableLine.push(linePos);
-            }
-          } else if (simpleCaptureAvailable) {
-            if (!board[linePos].piece?.isProtected) {
-              playableLine.push(linePos);
-            }
-            break;
-          } else {
-            if (board[linePos].piece) {
-              board[linePos].piece.isProtected = true;
-              // protectedPieces.push(board[linePos].piece);
-            };
-            break;
+        if (squareIsEmpty && !controlledSquares[enemySide].has(linePos)) {
+          if (!enemyKing.legalLines.flat(2).includes(linePos)) {
+            playableLine.push(linePos);
           }
+          return true;
+        } else if (simpleCaptureAvailable) {
+          if (!board[linePos].piece?.isProtected) {
+            playableLine.push(linePos);
+          }
+          return false;
+        } else {
+          if (board[linePos].piece) {
+            board[linePos].piece.isProtected = true;
+            // protectedPieces.push(board[linePos].piece);
+          };
+          return false;
         };
-        
-        playableLines.push(playableLine);
-      };
-
-      king.availableMoves = playableLines.flat();
-
-      // return protectedPieces
+      });
     }
   };
 };
