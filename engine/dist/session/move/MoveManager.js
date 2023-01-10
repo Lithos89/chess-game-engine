@@ -59,8 +59,8 @@ var MoveManager = /** @class */ (function () {
         };
         // Idea for algorithm to find out if a piece is pinned
         /*
-          For each piece, go through it's line of attack and see if the queen is in part of the line. Then if the queen is a part of that line
-          go through all the squares bettween the piece and the queen. Then count the number of pieces that are between the two.
+          For each piece, go through it's line of attack and see if the king is in part of the line. Then if the king is a part of that line
+          go through all the squares bettween the piece and the king. Then count the number of pieces that are between the two.
           If there is more than one piece, then restrict the pinned pieces moves to those that are between the two pieces.
         */
         this.commitMove = function (origin, dest) {
@@ -78,102 +78,101 @@ var MoveManager = /** @class */ (function () {
             // console.log(this.moveLL.listMoves());
             _this.updateState('board');
         };
-        this.loopLines = function (piece, callback, callBack2) {
+        this.loopLines = function (moveLines, isSquareOccupied, emptySquareCallback, occupiedSquareCallback) {
             var playableLines = [];
-            var altCapturing = !(0, lodash_1.isEmpty)(piece.captureAlgorithms); // If a piece can still move there without capturing
-            for (var _i = 0, _a = piece.legalLines; _i < _a.length; _i++) {
-                var legalLine = _a[_i];
+            for (var _i = 0, moveLines_1 = moveLines; _i < moveLines_1.length; _i++) {
+                var moveLine = moveLines_1[_i];
                 var playableLine = [];
-                for (var _b = 0, legalLine_1 = legalLine; _b < legalLine_1.length; _b++) {
-                    var linePos = legalLine_1[_b];
-                    var continueLine = callback(linePos, playableLine);
-                    if (!continueLine)
+                // * Further line search is stopped when a piece is detected, resulting in [empty..., capture?]
+                for (var _a = 0, moveLine_1 = moveLine; _a < moveLine_1.length; _a++) {
+                    var linePos = moveLine_1[_a];
+                    if (isSquareOccupied(linePos)) {
+                        var captureAvailable = occupiedSquareCallback(linePos, playableLine);
+                        if (captureAvailable)
+                            playableLine.push(linePos);
                         break;
+                    }
+                    else {
+                        var moveAvailable = emptySquareCallback(linePos);
+                        if (moveAvailable)
+                            playableLine.push(linePos);
+                    }
+                    ;
                 }
                 ;
                 playableLines.push(playableLine);
             }
             ;
-            if (altCapturing && !(0, lodash_1.isUndefined)(callBack2)) {
-                for (var _c = 0, _d = piece.captureLines; _c < _d.length; _c++) {
-                    var captureLine = _d[_c];
-                    var playableLine = [];
-                    for (var _e = 0, captureLine_1 = captureLine; _e < captureLine_1.length; _e++) {
-                        var linePos = captureLine_1[_e];
-                        var continueLine = callBack2(linePos, playableLine);
-                        if (!continueLine)
-                            break;
-                    }
-                    ;
-                    playableLines.push(playableLine);
-                }
-                ;
-            }
-            ;
-            piece.availableMoves = playableLines.flat();
+            return playableLines.flat();
         };
         this.updateSideBasicPieces = function (board, pieces, side) {
             var checks = [];
             var controlledSquares = new Set();
             var protectedPieces = [];
-            var _loop_1 = function (piece) {
-                if (!protectedPieces.includes(piece))
-                    piece.isProtected = false;
-                var playableLines = [];
+            var doesPieceExist = function (pos) { return !(board[pos].piece === null); };
+            var emptySquareCallback = function (piece) { return function (linePos) {
+                if (piece.kind !== terms_1.PieceKind.Pawn) {
+                    controlledSquares.add(linePos);
+                }
+                ;
+                return true;
+            }; };
+            var occupiedSquareCallback = function (piece) { return function (linePos, playableLine) {
+                var destPiece = board[linePos].piece;
                 var altCapturing = !(0, lodash_1.isEmpty)(piece.captureAlgorithms); // If a piece can still move there without capturing
-                _this.loopLines(piece, function (linePos, playableLine) {
-                    var _a, _b;
-                    var squareIsEmpty = board[linePos].piece === null;
-                    var simpleCaptureAvailable = ((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.side) !== side && !altCapturing;
-                    if (squareIsEmpty) {
-                        if (piece.kind !== terms_1.PieceKind.Pawn) {
-                            controlledSquares.add(linePos);
-                        }
-                        ;
-                        playableLine.push(linePos);
+                var simpleCaptureAvailable = (destPiece === null || destPiece === void 0 ? void 0 : destPiece.side) !== side && !altCapturing;
+                if (simpleCaptureAvailable) {
+                    if ((destPiece === null || destPiece === void 0 ? void 0 : destPiece.kind) === terms_1.PieceKind.King) {
+                        checks.push({ attackPiece: piece, frontAttackLine: playableLine });
+                    }
+                    else {
                         return true;
                     }
-                    else if (simpleCaptureAvailable) {
-                        if (((_b = board[linePos].piece) === null || _b === void 0 ? void 0 : _b.kind) === terms_1.PieceKind.King) {
-                            checks.push({ attackPiece: piece, frontAttackLine: playableLine });
-                        }
-                        else {
-                            playableLine.push(linePos);
-                        }
-                        return false;
-                    }
-                    else {
-                        if (piece.kind !== terms_1.PieceKind.Pawn) {
-                            board[linePos].piece.isProtected = true;
-                            protectedPieces.push(board[linePos].piece);
-                        }
-                        return false;
-                    }
-                }, function (linePos, playableLine) {
-                    var _a;
-                    if (board[linePos].piece !== null && board[linePos].piece.side !== side) {
-                        if (((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.kind) === terms_1.PieceKind.King) {
-                            checks.push({ attackPiece: piece, frontAttackLine: playableLine });
-                            return false;
-                        }
-                        else {
-                            playableLine.push(linePos);
-                            return true;
-                        }
-                    }
-                    else {
-                        if (board[linePos].piece) {
-                            board[linePos].piece.isProtected = true;
-                            protectedPieces.push(board[linePos].piece);
-                        }
-                        else {
-                            controlledSquares.add(linePos);
-                        }
-                        ;
-                        return false;
+                    ;
+                }
+                else {
+                    if (piece.kind !== terms_1.PieceKind.Pawn) {
+                        destPiece.isProtected = true;
+                        protectedPieces.push(destPiece);
                     }
                     ;
-                });
+                }
+                ;
+                return false;
+            }; };
+            var _loop_1 = function (piece) {
+                piece.availableMoves = []; // Reset piece moveset
+                var newMoves = [];
+                if (!protectedPieces.includes(piece))
+                    piece.isProtected = false;
+                var regularMoves = _this.loopLines(piece.legalLines, doesPieceExist, emptySquareCallback(piece), occupiedSquareCallback(piece));
+                newMoves.push.apply(newMoves, regularMoves);
+                if (!(0, lodash_1.isEmpty)(piece.captureAlgorithms)) {
+                    var captureMoves = _this.loopLines(piece.captureLines, doesPieceExist, function (linePos) {
+                        controlledSquares.add(linePos);
+                        return false;
+                    }, function (linePos, playableLine) {
+                        var _a;
+                        if (board[linePos].piece.side !== side) {
+                            if (((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.kind) === terms_1.PieceKind.King) {
+                                checks.push({ attackPiece: piece, frontAttackLine: playableLine });
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        else {
+                            board[linePos].piece.isProtected = true;
+                            protectedPieces.push(board[linePos].piece);
+                            return false;
+                        }
+                        ;
+                    });
+                    newMoves.push.apply(newMoves, captureMoves);
+                }
+                ;
+                piece.availableMoves = newMoves;
             };
             for (var _i = 0, pieces_1 = pieces; _i < pieces_1.length; _i++) {
                 var piece = pieces_1[_i];
@@ -183,82 +182,59 @@ var MoveManager = /** @class */ (function () {
             return [checks, controlledSquares];
         };
         this.updateKings = function (board, kings, controlledSquares) {
+            var doesPieceExist = function (pos) { return !(board[pos].piece === null); };
+            var occupiedSquareCallback = function (king) { return function (linePos) {
+                var destPiece = board[linePos].piece;
+                var simpleCaptureAvailable = !(0, lodash_1.isNull)(destPiece) && (destPiece === null || destPiece === void 0 ? void 0 : destPiece.side) !== king.side;
+                if (simpleCaptureAvailable) {
+                    if (!(destPiece === null || destPiece === void 0 ? void 0 : destPiece.isProtected)) {
+                        return true;
+                    }
+                    ;
+                }
+                else {
+                    if (destPiece)
+                        board[linePos].piece.isProtected = true;
+                }
+                ;
+                return false;
+            }; };
             var _loop_2 = function (i) {
                 var side = terms_1.SIDES[i];
                 var king = kings[side];
                 var enemySide = terms_1.SIDES[1 - Number(i)];
                 var enemyKing = kings[enemySide];
-                _this.loopLines(king, function (linePos, playableLine) {
-                    var _a, _b;
-                    var squareIsEmpty = board[linePos].piece === null;
-                    var simpleCaptureAvailable = !(0, lodash_1.isNull)(board[linePos].piece) && ((_a = board[linePos].piece) === null || _a === void 0 ? void 0 : _a.side) !== king.side;
-                    if (squareIsEmpty && !controlledSquares[enemySide].has(linePos)) {
+                king.availableMoves = [];
+                var newMoves = [];
+                var emptySquareCallback = function (linePos) {
+                    if (!controlledSquares[enemySide].has(linePos)) {
                         if (!enemyKing.legalLines.flat(2).includes(linePos)) {
-                            playableLine.push(linePos);
-                        }
-                        return true;
-                    }
-                    else if (simpleCaptureAvailable) {
-                        if (!((_b = board[linePos].piece) === null || _b === void 0 ? void 0 : _b.isProtected)) {
-                            playableLine.push(linePos);
-                        }
-                        return false;
-                    }
-                    else {
-                        if (board[linePos].piece) {
-                            board[linePos].piece.isProtected = true;
-                            // protectedPieces.push(board[linePos].piece);
+                            return true;
                         }
                         ;
-                        return false;
                     }
                     ;
-                });
+                    return false;
+                };
+                var moves = _this.loopLines(king.legalLines, doesPieceExist, emptySquareCallback, occupiedSquareCallback(king));
+                newMoves.push.apply(newMoves, moves);
+                king.availableMoves = newMoves;
             };
             for (var i in terms_1.SIDES) {
                 _loop_2(i);
             }
+            ;
         };
     }
     ;
     // *: Loops over each square on the board to update each piece with their respective available moves
     MoveManager.prototype.updateMoves = function (board, sideLastMoved) {
-        var basicPieces = {
-            white: [],
-            black: []
-        };
-        var kings = {};
-        for (var boardPos in board) {
-            var square = board[boardPos];
-            var piece = square.piece;
-            if ((0, lodash_1.isNull)(piece)) {
-                continue;
-            }
-            ;
-            if (piece.kind === terms_1.PieceKind.King) {
-                if (piece.side === 'white')
-                    kings.white = piece;
-                else if (piece.side === 'black') {
-                    kings.black = piece;
-                }
-                ;
-            }
-            else {
-                if (piece.side === 'white')
-                    basicPieces.white.push(piece);
-                else if (piece.side === 'black') {
-                    basicPieces.black.push(piece);
-                }
-                ;
-            }
-            ;
-        }
-        ;
-        // White
-        var _a = this.updateSideBasicPieces(board, basicPieces.white, "white"), whiteChecks = _a[0], whiteControlled = _a[1];
-        // Black
-        var _b = this.updateSideBasicPieces(board, basicPieces.black, "black"), blackChecks = _b[0], blackControlled = _b[1];
+        var _a = (0, utils_1.sortPieces)(board), basicPieces = _a[0], kings = _a[1];
+        var _b = this.updateSideBasicPieces(board, basicPieces.white, "white"), whiteChecks = _b[0], whiteControlled = _b[1];
+        var _c = this.updateSideBasicPieces(board, basicPieces.black, "black"), blackChecks = _c[0], blackControlled = _c[1];
+        // Kings are updated after basic pieces to make sure that a king cannot move into a line of check and if it is already in check
         this.updateKings(board, kings, { white: whiteControlled, black: blackControlled });
+        //? Could add a pin updating function here that takes the kings and the other pieces and loops over all of the basic pieces to detect pins
         var checks = sideLastMoved === "white" ? whiteChecks : blackChecks;
         if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
             var isCheckmate = (Array.from(checks)).map(function (attack) { return EventManager_1.default.forceCheckResolve(board, attack, sideLastMoved); }).some(Boolean);

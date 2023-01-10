@@ -32,6 +32,7 @@ var Rook = /** @class */ (function (_super) {
                 core_1.default.rank()
             ];
         };
+        _this.emptySquareCallback = function (linePos) { return true; };
         return _this;
     }
     ;

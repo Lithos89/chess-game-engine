@@ -24,6 +24,9 @@ abstract class Piece {
   // If captureAlgorithms left empty, then same logic as movement algorithms
   public captureAlgorithms: MoveAlgorithm[] = [];
   abstract movementAlgorithms: MoveAlgorithm[];
+
+  // abstract emptySquareCallback: (linePos: ShortPosition) => boolean;
+  // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
   
   public static create({ kind, side }: PieceListing): Piece {
     switch (kind) {

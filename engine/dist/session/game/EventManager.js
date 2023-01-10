@@ -41,7 +41,8 @@ var EventManager = /** @class */ (function () {
         }
         var kingMoves = new Set(king.availableMoves);
         // Remove the positions that are still in the attacking piece's lines of attack
-        attackPiece.legalLines.flat(2).forEach(function (pos) { return kingMoves.delete(pos); });
+        if (attackPiece.kind !== terms_1.PieceKind.Pawn)
+            attackPiece.legalLines.flat(2).forEach(function (pos) { return kingMoves.delete(pos); });
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);
     };

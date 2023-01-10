@@ -12,6 +12,8 @@ var Piece = /** @class */ (function () {
         this.kind = piece;
         this.side = side;
     }
+    // abstract emptySquareCallback: (linePos: ShortPosition) => boolean;
+    // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
     Piece.create = function (_a) {
         var kind = _a.kind, side = _a.side;
         switch (kind) {

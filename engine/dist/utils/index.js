@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.indexInRange = exports.flipFormation = exports.convertPosition = void 0;
+exports.indexInRange = exports.sortPieces = exports.flipFormation = exports.convertPosition = void 0;
+var lodash_1 = require("lodash");
 // Types, interface, constants, ...
 var terms_1 = require("../logic/terms");
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
@@ -31,6 +32,41 @@ function flipFormation(piecesFormation) {
 }
 exports.flipFormation = flipFormation;
 ;
+function sortPieces(board) {
+    var basicPieces = {
+        white: [],
+        black: []
+    };
+    var kings = {};
+    for (var boardPos in board) {
+        var square = board[boardPos];
+        var piece = square.piece;
+        if ((0, lodash_1.isNull)(piece)) {
+            continue;
+        }
+        ;
+        if (piece.kind === terms_1.PieceKind.King) {
+            if (piece.side === 'white')
+                kings.white = piece;
+            else if (piece.side === 'black') {
+                kings.black = piece;
+            }
+            ;
+        }
+        else {
+            if (piece.side === 'white')
+                basicPieces.white.push(piece);
+            else if (piece.side === 'black') {
+                basicPieces.black.push(piece);
+            }
+            ;
+        }
+        ;
+    }
+    ;
+    return [basicPieces, kings];
+}
+exports.sortPieces = sortPieces;
 function indexInRange(index, array) {
     return index >= 0 && index < array.length;
 }

@@ -53,7 +53,8 @@ class EventManager {
     const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
     
     // Remove the positions that are still in the attacking piece's lines of attack
-    attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
+    if (attackPiece.kind !== PieceKind.Pawn)
+      attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
     
     king.availableMoves = Array.from(kingMoves);
 
