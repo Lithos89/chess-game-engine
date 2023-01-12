@@ -27,8 +27,7 @@ class King extends Piece implements DynamicBehavior {
 
   //? See how this static implementation works when it comes to multiple games or sessions
   // TODO: Add error handling to make sure that both properties are filled and that they do not become overwritten
-  public static white: King;
-  public static black: King;
+  public enemyKing: King;
 
   public checks: Attack[] = [];
 
@@ -49,18 +48,25 @@ class King extends Piece implements DynamicBehavior {
   //   return false;
   // };
 
-  public override influenceEmptySquare = (square: Square) => {
-    const enemySide = SIDES[1 - SIDES.indexOf(this.side)];
-    const enemyKing = King[enemySide];
+  public override influenceEmptySquare = (square: Square): boolean => {
+    const enemySide = this.enemyKing.side;
+
+    console.log(this.legalLines);
+
     if (!square.controlled[enemySide]) {
-      if (!enemyKing.legalLines.flat(2).includes(convertPosition(square.position) as ShortPosition)) {
+      const enemyKingControlledSquares: ShortPosition[] = this.enemyKing.legalLines.flat(2);
+      const squareShortPos: ShortPosition = convertPosition(square.position) as ShortPosition;
+
+      console.log(enemyKingControlledSquares)
+      console.log(squareShortPos)
+      if (!enemyKingControlledSquares.includes(squareShortPos)) {
         return true;
       };
     };
     return false;
   };
 
-  public override influenceOccupiedSquare = (square: Square) => {
+  public override influenceOccupiedSquare = (square: Square): boolean => {
     const destPiece: Piece = square.piece;
     const simpleCaptureAvailable: boolean = !isNull(destPiece) && destPiece.side !== this.side;
 

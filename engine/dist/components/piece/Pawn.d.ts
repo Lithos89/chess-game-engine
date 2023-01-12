@@ -1,7 +1,7 @@
 import { type Side } from '../../logic/terms';
 import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
 import DynamicBehavior from './interfaces/dynamicBehavior';
-import Piece from './index';
+import Piece from './Piece';
 import Square from '../Square';
 declare class Pawn extends Piece implements DynamicBehavior {
     private readonly direction;
@@ -11,7 +11,7 @@ declare class Pawn extends Piece implements DynamicBehavior {
     loadMoveAlgorithms(): MoveAlgorithm[];
     influenceEmptySquare: () => boolean;
     influenceOccupiedSquare: () => boolean;
-    altEmptySquareCallback(square: Square): boolean;
-    altOccupiedSquareCallback: (square: Square, playableLine: MoveLine) => boolean;
+    altInfluenceEmptySquare(square: Square): boolean;
+    altInfluenceOccupiedSquare: (square: Square, playableLine: MoveLine) => boolean;
 }
 export default Pawn;

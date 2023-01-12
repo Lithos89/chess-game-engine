@@ -2,8 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 var terms_1 = require("../../logic/terms");
-var index_1 = require("./index");
 var Piece = /** @class */ (function () {
+    // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
+    // !: Circular dependence created, need to move this outside the class to solve the problem or come up with something else
+    // public static create({ kind, side }: PieceListing): Piece {
+    //   switch (kind) {
+    //     case PieceKind.Pawn:
+    //       return new Pawn(side);
+    //     case PieceKind.Rook:
+    //       return new Rook(side);
+    //     case PieceKind.Knight:
+    //       return new Knight(side);
+    //     case PieceKind.Bishop:
+    //       return new Bishop(side);
+    //     case PieceKind.Queen:
+    //       return new Queen(side);
+    //     case PieceKind.King:
+    //       return new King(side);
+    //     default:
+    //       throw new Error(`Unable to create piece with kind: ${kind}, side: ${side}`);
+    //   };
+    // };
     function Piece(piece, side) {
         this.isProtected = false;
         // If captureAlgorithms left empty, then same logic as movement algorithms
@@ -11,28 +30,6 @@ var Piece = /** @class */ (function () {
         this.kind = piece;
         this.side = side;
     }
-    // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
-    Piece.create = function (_a) {
-        var kind = _a.kind, side = _a.side;
-        switch (kind) {
-            case terms_1.PieceKind.Pawn:
-                return new index_1.Pawn(side);
-            case terms_1.PieceKind.Rook:
-                return new index_1.Rook(side);
-            case terms_1.PieceKind.Knight:
-                return new index_1.Knight(side);
-            case terms_1.PieceKind.Bishop:
-                return new index_1.Bishop(side);
-            case terms_1.PieceKind.Queen:
-                return new index_1.Queen(side);
-            case terms_1.PieceKind.King:
-                return new index_1.King(side);
-            default:
-                throw new Error("Unable to create piece with kind: ".concat(kind, ", side: ").concat(side));
-        }
-        ;
-    };
-    ;
     ;
     Piece.prototype.isMultiBehavioral = function () {
         // TODO: See if hasOwnProperty can be used for interface method and attatched here
@@ -82,11 +79,11 @@ var Piece = /** @class */ (function () {
     //   return false; 
     // };
     Piece.prototype.influenceOccupiedSquare = function (square, playableLine) {
-        var destPiece = square.piece;
+        var destPiece = square.piece; //!: destPiece still optional with current implementation, FIX
         var altCapturing = !(0, lodash_1.isEmpty)(this.captureAlgorithms); // If a piece can still move there without capturing
-        var simpleCaptureAvailable = destPiece.side !== this.side && !altCapturing;
+        var simpleCaptureAvailable = (destPiece === null || destPiece === void 0 ? void 0 : destPiece.side) !== this.side && !altCapturing;
         if (simpleCaptureAvailable) {
-            if (destPiece instanceof index_1.King) {
+            if ((destPiece === null || destPiece === void 0 ? void 0 : destPiece.kind) === terms_1.PieceKind.King) {
                 destPiece.checks.push({ attackPiece: this, frontAttackLine: playableLine });
             }
             else {

@@ -15,7 +15,7 @@ var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 var start_1 = require("../../formation/setups/start");
-var piece_1 = require("../../components/piece");
+var Piece_1 = require("../../components/piece/Piece");
 // Game Management
 var BoardManager_1 = require("../board/BoardManager");
 var MoveManager_1 = require("../move/MoveManager");
@@ -59,7 +59,7 @@ var Game = /** @class */ (function () {
             var _a;
             if ((0, lodash_1.isString)(position)) {
                 var selectedPiece = (_a = _this.boardManager.boardSquares[position]) === null || _a === void 0 ? void 0 : _a.piece;
-                if ((selectedPiece instanceof piece_1.default) && (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide)) {
+                if ((selectedPiece instanceof Piece_1.default) && (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide)) {
                     _this.boardManager.highlightMoves(selectedPiece);
                     return true;
                 }

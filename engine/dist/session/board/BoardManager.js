@@ -5,7 +5,14 @@ var lodash_1 = require("lodash");
 var terms_1 = require("../../logic/terms");
 // Components
 var Square_1 = require("../../components/Square");
-var piece_1 = require("../../components/piece");
+// import Piece, { Rook, Knight, Queen, Bishop, King, Pawn } from '../../components/piece';
+var Piece_1 = require("../../components/piece/Piece");
+var King_1 = require("../../components/piece/King");
+var Rook_1 = require("../../components/piece/Rook");
+var Knight_1 = require("../../components/piece/Knight");
+var Bishop_1 = require("../../components/piece/Bishop");
+var Queen_1 = require("../../components/piece/Queen");
+var Pawn_1 = require("../../components/piece/Pawn");
 // Utils
 var convertPosition_1 = require("../../utils/position/convertPosition");
 var flipFormation_1 = require("../../utils/board/flipFormation");
@@ -43,7 +50,7 @@ var BoardManager = /** @class */ (function () {
         /*--------------------------------------------HIGHLIGHTING---------------------------------------------*/
         this.highlightMoves = function (piece) {
             var _a;
-            if (piece instanceof piece_1.default) {
+            if (piece instanceof Piece_1.default) {
                 if (piece.side === _this.getCurrentTurnSide()) {
                     //* Highlighting the available moves of the piece
                     for (var _i = 0, _b = piece.availableMoves; _i < _b.length; _i++) {
@@ -99,48 +106,67 @@ var BoardManager = /** @class */ (function () {
         };
         this.updateLines = function (piece) {
             var playableLines = [];
-            // TODO: At the moment this does not work, need to allow for the function to be able to access 'alt' methods
-            for (var _i = 0, _a = [piece.legalLines, piece.captureLines]; _i < _a.length; _i++) {
-                var moveLineSet = _a[_i];
-                for (var _b = 0, moveLineSet_1 = moveLineSet; _b < moveLineSet_1.length; _b++) {
-                    var moveLine = moveLineSet_1[_b];
-                    var playableLine = [];
-                    // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
-                    for (var _c = 0, moveLine_2 = moveLine; _c < moveLine_2.length; _c++) {
-                        var linePos = moveLine_2[_c];
-                        var square = _this.boardSquares[linePos];
-                        // TODO: Try making it the negation to allow for better if else flow down below
-                        var isSquareOccupied = !(square.piece === null);
-                        var moveAvailable = void 0;
-                        if (isSquareOccupied) {
-                            moveAvailable = piece.influenceEmptySquare(square);
-                            break;
-                        }
-                        else {
-                            moveAvailable = piece.influenceOccupiedSquare(square, playableLine);
-                        }
-                        ;
+            for (var _i = 0, _a = piece.legalLines; _i < _a.length; _i++) {
+                var moveLine = _a[_i];
+                var playableLine = [];
+                // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
+                for (var _b = 0, moveLine_2 = moveLine; _b < moveLine_2.length; _b++) {
+                    var linePos = moveLine_2[_b];
+                    var square = _this.boardSquares[linePos];
+                    var isSquareUnoccupied = (0, lodash_1.isNull)(square.piece);
+                    if (isSquareUnoccupied) {
+                        var moveAvailable = piece.influenceEmptySquare(square);
                         if (moveAvailable)
                             playableLine.push(linePos);
+                    }
+                    else {
+                        var captureAvailable = piece.influenceOccupiedSquare(square, playableLine);
+                        if (captureAvailable)
+                            playableLine.push(linePos);
+                        break;
+                    }
+                    ;
+                }
+                ;
+                playableLines.push(playableLine);
+            }
+            ;
+            if (piece instanceof Pawn_1.default) {
+                for (var _c = 0, _d = piece.captureLines; _c < _d.length; _c++) {
+                    var moveLine = _d[_c];
+                    var playableLine = [];
+                    // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
+                    for (var _e = 0, moveLine_3 = moveLine; _e < moveLine_3.length; _e++) {
+                        var linePos = moveLine_3[_e];
+                        var square = _this.boardSquares[linePos];
+                        var isSquareUnoccupied = (0, lodash_1.isNull)(square.piece);
+                        if (isSquareUnoccupied) {
+                            var moveAvailable = piece.altInfluenceEmptySquare(square);
+                            if (moveAvailable)
+                                playableLine.push(linePos);
+                        }
+                        else {
+                            var captureAvailable = piece.altInfluenceOccupiedSquare(square, playableLine);
+                            if (captureAvailable)
+                                playableLine.push(linePos);
+                            break;
+                        }
+                        ;
                     }
                     ;
                     playableLines.push(playableLine);
                 }
                 ;
-                return playableLines.flat();
             }
-            ;
+            return playableLines.flat();
         };
         this.updateSideBasicPieces = function (pieces) {
             var _a;
             var checks = [];
             var controlledSquares = new Set();
-            var protectedPieces = [];
             for (var _i = 0, pieces_1 = pieces; _i < pieces_1.length; _i++) {
                 var piece = pieces_1[_i];
                 piece.availableMoves = []; // Reset piece moveset
-                if (!protectedPieces.includes(piece))
-                    piece.isProtected = false;
                 var regularMoves = _this.updateLines(piece);
                 (_a = piece.availableMoves).push.apply(_a, regularMoves);
                 // if (!isEmpty(piece.captureAlgorithms)) {
@@ -159,7 +185,9 @@ var BoardManager = /** @class */ (function () {
                 var side = terms_1.SIDES[i];
                 var king = kings[side];
                 var enemySide = terms_1.SIDES[1 - Number(i)];
+                // TODO: See if I can find a better solution, this implementation is prone to bugs
                 var enemyKing = kings[enemySide];
+                king.enemyKing = enemyKing;
                 king.availableMoves = []; // Reset king movesets
                 var newMoves = _this.updateLines(king);
                 (_a = king.availableMoves).push.apply(_a, newMoves);
@@ -183,7 +211,44 @@ var BoardManager = /** @class */ (function () {
         var initialPieces = {};
         for (var pos in pieceConfigurations) {
             var pieceConfig = pieceConfigurations[pos];
-            initialPieces[pos] = piece_1.default.create(pieceConfig);
+            console.info(pieceConfig.kind);
+            // switch (pieceConfig.kind) {
+            //   case PieceKind.Pawn:
+            //   // case 'p':
+            //     initialPieces[pos] = new Pawn(pieceConfig.side);
+            //   case PieceKind.Rook:
+            //   // case 'r':
+            //     initialPieces[pos] = new Rook(pieceConfig.side);
+            //   case PieceKind.Knight:
+            //   // case 'h':
+            //     initialPieces[pos] = new Knight(pieceConfig.side);
+            //   case PieceKind.Bishop:
+            //   // case 'b':
+            //     initialPieces[pos] = new Bishop(pieceConfig.side);
+            //   case PieceKind.Queen:
+            //   // case 'q':
+            //     initialPieces[pos] = new Queen(pieceConfig.side);
+            //   case PieceKind.King:
+            //   // case 'k':
+            //     initialPieces[pos] = new King(pieceConfig.side);
+            //   default:
+            //     throw new Error(`Unable to create piece with kind: ${pieceConfig.kind}, side: ${pieceConfig.side}`);
+            // };
+            // initialPieces[pos] = Piece.create(pieceConfiguration[pos]);
+            if (pieceConfig.kind === terms_1.PieceKind.Pawn)
+                initialPieces[pos] = new Pawn_1.default(pieceConfig.side);
+            else if (pieceConfig.kind === terms_1.PieceKind.Rook)
+                initialPieces[pos] = new Rook_1.default(pieceConfig.side);
+            else if (pieceConfig.kind === terms_1.PieceKind.Knight)
+                initialPieces[pos] = new Knight_1.default(pieceConfig.side);
+            else if (pieceConfig.kind === terms_1.PieceKind.Bishop)
+                initialPieces[pos] = new Bishop_1.default(pieceConfig.side);
+            else if (pieceConfig.kind === terms_1.PieceKind.Queen)
+                initialPieces[pos] = new Queen_1.default(pieceConfig.side);
+            else if (pieceConfig.kind === terms_1.PieceKind.King)
+                initialPieces[pos] = new King_1.default(pieceConfig.side);
+            else
+                throw new Error("Unable to create piece with kind: ".concat(pieceConfig.kind, ", side: ").concat(pieceConfig.side));
         }
         ;
         return initialPieces;
@@ -205,13 +270,16 @@ var BoardManager = /** @class */ (function () {
     // *: Loops over each square on the board to update each piece with their respective available moves
     BoardManager.prototype.processAvailableMoves = function (checks, sideLastMoved) {
         var _a = (0, sortPieces_1.default)(this.boardSquares), basicPieces = _a[0], kings = _a[1];
+        basicPieces.white.forEach(function (piece) { return piece.isProtected = false; });
+        basicPieces.black.forEach(function (piece) { return piece.isProtected = false; });
         this.updateSideBasicPieces(basicPieces.white);
         this.updateSideBasicPieces(basicPieces.black);
         // Kings are updated after basic pieces to make sure that a king cannot move into a line of check and if it is already in check
         this.updateKings(kings);
         //? Could add a pin updating function here that takes the kings and the other pieces and loops over all of the basic pieces to detect pins
         // checks.push(...(sideLastMoved === "white" ? whiteChecks : blackChecks));
-        checks.push.apply(checks, piece_1.King[sideLastMoved].checks);
+        if (sideLastMoved)
+            checks.push.apply(checks, King_1.default[sideLastMoved].checks);
         this.updateState();
     };
     ;

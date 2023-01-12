@@ -18,7 +18,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 // Components
-var index_1 = require("./index");
+// import Piece, { King } from './index';
+var Piece_1 = require("./Piece");
+var King_1 = require("./King");
 // Algorithms
 var core_1 = require("../../logic/algorithms/core");
 var Pawn = /** @class */ (function (_super) {
@@ -30,10 +32,10 @@ var Pawn = /** @class */ (function (_super) {
         _this.moved = false;
         _this.influenceEmptySquare = function () { return true; };
         _this.influenceOccupiedSquare = function () { return false; };
-        _this.altOccupiedSquareCallback = function (square, playableLine) {
+        _this.altInfluenceOccupiedSquare = function (square, playableLine) {
             var destPiece = square.piece;
             if (destPiece.side !== _this.side) {
-                if (destPiece instanceof index_1.King) {
+                if (destPiece instanceof King_1.default) {
                     destPiece.checks.push({ attackPiece: _this, frontAttackLine: playableLine });
                     return false;
                 }
@@ -57,13 +59,13 @@ var Pawn = /** @class */ (function (_super) {
         return [core_1.default.file(fileDistance, this.direction)];
     };
     ;
-    Pawn.prototype.altEmptySquareCallback = function (square) {
+    Pawn.prototype.altInfluenceEmptySquare = function (square) {
         square.controlled[this.side] = true;
         return false;
     };
     ;
     return Pawn;
-}(index_1.default));
+}(Piece_1.default));
 ;
 exports.default = Pawn;
 //# sourceMappingURL=Pawn.js.map

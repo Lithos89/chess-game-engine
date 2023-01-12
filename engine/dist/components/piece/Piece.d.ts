@@ -1,4 +1,3 @@
-import { PieceListing } from '../../formation/structure/pieceCollection';
 import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/terms';
 import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
 import DynamicBehavior from './interfaces/dynamicBehavior';
@@ -13,7 +12,6 @@ export default abstract class Piece {
     availableMoves: ShortPosition[];
     captureAlgorithms: MoveAlgorithm[];
     abstract movementAlgorithms: MoveAlgorithm[];
-    static create({ kind, side }: PieceListing): Piece;
     constructor(piece: PieceKind, side: Side);
     isMultiBehavioral(): this is DynamicBehavior;
     updateLines(): void;

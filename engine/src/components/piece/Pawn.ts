@@ -6,7 +6,9 @@ import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types'
 import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Components
-import Piece, { King } from './index';
+// import Piece, { King } from './index';
+import Piece from './Piece';
+import King from './King';
 import Square from '../Square';
 
 // Algorithms
@@ -36,12 +38,12 @@ class Pawn extends Piece implements DynamicBehavior {
 
   public override influenceOccupiedSquare = () => false;
 
-  public altEmptySquareCallback(square: Square): boolean {
+  public altInfluenceEmptySquare(square: Square): boolean {
     square.controlled[this.side] = true;
     return false;
   };
 
-  public altOccupiedSquareCallback = (square: Square, playableLine: MoveLine) => {
+  public altInfluenceOccupiedSquare = (square: Square, playableLine: MoveLine) => {
     const destPiece = square.piece;
     if (destPiece.side !== this.side) {
       if (destPiece instanceof King) {

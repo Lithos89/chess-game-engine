@@ -10,8 +10,7 @@ interface Attack {
 declare class King extends Piece implements DynamicBehavior {
     movementAlgorithms: null;
     moved: boolean;
-    static white: King;
-    static black: King;
+    enemyKing: King;
     checks: Attack[];
     constructor(side: Side);
     loadMoveAlgorithms: () => (({ row, col }: import("../../logic/terms").Position) => MoveLine[])[];

@@ -42,10 +42,14 @@ var King = /** @class */ (function (_super) {
         //   return false;
         // };
         _this.influenceEmptySquare = function (square) {
-            var enemySide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(_this.side)];
-            var enemyKing = King[enemySide];
+            var enemySide = _this.enemyKing.side;
+            console.log(_this.legalLines);
             if (!square.controlled[enemySide]) {
-                if (!enemyKing.legalLines.flat(2).includes((0, convertPosition_1.default)(square.position))) {
+                var enemyKingControlledSquares = _this.enemyKing.legalLines.flat(2);
+                var squareShortPos = (0, convertPosition_1.default)(square.position);
+                console.log(enemyKingControlledSquares);
+                console.log(squareShortPos);
+                if (!enemyKingControlledSquares.includes(squareShortPos)) {
                     return true;
                 }
                 ;

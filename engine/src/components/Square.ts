@@ -3,7 +3,7 @@
 import { type Position, type ShortPosition, type Side } from '../logic/terms';
 
 // Components
-import Piece from './piece';
+import Piece from './piece/Piece';
 
 // Utils
 import convertPosition from '../utils/position/convertPosition';

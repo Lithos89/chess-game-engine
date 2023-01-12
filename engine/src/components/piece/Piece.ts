@@ -10,7 +10,13 @@ import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Components
 import Square from '../Square';
-import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
+// import { Pawn, Rook, Knight, Bishop, Queen, King } from './index';
+// import Pawn from './Pawn';
+// import Rook from './Rook';
+// import Knight from './Knight';
+// import Bishop from './Bishop';
+// import Queen from './Queen';
+import King from './King';
 
 export default abstract class Piece {
   public readonly side: Side;
@@ -28,24 +34,25 @@ export default abstract class Piece {
 
   // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
   
-  public static create({ kind, side }: PieceListing): Piece {
-    switch (kind) {
-      case PieceKind.Pawn:
-        return new Pawn(side);
-      case PieceKind.Rook:
-        return new Rook(side);
-      case PieceKind.Knight:
-        return new Knight(side);
-      case PieceKind.Bishop:
-        return new Bishop(side);
-      case PieceKind.Queen:
-        return new Queen(side);
-      case PieceKind.King:
-        return new King(side);
-      default:
-        throw new Error(`Unable to create piece with kind: ${kind}, side: ${side}`);
-    };
-  };
+  // !: Circular dependence created, need to move this outside the class to solve the problem or come up with something else
+  // public static create({ kind, side }: PieceListing): Piece {
+  //   switch (kind) {
+  //     case PieceKind.Pawn:
+  //       return new Pawn(side);
+  //     case PieceKind.Rook:
+  //       return new Rook(side);
+  //     case PieceKind.Knight:
+  //       return new Knight(side);
+  //     case PieceKind.Bishop:
+  //       return new Bishop(side);
+  //     case PieceKind.Queen:
+  //       return new Queen(side);
+  //     case PieceKind.King:
+  //       return new King(side);
+  //     default:
+  //       throw new Error(`Unable to create piece with kind: ${kind}, side: ${side}`);
+  //   };
+  // };
 
   constructor(piece: PieceKind, side: Side) { 
     this.kind = piece;
@@ -100,13 +107,13 @@ export default abstract class Piece {
   // };
 
   public influenceOccupiedSquare(square: Square, playableLine: MoveLine): boolean {
-    const destPiece: Piece = square.piece;
+    const destPiece: Piece = square.piece; //!: destPiece still optional with current implementation, FIX
     const altCapturing = !isEmpty(this.captureAlgorithms); // If a piece can still move there without capturing
-    const simpleCaptureAvailable: boolean = destPiece.side !== this.side && !altCapturing;
+    const simpleCaptureAvailable: boolean = destPiece?.side !== this.side && !altCapturing;
 
     if (simpleCaptureAvailable) {
-      if (destPiece instanceof King) {
-        destPiece.checks.push({ attackPiece: this, frontAttackLine: playableLine });
+      if (destPiece?.kind === PieceKind.King) {
+        (destPiece as King).checks.push({ attackPiece: this, frontAttackLine: playableLine });
       } else {
         return true;
       };

@@ -8,7 +8,7 @@ import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
 import Square from '../../components/Square';
-import Piece from '../../components/piece';
+import Piece from '../../components/piece/Piece';
 
 // Game Management
 import BoardManager from '../board/BoardManager';

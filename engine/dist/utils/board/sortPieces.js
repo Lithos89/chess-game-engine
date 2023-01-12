@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
-// Components
-var piece_1 = require("../../components/piece");
+var King_1 = require("../../components/piece/King");
 function sortPieces(board) {
     var basicPieces = {
         white: [],
@@ -17,7 +16,7 @@ function sortPieces(board) {
             continue;
         }
         ;
-        if (piece instanceof piece_1.King) {
+        if (piece instanceof King_1.default) {
             if (piece.side === 'white')
                 kings.white = piece;
             else if (piece.side === 'black') {

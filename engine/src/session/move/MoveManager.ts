@@ -5,7 +5,7 @@ import { type MoveLine } from '../../logic/algorithms/types';
 
 // Components
 import Square from '../../components/Square';
-import Piece from '../../components/piece';
+import Piece from '../../components/piece/Piece';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';

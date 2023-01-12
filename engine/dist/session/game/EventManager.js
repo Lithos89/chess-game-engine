@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
-// Classes
-var piece_1 = require("../../components/piece");
+var King_1 = require("../../components/piece/King");
+var Pawn_1 = require("../../components/piece/Pawn");
 // Utils
 var convertPosition_1 = require("../../utils/position/convertPosition");
 ;
@@ -23,7 +23,7 @@ var EventManager = /** @class */ (function () {
             }
             ;
             //* DEFENDING
-            if (piece instanceof piece_1.King) {
+            if (piece instanceof King_1.default) {
                 king = piece;
                 continue;
             }
@@ -43,7 +43,7 @@ var EventManager = /** @class */ (function () {
         }
         var kingMoves = new Set(king.availableMoves);
         // Remove the positions that are still in the attacking piece's lines of attack
-        if (attackPiece instanceof piece_1.Pawn)
+        if (attackPiece instanceof Pawn_1.default)
             attackPiece.legalLines.flat(2).forEach(function (pos) { return kingMoves.delete(pos); });
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);

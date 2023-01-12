@@ -7,7 +7,10 @@ import { type MoveLine } from "../../logic/algorithms/types";
 import { type BoardSquareListings } from "../../formation/structure/squareCollection";
 
 // Classes
-import Piece, { King, Pawn } from "../../components/piece";
+// import Piece, { King, Pawn } from "../../components/piece";
+import Piece from '../../components/piece/Piece';
+import King from '../../components/piece/King';
+import Pawn from '../../components/piece/Pawn';
 
 // Utils
 import convertPosition from '../../utils/position/convertPosition';

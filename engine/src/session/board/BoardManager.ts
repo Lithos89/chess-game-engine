@@ -10,7 +10,14 @@ import { type MoveLine } from '../../logic/algorithms/types';
 
 // Components
 import Square, { type SquareColor } from '../../components/Square';
-import Piece, { Rook, Knight, Queen, Bishop, King, Pawn } from '../../components/piece';
+// import Piece, { Rook, Knight, Queen, Bishop, King, Pawn } from '../../components/piece';
+import Piece from '../../components/piece/Piece';
+import King from '../../components/piece/King';
+import Rook from '../../components/piece/Rook';
+import Knight from '../../components/piece/Knight';
+import Bishop from '../../components/piece/Bishop';
+import Queen from '../../components/piece/Queen';
+import Pawn from '../../components/piece/Pawn';
 
 // Utils
 import convertPosition from '../../utils/position/convertPosition';
@@ -28,8 +35,7 @@ class BoardManager {
   public boardSquares: BoardSquareListings = {};
   private squareHighlighting: {[key in ShortPosition]? : PresentedSquare["focus"]} = {};
 
-  // public whiteKing: King;
-  // public blackKing: King;
+  public kings: {[side in Side]: King};
 
   private readonly getCurrentTurnSide: () => Side;
 
@@ -55,7 +61,46 @@ class BoardManager {
 
     for (const pos in pieceConfigurations) {
       const pieceConfig: PieceListing = pieceConfigurations[pos];
-      initialPieces[pos] = Piece.create(pieceConfig);
+      console.info(pieceConfig.kind)
+      // switch (pieceConfig.kind) {
+      //   case PieceKind.Pawn:
+      //   // case 'p':
+      //     initialPieces[pos] = new Pawn(pieceConfig.side);
+      //   case PieceKind.Rook:
+      //   // case 'r':
+      //     initialPieces[pos] = new Rook(pieceConfig.side);
+      //   case PieceKind.Knight:
+      //   // case 'h':
+      //     initialPieces[pos] = new Knight(pieceConfig.side);
+      //   case PieceKind.Bishop:
+      //   // case 'b':
+      //     initialPieces[pos] = new Bishop(pieceConfig.side);
+      //   case PieceKind.Queen:
+      //   // case 'q':
+      //     initialPieces[pos] = new Queen(pieceConfig.side);
+      //   case PieceKind.King:
+      //   // case 'k':
+      //     initialPieces[pos] = new King(pieceConfig.side);
+      //   default:
+      //     throw new Error(`Unable to create piece with kind: ${pieceConfig.kind}, side: ${pieceConfig.side}`);
+      // };
+      // initialPieces[pos] = Piece.create(pieceConfiguration[pos]);
+
+
+      if (pieceConfig.kind === PieceKind.Pawn)
+        initialPieces[pos] = new Pawn(pieceConfig.side);
+      else if (pieceConfig.kind === PieceKind.Rook)
+        initialPieces[pos] = new Rook(pieceConfig.side);
+      else if(pieceConfig.kind === PieceKind.Knight)
+        initialPieces[pos] = new Knight(pieceConfig.side);
+      else if (pieceConfig.kind === PieceKind.Bishop)
+        initialPieces[pos] = new Bishop(pieceConfig.side);
+      else if (pieceConfig.kind === PieceKind.Queen)
+        initialPieces[pos] = new Queen(pieceConfig.side);
+      else if (pieceConfig.kind === PieceKind.King)
+        initialPieces[pos] = new King(pieceConfig.side);
+      else
+        throw new Error(`Unable to create piece with kind: ${pieceConfig.kind}, side: ${pieceConfig.side}`);
     };
 
     return initialPieces;
@@ -139,6 +184,9 @@ class BoardManager {
   public processAvailableMoves(checks, sideLastMoved?: Side) {
     const [basicPieces, kings] = sortPieces(this.boardSquares);
 
+    basicPieces.white.forEach(piece => piece.isProtected = false);
+    basicPieces.black.forEach(piece => piece.isProtected = false);
+
     this.updateSideBasicPieces(basicPieces.white);
     this.updateSideBasicPieces(basicPieces.black);
 
@@ -148,7 +196,8 @@ class BoardManager {
     //? Could add a pin updating function here that takes the kings and the other pieces and loops over all of the basic pieces to detect pins
 
     // checks.push(...(sideLastMoved === "white" ? whiteChecks : blackChecks));
-    checks.push(...King[sideLastMoved].checks);
+    if (sideLastMoved)
+      checks.push(...King[sideLastMoved].checks);
     
     this.updateState();
   };
@@ -190,46 +239,67 @@ class BoardManager {
   ) => {
     const playableLines: MoveLine[] = [];
 
-    // TODO: At the moment this does not work, need to allow for the function to be able to access 'alt' methods
-    for (const moveLineSet of [piece.legalLines, piece.captureLines]) {
-      for (const moveLine of moveLineSet) { 
+    for (const moveLine of piece.legalLines) { 
+      const playableLine: MoveLine = [];
+
+      // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
+      for (const linePos of moveLine) {
+        const square = this.boardSquares[linePos];
+        const isSquareUnoccupied = isNull(square.piece);
+
+        if (isSquareUnoccupied) {
+          const moveAvailable = piece.influenceEmptySquare(square);
+
+          if (moveAvailable)
+            playableLine.push(linePos);
+        } else {
+          const captureAvailable = piece.influenceOccupiedSquare(square, playableLine);
+
+          if (captureAvailable)
+            playableLine.push(linePos);
+
+          break;
+        };
+      };
+      playableLines.push(playableLine);
+    };
+
+    if (piece instanceof Pawn){
+      for (const moveLine of piece.captureLines) { 
         const playableLine: MoveLine = [];
 
         // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
         for (const linePos of moveLine) {
           const square = this.boardSquares[linePos];
-          // TODO: Try making it the negation to allow for better if else flow down below
-          const isSquareOccupied = !(square.piece === null);
+          const isSquareUnoccupied = isNull(square.piece);
 
-          let moveAvailable: boolean;
+          if (isSquareUnoccupied) {
+            const moveAvailable = piece.altInfluenceEmptySquare(square);
 
-          if (isSquareOccupied) {
-            moveAvailable = piece.influenceEmptySquare(square);
-            break;
+            if (moveAvailable)
+              playableLine.push(linePos);
           } else {
-            moveAvailable = piece.influenceOccupiedSquare(square, playableLine);
-          };
+            const captureAvailable = piece.altInfluenceOccupiedSquare(square, playableLine);
 
-          if (moveAvailable)
-            playableLine.push(linePos);
+            if (captureAvailable)
+              playableLine.push(linePos);
+
+            break;
+          };
         };
         playableLines.push(playableLine);
       };
+    }
 
-      return playableLines.flat();
-    };
+    return playableLines.flat();
   };
 
   private updateSideBasicPieces = (pieces: Piece[]): [Attack[], Set<ShortPosition>] => {
     const checks: Attack[] = [];
     const controlledSquares: Set<ShortPosition> = new Set();
-    const protectedPieces: Piece[] = [];
 
     for (const piece of pieces){
       piece.availableMoves = []; // Reset piece moveset
-
-      if (!protectedPieces.includes(piece))
-          piece.isProtected = false;
       
       const regularMoves = this.updateLines(piece);
       piece.availableMoves.push(...regularMoves);
@@ -251,7 +321,10 @@ class BoardManager {
       const king = kings[side];
 
       const enemySide = SIDES[1 - Number(i)];
+      // TODO: See if I can find a better solution, this implementation is prone to bugs
       const enemyKing = kings[enemySide];
+
+      king.enemyKing = enemyKing;
 
       king.availableMoves = []; // Reset king movesets
 
@@ -259,13 +332,6 @@ class BoardManager {
       king.availableMoves.push(...newMoves);
     };
   };
-
-
-
-
-
-
-
 };
 
 export default BoardManager;
