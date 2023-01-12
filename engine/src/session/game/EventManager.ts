@@ -7,10 +7,10 @@ import { type MoveLine } from "../../logic/algorithms/types";
 import { type BoardSquareListings } from "../../formation/structure/squareCollection";
 
 // Classes
-import Piece, { King } from "components/piece";
+import Piece, { King, Pawn } from "../../components/piece";
 
-
-import { convertPosition } from "../../utils";
+// Utils
+import convertPosition from '../../utils/position/convertPosition';
 
 interface Attack {
   attackPiece: Piece,
@@ -35,7 +35,10 @@ class EventManager {
       if (isNull(piece) || piece.side === side) { continue };
 
       //* DEFENDING
-      if (piece.kind === PieceKind.King) { king = piece as King; continue}
+      if (piece instanceof King) {
+        king = piece;
+        continue;
+      };
 
       const playableMoves: ShortPosition[] = [];
 
@@ -53,7 +56,7 @@ class EventManager {
     const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
     
     // Remove the positions that are still in the attacking piece's lines of attack
-    if (attackPiece.kind !== PieceKind.Pawn)
+    if (attackPiece !instanceof Pawn)
       attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
     
     king.availableMoves = Array.from(kingMoves);

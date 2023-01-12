@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Utils
-var utils_1 = require("../utils");
+var convertPosition_1 = require("../utils/position/convertPosition");
 var Square = /** @class */ (function () {
     // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
     function Square(position, color, piece) {
         if (piece === void 0) { piece = null; }
+        this.controlled = {
+            white: false,
+            black: false,
+        };
         if (typeof position === 'string')
-            this.position = (0, utils_1.convertPosition)(position);
+            this.position = (0, convertPosition_1.default)(position);
         else if (typeof position === 'object')
             this.position = position;
         this.color = color;
@@ -32,6 +36,6 @@ var Square = /** @class */ (function () {
     ;
     return Square;
 }());
-exports.default = Square;
 ;
+exports.default = Square;
 //# sourceMappingURL=Square.js.map

@@ -4,7 +4,7 @@ var lodash_1 = require("lodash");
 // Types, interface, constants, ...
 var terms_1 = require("../terms");
 // Utils
-var utils_1 = require("../../utils");
+var indexInRange_1 = require("../../utils/common/indexInRange");
 var searchDiagonals = function (max, direction) { return function (_a) {
     var row = _a.row, col = _a.col;
     if (max !== undefined && max < 1) {
@@ -34,10 +34,10 @@ var searchDiagonals = function (max, direction) { return function (_a) {
         while (distance <= rowSet.length && (max === undefined || distance <= max)) {
             var i = distance - 1;
             // Upper Horizontal of Board
-            if ((0, utils_1.indexInRange)(colIndex + distance, terms_1.COLUMNS))
+            if ((0, indexInRange_1.default)(colIndex + distance, terms_1.COLUMNS))
                 upperDiagonal.push("".concat(terms_1.COLUMNS[colIndex + distance]).concat(rowSet[i]));
             // Lower Horizontal of Board
-            if ((0, utils_1.indexInRange)(colIndex - distance, terms_1.COLUMNS))
+            if ((0, indexInRange_1.default)(colIndex - distance, terms_1.COLUMNS))
                 lowerDiagonal.push("".concat(terms_1.COLUMNS[colIndex - distance]).concat(rowSet[i]));
             distance += 1;
         }
@@ -149,7 +149,7 @@ var searchLs = function () { return function (_a) {
     var posT = translations.map(function (T) { return [rowIndex + T[0], colIndex + T[1]]; });
     for (var _i = 0, posT_1 = posT; _i < posT_1.length; _i++) {
         var _b = posT_1[_i], rowT = _b[0], colT = _b[1];
-        if ((0, utils_1.indexInRange)(rowT, terms_1.ROWS) && (0, utils_1.indexInRange)(colT, terms_1.COLUMNS)) {
+        if ((0, indexInRange_1.default)(rowT, terms_1.ROWS) && (0, indexInRange_1.default)(colT, terms_1.COLUMNS)) {
             var rowPrime = terms_1.ROWS[rowT];
             var colPrime = terms_1.COLUMNS[colT];
             squaresFound.push("".concat(colPrime).concat(rowPrime));

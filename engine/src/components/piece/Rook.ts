@@ -21,15 +21,9 @@ class Rook extends Piece implements DynamicBehavior {
     super(PieceKind.Rook, side);
   };
 
-  loadMoveAlgorithms = () => {
+  loadMoveAlgorithms = () => [Search.file(), Search.rank()];
 
-    return [
-      Search.file(),
-      Search.rank()
-    ];
-  }
-
-  emptySquareCallback = (linePos: ShortPosition) => true;
+  // emptySquareCallback = (linePos: ShortPosition) => true;
 
   // occupiedSquareCallback = (linePos: ShortPosition, playableLine: MoveLine, destPiece: Piece) => {
   //   // const destPiece: Piece | null = board[linePos].piece;

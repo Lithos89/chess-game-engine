@@ -6,7 +6,7 @@ import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition
 import { type MoveLine } from './types';
 
 // Utils
-import { indexInRange } from '../../utils';
+import indexInRange from '../../utils/common/indexInRange';
 
 const searchDiagonals = (max?: number | undefined, direction?: BoardDirection) => ({row, col}: Position): MoveLine[] => {
   if (max !== undefined && max < 1) {

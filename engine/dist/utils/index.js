@@ -4,6 +4,8 @@ exports.indexInRange = exports.sortPieces = exports.flipFormation = exports.conv
 var lodash_1 = require("lodash");
 // Types, interface, constants, ...
 var terms_1 = require("../logic/terms");
+// Components
+var piece_1 = require("../components/piece");
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
 function convertPosition(position) {
     if (typeof position === 'string') {
@@ -40,12 +42,13 @@ function sortPieces(board) {
     var kings = {};
     for (var boardPos in board) {
         var square = board[boardPos];
+        square.controlled = { white: false, black: false };
         var piece = square.piece;
         if ((0, lodash_1.isNull)(piece)) {
             continue;
         }
         ;
-        if (piece.kind === terms_1.PieceKind.King) {
+        if (piece instanceof piece_1.King) {
             if (piece.side === 'white')
                 kings.white = piece;
             else if (piece.side === 'black') {

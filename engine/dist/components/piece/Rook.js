@@ -26,13 +26,7 @@ var Rook = /** @class */ (function (_super) {
     function Rook(side) {
         var _this = _super.call(this, terms_1.PieceKind.Rook, side) || this;
         _this.moved = false;
-        _this.loadMoveAlgorithms = function () {
-            return [
-                core_1.default.file(),
-                core_1.default.rank()
-            ];
-        };
-        _this.emptySquareCallback = function (linePos) { return true; };
+        _this.loadMoveAlgorithms = function () { return [core_1.default.file(), core_1.default.rank()]; };
         return _this;
     }
     ;

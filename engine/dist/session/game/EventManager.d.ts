@@ -1,7 +1,7 @@
 import { type Side } from "../../logic/terms";
 import { type MoveLine } from "../../logic/algorithms/types";
 import { type BoardSquareListings } from "../../formation/structure/squareCollection";
-import Piece from "components/piece";
+import Piece from "../../components/piece";
 interface Attack {
     attackPiece: Piece;
     frontAttackLine: MoveLine;

@@ -15,24 +15,60 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 // Components
 var Piece_1 = require("./Piece");
 // Algorithms
 var core_1 = require("../../logic/algorithms/core");
+// Utils
+var convertPosition_1 = require("../../utils/position/convertPosition");
+;
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
     function King(side) {
         var _this = _super.call(this, terms_1.PieceKind.King, side) || this;
         _this.moved = false;
-        _this.loadMoveAlgorithms = function () {
-            return [
-                core_1.default.file(1),
-                core_1.default.diagonals(1),
-                core_1.default.rank(1)
-            ];
+        _this.checks = [];
+        _this.loadMoveAlgorithms = function () { return [core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(1)]; };
+        // public override influenceEmptySquare = (controlledSquares, enemyKing) => (linePos: ShortPosition) => {
+        //   const enemySide = enemyKing.side;
+        //   if (!controlledSquares[enemySide].has(linePos)) {
+        //     if (!enemyKing.legalLines.flat(2).includes(linePos)) {
+        //       return true;
+        //     };
+        //   };
+        //   return false;
+        // };
+        _this.influenceEmptySquare = function (square) {
+            var enemySide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(_this.side)];
+            var enemyKing = King[enemySide];
+            if (!square.controlled[enemySide]) {
+                if (!enemyKing.legalLines.flat(2).includes((0, convertPosition_1.default)(square.position))) {
+                    return true;
+                }
+                ;
+            }
+            ;
+            return false;
         };
+        _this.influenceOccupiedSquare = function (square) {
+            var destPiece = square.piece;
+            var simpleCaptureAvailable = !(0, lodash_1.isNull)(destPiece) && destPiece.side !== _this.side;
+            if (simpleCaptureAvailable) {
+                if (!(destPiece === null || destPiece === void 0 ? void 0 : destPiece.isProtected)) {
+                    return true;
+                }
+                ;
+            }
+            else {
+                destPiece.isProtected = true;
+            }
+            ;
+            return false;
+        };
+        King[side] = _this;
         return _this;
     }
     ;

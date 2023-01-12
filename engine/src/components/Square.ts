@@ -1,17 +1,26 @@
-import { Position, ShortPosition } from '../logic/terms';
+
+// Types, interfaces, constants, ...
+import { type Position, type ShortPosition, type Side } from '../logic/terms';
+
+// Components
 import Piece from './piece';
 
 // Utils
-import { convertPosition } from '../utils';
+import convertPosition from '../utils/position/convertPosition';
 
 export type SquareColor = 'light' | 'dark';
 
-export default class Square {
+class Square {
   // only allow position to be set
   public readonly position: Position;
   public readonly color: SquareColor;
   public piece: Piece;
   public abbrPiece: string;
+
+  public controlled: {[side in Side]: boolean} = {
+    white: false,
+    black: false,
+  };
 
   // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
   constructor(position: Position | ShortPosition, color: SquareColor, piece: Piece = null) {
@@ -42,3 +51,5 @@ export default class Square {
     this.abbrPiece = String(typeof newPiece);
   };
 };
+
+export default Square;

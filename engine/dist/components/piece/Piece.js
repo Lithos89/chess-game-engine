@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 var terms_1 = require("../../logic/terms");
-// Components
 var index_1 = require("./index");
 var Piece = /** @class */ (function () {
     function Piece(piece, side) {
@@ -12,7 +11,6 @@ var Piece = /** @class */ (function () {
         this.kind = piece;
         this.side = side;
     }
-    // abstract emptySquareCallback: (linePos: ShortPosition) => boolean;
     // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
     Piece.create = function (_a) {
         var kind = _a.kind, side = _a.side;
@@ -58,6 +56,51 @@ var Piece = /** @class */ (function () {
             this.captureLines = this.captureAlgorithms.flatMap(function (algo) { return algo(_this.position); });
     };
     ;
+    // public influenceEmptySquare = (controlledSquares, enemyKing?, enemySide?) => (linePos: ShortPosition) => {
+    //   controlledSquares.add(linePos);
+    //   return true;
+    // };
+    Piece.prototype.influenceEmptySquare = function (square) {
+        square.controlled[this.side] = true;
+        return true;
+    };
+    ;
+    // public influenceOccupiedSquare = (board, protectedPieces, checks) => (linePos: ShortPosition, playableLine: MoveLine) => {
+    //   const destPiece: Piece = board[linePos].piece;
+    //   const altCapturing = !isEmpty(this.captureAlgorithms); // If a piece can still move there without capturing
+    //   const simpleCaptureAvailable: boolean = destPiece?.side !== this.side && !altCapturing;
+    //   if (simpleCaptureAvailable) {
+    //     if (destPiece?.kind === PieceKind.King) {
+    //       checks.push({ attackPiece: this, frontAttackLine: playableLine });
+    //     } else {
+    //       return true;
+    //     };
+    //   } else {
+    //     destPiece.isProtected = true;
+    //     protectedPieces.push(destPiece);
+    //   };
+    //   return false; 
+    // };
+    Piece.prototype.influenceOccupiedSquare = function (square, playableLine) {
+        var destPiece = square.piece;
+        var altCapturing = !(0, lodash_1.isEmpty)(this.captureAlgorithms); // If a piece can still move there without capturing
+        var simpleCaptureAvailable = destPiece.side !== this.side && !altCapturing;
+        if (simpleCaptureAvailable) {
+            if (destPiece instanceof index_1.King) {
+                destPiece.checks.push({ attackPiece: this, frontAttackLine: playableLine });
+            }
+            else {
+                return true;
+            }
+            ;
+        }
+        else {
+            destPiece.isProtected = true;
+        }
+        ;
+        return false;
+    };
+    ;
     // ?: See whether capture should have a default value, be optional, or be required.
     // !: Logmove is a horrible name for how the method works, make sure to change
     Piece.prototype.logMove = function (to, didCapture) {
@@ -69,6 +112,6 @@ var Piece = /** @class */ (function () {
     ;
     return Piece;
 }());
-;
 exports.default = Piece;
+;
 //# sourceMappingURL=Piece.js.map

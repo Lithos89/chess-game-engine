@@ -1,5 +1,4 @@
 import { PieceKind, type Side } from '../../logic/terms';
-import { BoardSquareListings } from '../../formation/structure/squareCollection';
 import Square from '../../components/Square';
 import MoveHistoryLL from './MoveHistoryLL';
 declare class MoveManager {
@@ -15,9 +14,5 @@ declare class MoveManager {
     getMoveHistory: () => string[][];
     private capture;
     commitMove: (origin: Square, dest: Square) => void;
-    updateMoves(board: BoardSquareListings, sideLastMoved?: Side): void;
-    private loopLines;
-    private updateSideBasicPieces;
-    private updateKings;
 }
 export default MoveManager;

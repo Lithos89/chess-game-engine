@@ -1,3 +1,4 @@
+
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type BoardDirection } from '../../logic/terms';
 import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
@@ -5,7 +6,8 @@ import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types'
 import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Components
-import Piece from './Piece';
+import Piece, { King } from './index';
+import Square from '../Square';
 
 // Algorithms
 import Search from '../../logic/algorithms/core';
@@ -24,11 +26,35 @@ class Pawn extends Piece implements DynamicBehavior {
     this.captureAlgorithms = [Search.diagonals(1, this.direction)];
   };
 
-  public loadMoveAlgorithms = () => {
+  public loadMoveAlgorithms(): MoveAlgorithm[] {
     const fileDistance = this.moved ? 1 : 2;
 
     return [Search.file(fileDistance, this.direction)];
   };
+
+  public override influenceEmptySquare = () => true;
+
+  public override influenceOccupiedSquare = () => false;
+
+  public altEmptySquareCallback(square: Square): boolean {
+    square.controlled[this.side] = true;
+    return false;
+  };
+
+  public altOccupiedSquareCallback = (square: Square, playableLine: MoveLine) => {
+    const destPiece = square.piece;
+    if (destPiece.side !== this.side) {
+      if (destPiece instanceof King) {
+        destPiece.checks.push({ attackPiece: this, frontAttackLine: playableLine });
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      destPiece.isProtected = true;
+      return false;
+    };
+  }
 };
 
 export default Pawn;

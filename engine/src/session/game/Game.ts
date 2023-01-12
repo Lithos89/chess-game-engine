@@ -1,8 +1,8 @@
 
-import { isEqual, isString } from 'lodash';
+import { isEmpty, isEqual, isString, isUndefined } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/terms';
+import { type ShortPosition, type Side, SIDES } from '../../logic/terms';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
 import defaultStartingFormation from '../../formation/setups/start';
 
@@ -13,6 +13,7 @@ import Piece from '../../components/piece';
 // Game Management
 import BoardManager from '../board/BoardManager';
 import MoveManager from '../move/MoveManager';
+import EventManager from './EventManager';
 
 // State Management
 import Observer from '../../state/Observer';
@@ -48,7 +49,7 @@ class Game implements Observable {
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
     this.moveManager = new MoveManager((type?: string) => this.signalState(type));
     // this.moveManager.updateMoves(this.boardManager.boardSquares);
-    this.moveManager.updateMoves(this.boardManager.boardSquares);
+    this.updateMoves();
   };
 
   public signalState = (type?: string) => {
@@ -81,7 +82,7 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
-    this.moveManager.updateMoves(this.boardManager.boardSquares, this.currentTurnSide);
+    this.updateMoves(this.currentTurnSide);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
   };
@@ -123,6 +124,37 @@ class Game implements Observable {
   // TODO: Add more checks and functionality here
   protected undo = () => {
     this.moveManager.takebackMove();
+  };
+
+
+
+
+
+
+
+
+
+  public updateMoves(sideLastMoved?: Side) {
+    const checks = [];
+    this.boardManager.processAvailableMoves(checks, sideLastMoved);
+
+    if (!isEmpty(checks) && !isUndefined(sideLastMoved)) {
+      const isCheckmate = (Array.from(checks))
+        .map((attack) =>
+          EventManager.forceCheckResolve(
+            this.boardManager.boardSquares,
+            attack,
+            sideLastMoved
+          )
+        )
+        .some(Boolean);
+
+      if (isCheckmate) {
+        console.info("Checkmate");  
+      } else {
+        console.info("Check");
+      };
+    };
   };
 };
 
