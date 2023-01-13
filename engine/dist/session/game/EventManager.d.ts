@@ -7,7 +7,7 @@ interface Attack {
     frontAttackLine: MoveLine;
 }
 declare class EventManager {
-    static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side): boolean;
+    static forceCheckResolve: (board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side) => boolean;
     static victoryCheck(board: BoardSquareListings): void;
 }
 export default EventManager;

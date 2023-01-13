@@ -212,29 +212,6 @@ var BoardManager = /** @class */ (function () {
         for (var pos in pieceConfigurations) {
             var pieceConfig = pieceConfigurations[pos];
             console.info(pieceConfig.kind);
-            // switch (pieceConfig.kind) {
-            //   case PieceKind.Pawn:
-            //   // case 'p':
-            //     initialPieces[pos] = new Pawn(pieceConfig.side);
-            //   case PieceKind.Rook:
-            //   // case 'r':
-            //     initialPieces[pos] = new Rook(pieceConfig.side);
-            //   case PieceKind.Knight:
-            //   // case 'h':
-            //     initialPieces[pos] = new Knight(pieceConfig.side);
-            //   case PieceKind.Bishop:
-            //   // case 'b':
-            //     initialPieces[pos] = new Bishop(pieceConfig.side);
-            //   case PieceKind.Queen:
-            //   // case 'q':
-            //     initialPieces[pos] = new Queen(pieceConfig.side);
-            //   case PieceKind.King:
-            //   // case 'k':
-            //     initialPieces[pos] = new King(pieceConfig.side);
-            //   default:
-            //     throw new Error(`Unable to create piece with kind: ${pieceConfig.kind}, side: ${pieceConfig.side}`);
-            // };
-            // initialPieces[pos] = Piece.create(pieceConfiguration[pos]);
             if (pieceConfig.kind === terms_1.PieceKind.Pawn)
                 initialPieces[pos] = new Pawn_1.default(pieceConfig.side);
             else if (pieceConfig.kind === terms_1.PieceKind.Rook)
@@ -272,6 +249,8 @@ var BoardManager = /** @class */ (function () {
         var _a = (0, sortPieces_1.default)(this.boardSquares), basicPieces = _a[0], kings = _a[1];
         basicPieces.white.forEach(function (piece) { return piece.isProtected = false; });
         basicPieces.black.forEach(function (piece) { return piece.isProtected = false; });
+        kings.black.checks = [];
+        kings.white.checks = [];
         this.updateSideBasicPieces(basicPieces.white);
         this.updateSideBasicPieces(basicPieces.black);
         // Kings are updated after basic pieces to make sure that a king cannot move into a line of check and if it is already in check
@@ -279,7 +258,8 @@ var BoardManager = /** @class */ (function () {
         //? Could add a pin updating function here that takes the kings and the other pieces and loops over all of the basic pieces to detect pins
         // checks.push(...(sideLastMoved === "white" ? whiteChecks : blackChecks));
         if (sideLastMoved)
-            checks.push.apply(checks, King_1.default[sideLastMoved].checks);
+            checks.push.apply(checks, kings[terms_1.SIDES[1 - terms_1.SIDES.indexOf(sideLastMoved)]].checks);
+        console.info(this.boardSquares);
         this.updateState();
     };
     ;

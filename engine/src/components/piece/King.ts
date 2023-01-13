@@ -48,7 +48,7 @@ class King extends Piece implements DynamicBehavior {
   //   return false;
   // };
 
-  public override influenceEmptySquare = (square: Square): boolean => {
+  public override influenceEmptySquare(square: Square): boolean {
     const enemySide = this.enemyKing.side;
 
     console.log(this.legalLines);
@@ -66,7 +66,7 @@ class King extends Piece implements DynamicBehavior {
     return false;
   };
 
-  public override influenceOccupiedSquare = (square: Square): boolean => {
+  public override influenceOccupiedSquare(square: Square): boolean {
     const destPiece: Piece = square.piece;
     const simpleCaptureAvailable: boolean = !isNull(destPiece) && destPiece.side !== this.side;
 

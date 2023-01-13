@@ -22,7 +22,7 @@ interface Attack {
 
 class EventManager {
 
-  static forceCheckResolve(board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side): boolean {
+  static forceCheckResolve = (board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side) => {
 
     const preventitiveMoves: ShortPosition[] = []
 
@@ -35,7 +35,7 @@ class EventManager {
       const square = board[boardPos];
       const piece: Piece | null = square.piece;
 
-      if (isNull(piece) || piece.side === side) { continue };
+      if (isNull(piece) || piece.side !== side) { continue };
 
       //* DEFENDING
       if (piece instanceof King) {
@@ -53,14 +53,19 @@ class EventManager {
         };
       };
       piece.availableMoves = playableMoves;
-
     }
 
     const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
+
+    console.info(kingMoves);
     
     // Remove the positions that are still in the attacking piece's lines of attack
-    if (attackPiece !instanceof Pawn)
-      attackPiece.legalLines.flat(2).forEach((pos) => kingMoves.delete(pos))
+    if (!(attackPiece instanceof Pawn)) {
+      attackPiece.legalLines.flat(2).forEach((pos) => {
+        console.info(pos)
+        kingMoves.delete(pos as ShortPosition)
+      })
+    }
     
     king.availableMoves = Array.from(kingMoves);
 

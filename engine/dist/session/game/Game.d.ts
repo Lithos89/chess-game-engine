@@ -15,6 +15,6 @@ declare class Game implements Observable {
     protected attemptHighlight: (position?: ShortPosition) => boolean;
     protected attemptMove: (from: ShortPosition, to: ShortPosition) => boolean;
     protected undo: () => void;
-    updateMoves(sideLastMoved?: Side): void;
+    updateMoves: (sideLastMoved?: Side) => void;
 }
 export default Game;

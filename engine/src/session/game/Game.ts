@@ -4,6 +4,7 @@ import { isEmpty, isEqual, isString, isUndefined } from 'lodash';
 // Types, interfaces, constants, ...
 import { type ShortPosition, type Side, SIDES } from '../../logic/terms';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
+import { MoveLine } from '../../logic/algorithms/types';
 import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
@@ -18,6 +19,11 @@ import EventManager from './EventManager';
 // State Management
 import Observer from '../../state/Observer';
 import Observable from 'state/observable';
+
+interface Attack {
+  attackPiece: Piece,
+  frontAttackLine: MoveLine
+};
 
 class Game implements Observable {
   readonly id: string;
@@ -134,27 +140,32 @@ class Game implements Observable {
 
 
 
-  public updateMoves(sideLastMoved?: Side) {
-    const checks = [];
+  public updateMoves = (sideLastMoved?: Side) => {
+    const checks: Attack[] = [];
     this.boardManager.processAvailableMoves(checks, sideLastMoved);
+    console.info("checks")
+    console.info(checks)
 
     if (!isEmpty(checks) && !isUndefined(sideLastMoved)) {
       const isCheckmate = (Array.from(checks))
-        .map((attack) =>
-          EventManager.forceCheckResolve(
+        .map((attack) => EventManager.forceCheckResolve(
             this.boardManager.boardSquares,
             attack,
-            sideLastMoved
+            SIDES[1 - SIDES.indexOf(sideLastMoved)]
           )
         )
         .some(Boolean);
 
+
+      console.info(this.boardManager.boardSquares);
       if (isCheckmate) {
         console.info("Checkmate");  
       } else {
         console.info("Check");
       };
     };
+
+    this.signalState('board');
   };
 };
 

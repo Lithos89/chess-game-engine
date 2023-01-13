@@ -9,6 +9,8 @@ var convertPosition_1 = require("../../utils/position/convertPosition");
 var EventManager = /** @class */ (function () {
     function EventManager() {
     }
+    EventManager.victoryCheck = function (board) {
+    };
     EventManager.forceCheckResolve = function (board, _a, side) {
         var attackPiece = _a.attackPiece, frontAttackLine = _a.frontAttackLine;
         var preventitiveMoves = [];
@@ -18,7 +20,7 @@ var EventManager = /** @class */ (function () {
         for (var boardPos in board) {
             var square = board[boardPos];
             var piece = square.piece;
-            if ((0, lodash_1.isNull)(piece) || piece.side === side) {
+            if ((0, lodash_1.isNull)(piece) || piece.side !== side) {
                 continue;
             }
             ;
@@ -42,14 +44,16 @@ var EventManager = /** @class */ (function () {
             piece.availableMoves = playableMoves;
         }
         var kingMoves = new Set(king.availableMoves);
+        console.info(kingMoves);
         // Remove the positions that are still in the attacking piece's lines of attack
-        if (attackPiece instanceof Pawn_1.default)
-            attackPiece.legalLines.flat(2).forEach(function (pos) { return kingMoves.delete(pos); });
+        if (!(attackPiece instanceof Pawn_1.default)) {
+            attackPiece.legalLines.flat(2).forEach(function (pos) {
+                console.info(pos);
+                kingMoves.delete(pos);
+            });
+        }
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);
-    };
-    ;
-    EventManager.victoryCheck = function (board) {
     };
     return EventManager;
 }());

@@ -22,6 +22,7 @@ var MoveManager_1 = require("../move/MoveManager");
 var EventManager_1 = require("./EventManager");
 // State Management
 var Observer_1 = require("../../state/Observer");
+;
 var Game = /** @class */ (function () {
     function Game(side, id) {
         var _this = this;
@@ -95,6 +96,27 @@ var Game = /** @class */ (function () {
         this.undo = function () {
             _this.moveManager.takebackMove();
         };
+        this.updateMoves = function (sideLastMoved) {
+            var checks = [];
+            _this.boardManager.processAvailableMoves(checks, sideLastMoved);
+            console.info("checks");
+            console.info(checks);
+            if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
+                var isCheckmate = (Array.from(checks))
+                    .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, terms_1.SIDES[1 - terms_1.SIDES.indexOf(sideLastMoved)]); })
+                    .some(Boolean);
+                console.info(_this.boardManager.boardSquares);
+                if (isCheckmate) {
+                    console.info("Checkmate");
+                }
+                else {
+                    console.info("Check");
+                }
+                ;
+            }
+            ;
+            _this.signalState('board');
+        };
         this.id = id;
         this.playerSide = side;
         this.observer = new Observer_1.default(this);
@@ -111,27 +133,6 @@ var Game = /** @class */ (function () {
         this.updateMoves(this.currentTurnSide);
         this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
-    };
-    ;
-    Game.prototype.updateMoves = function (sideLastMoved) {
-        var _this = this;
-        var checks = [];
-        this.boardManager.processAvailableMoves(checks, sideLastMoved);
-        if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
-            var isCheckmate = (Array.from(checks))
-                .map(function (attack) {
-                return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved);
-            })
-                .some(Boolean);
-            if (isCheckmate) {
-                console.info("Checkmate");
-            }
-            else {
-                console.info("Check");
-            }
-            ;
-        }
-        ;
     };
     ;
     return Game;

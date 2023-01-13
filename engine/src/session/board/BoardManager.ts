@@ -62,30 +62,6 @@ class BoardManager {
     for (const pos in pieceConfigurations) {
       const pieceConfig: PieceListing = pieceConfigurations[pos];
       console.info(pieceConfig.kind)
-      // switch (pieceConfig.kind) {
-      //   case PieceKind.Pawn:
-      //   // case 'p':
-      //     initialPieces[pos] = new Pawn(pieceConfig.side);
-      //   case PieceKind.Rook:
-      //   // case 'r':
-      //     initialPieces[pos] = new Rook(pieceConfig.side);
-      //   case PieceKind.Knight:
-      //   // case 'h':
-      //     initialPieces[pos] = new Knight(pieceConfig.side);
-      //   case PieceKind.Bishop:
-      //   // case 'b':
-      //     initialPieces[pos] = new Bishop(pieceConfig.side);
-      //   case PieceKind.Queen:
-      //   // case 'q':
-      //     initialPieces[pos] = new Queen(pieceConfig.side);
-      //   case PieceKind.King:
-      //   // case 'k':
-      //     initialPieces[pos] = new King(pieceConfig.side);
-      //   default:
-      //     throw new Error(`Unable to create piece with kind: ${pieceConfig.kind}, side: ${pieceConfig.side}`);
-      // };
-      // initialPieces[pos] = Piece.create(pieceConfiguration[pos]);
-
 
       if (pieceConfig.kind === PieceKind.Pawn)
         initialPieces[pos] = new Pawn(pieceConfig.side);
@@ -187,6 +163,9 @@ class BoardManager {
     basicPieces.white.forEach(piece => piece.isProtected = false);
     basicPieces.black.forEach(piece => piece.isProtected = false);
 
+    kings.black.checks = [];
+    kings.white.checks = [];
+
     this.updateSideBasicPieces(basicPieces.white);
     this.updateSideBasicPieces(basicPieces.black);
 
@@ -197,7 +176,9 @@ class BoardManager {
 
     // checks.push(...(sideLastMoved === "white" ? whiteChecks : blackChecks));
     if (sideLastMoved)
-      checks.push(...King[sideLastMoved].checks);
+      checks.push(...kings[SIDES[1 - SIDES.indexOf(sideLastMoved)]].checks);
+
+    console.info(this.boardSquares);
     
     this.updateState();
   };
