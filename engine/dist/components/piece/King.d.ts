@@ -14,7 +14,7 @@ declare class King extends Piece implements DynamicBehavior {
     checks: Attack[];
     constructor(side: Side);
     loadMoveAlgorithms: () => (({ row, col }: import("../../logic/terms").Position) => MoveLine[])[];
-    influenceEmptySquare(square: Square): boolean;
-    influenceOccupiedSquare(square: Square): boolean;
+    influenceEmptySquare: (square: Square) => boolean;
+    influenceOccupiedSquare: (square: Square) => boolean;
 }
 export default King;

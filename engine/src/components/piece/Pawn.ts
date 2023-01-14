@@ -38,7 +38,7 @@ class Pawn extends Piece implements DynamicBehavior {
 
   public override influenceOccupiedSquare = () => false;
 
-  public altInfluenceEmptySquare(square: Square): boolean {
+  public override altInfluenceEmptySquare = (square: Square): boolean => {
     square.controlled[this.side] = true;
     return false;
   };

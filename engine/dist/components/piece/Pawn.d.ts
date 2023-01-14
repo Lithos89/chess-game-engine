@@ -11,7 +11,7 @@ declare class Pawn extends Piece implements DynamicBehavior {
     loadMoveAlgorithms(): MoveAlgorithm[];
     influenceEmptySquare: () => boolean;
     influenceOccupiedSquare: () => boolean;
-    altInfluenceEmptySquare(square: Square): boolean;
+    altInfluenceEmptySquare: (square: Square) => boolean;
     altInfluenceOccupiedSquare: (square: Square, playableLine: MoveLine) => boolean;
 }
 export default Pawn;

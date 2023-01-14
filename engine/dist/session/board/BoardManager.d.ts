@@ -19,9 +19,9 @@ declare class BoardManager {
     compileBoard: () => BoardSquareCondensed[];
     highlightMoves: (piece?: Piece) => void;
     processAvailableMoves(checks: any, sideLastMoved?: Side): void;
-    private loopLines;
     private updateLines;
     private updateSideBasicPieces;
     private updateKings;
+    private applyPins;
 }
 export default BoardManager;

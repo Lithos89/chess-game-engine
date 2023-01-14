@@ -31,7 +31,7 @@ class Square {
 
     this.color = color;
     this.setPiece(piece);
-  }
+  };
 
   /*
     Possible cases to consider:

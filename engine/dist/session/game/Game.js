@@ -103,7 +103,7 @@ var Game = /** @class */ (function () {
             console.info(checks);
             if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
                 var isCheckmate = (Array.from(checks))
-                    .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, terms_1.SIDES[1 - terms_1.SIDES.indexOf(sideLastMoved)]); })
+                    .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved); })
                     .some(Boolean);
                 console.info(_this.boardManager.boardSquares);
                 if (isCheckmate) {

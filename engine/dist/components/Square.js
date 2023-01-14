@@ -17,6 +17,7 @@ var Square = /** @class */ (function () {
         this.color = color;
         this.setPiece(piece);
     }
+    ;
     /*
       Possible cases to consider:
       1. Passing in an initialized piece

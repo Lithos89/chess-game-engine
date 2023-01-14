@@ -31,8 +31,6 @@ export default abstract class Piece {
   // If captureAlgorithms left empty, then same logic as movement algorithms
   public captureAlgorithms: MoveAlgorithm[] = [];
   abstract movementAlgorithms: MoveAlgorithm[];
-
-  // abstract occupiedSquareCallback: (linePos: ShortPosition, playableLine: MoveLine) => boolean;
   
   // !: Circular dependence created, need to move this outside the class to solve the problem or come up with something else
   // public static create({ kind, side }: PieceListing): Piece {
@@ -83,7 +81,7 @@ export default abstract class Piece {
   //   return true;
   // };
 
-  public influenceEmptySquare(square: Square): boolean {
+  public influenceEmptySquare = (square: Square): boolean => {
     square.controlled[this.side] = true;
     return true;
   };
@@ -106,7 +104,7 @@ export default abstract class Piece {
   //   return false; 
   // };
 
-  public influenceOccupiedSquare(square: Square, playableLine: MoveLine): boolean {
+  public influenceOccupiedSquare = (square: Square, playableLine: MoveLine): boolean => {
     const destPiece: Piece = square.piece; //!: destPiece still optional with current implementation, FIX
     const altCapturing = !isEmpty(this.captureAlgorithms); // If a piece can still move there without capturing
     const simpleCaptureAvailable: boolean = destPiece?.side !== this.side && !altCapturing;
@@ -122,6 +120,11 @@ export default abstract class Piece {
     };
     return false; 
   };
+
+  //TODO: Move this into the Dynamic Behaviour interface if you can
+  public altInfluenceEmptySquare(square: Square) { return false };
+
+  public altInfluenceOccupiedSquare(square: Square, playableLine: MoveLine) { return false };
 
   // ?: See whether capture should have a default value, be optional, or be required.
   // !: Logmove is a horrible name for how the method works, make sure to change

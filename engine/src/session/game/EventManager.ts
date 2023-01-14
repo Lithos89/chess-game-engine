@@ -35,7 +35,7 @@ class EventManager {
       const square = board[boardPos];
       const piece: Piece | null = square.piece;
 
-      if (isNull(piece) || piece.side !== side) { continue };
+      if (isNull(piece) || piece.side === side) { continue };
 
       //* DEFENDING
       if (piece instanceof King) {

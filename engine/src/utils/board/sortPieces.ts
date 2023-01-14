@@ -1,5 +1,4 @@
 
-
 import { isNull } from 'lodash';
 
 // Types, interface, constants, ...
@@ -7,7 +6,6 @@ import { type Side } from '../../logic/terms';
 import { type BoardSquareListings } from '../../formation/structure/squareCollection';
 
 // Components
-// import Piece, { King } from '../../components/piece';
 import Piece from '../../components/piece/Piece';
 import King from '../../components/piece/King';
 

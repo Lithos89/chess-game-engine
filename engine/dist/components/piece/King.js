@@ -32,51 +32,48 @@ var King = /** @class */ (function (_super) {
         _this.moved = false;
         _this.checks = [];
         _this.loadMoveAlgorithms = function () { return [core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(1)]; };
-        King[side] = _this;
+        // public override influenceEmptySquare = (controlledSquares, enemyKing) => (linePos: ShortPosition) => {
+        //   const enemySide = enemyKing.side;
+        //   if (!controlledSquares[enemySide].has(linePos)) {
+        //     if (!enemyKing.legalLines.flat(2).includes(linePos)) {
+        //       return true;
+        //     };
+        //   };
+        //   return false;
+        // };
+        _this.influenceEmptySquare = function (square) {
+            var enemySide = _this.enemyKing.side;
+            console.log(_this.legalLines);
+            if (!square.controlled[enemySide]) {
+                var enemyKingControlledSquares = _this.enemyKing.legalLines.flat(2);
+                var squareShortPos = (0, convertPosition_1.default)(square.position);
+                console.log(enemyKingControlledSquares);
+                console.log(squareShortPos);
+                if (!enemyKingControlledSquares.includes(squareShortPos)) {
+                    return true;
+                }
+                ;
+            }
+            ;
+            return false;
+        };
+        _this.influenceOccupiedSquare = function (square) {
+            var destPiece = square.piece;
+            var simpleCaptureAvailable = !(0, lodash_1.isNull)(destPiece) && destPiece.side !== _this.side;
+            if (simpleCaptureAvailable) {
+                if (!(destPiece === null || destPiece === void 0 ? void 0 : destPiece.isProtected)) {
+                    return true;
+                }
+                ;
+            }
+            else {
+                destPiece.isProtected = true;
+            }
+            ;
+            return false;
+        };
         return _this;
     }
-    ;
-    // public override influenceEmptySquare = (controlledSquares, enemyKing) => (linePos: ShortPosition) => {
-    //   const enemySide = enemyKing.side;
-    //   if (!controlledSquares[enemySide].has(linePos)) {
-    //     if (!enemyKing.legalLines.flat(2).includes(linePos)) {
-    //       return true;
-    //     };
-    //   };
-    //   return false;
-    // };
-    King.prototype.influenceEmptySquare = function (square) {
-        var enemySide = this.enemyKing.side;
-        console.log(this.legalLines);
-        if (!square.controlled[enemySide]) {
-            var enemyKingControlledSquares = this.enemyKing.legalLines.flat(2);
-            var squareShortPos = (0, convertPosition_1.default)(square.position);
-            console.log(enemyKingControlledSquares);
-            console.log(squareShortPos);
-            if (!enemyKingControlledSquares.includes(squareShortPos)) {
-                return true;
-            }
-            ;
-        }
-        ;
-        return false;
-    };
-    ;
-    King.prototype.influenceOccupiedSquare = function (square) {
-        var destPiece = square.piece;
-        var simpleCaptureAvailable = !(0, lodash_1.isNull)(destPiece) && destPiece.side !== this.side;
-        if (simpleCaptureAvailable) {
-            if (!(destPiece === null || destPiece === void 0 ? void 0 : destPiece.isProtected)) {
-                return true;
-            }
-            ;
-        }
-        else {
-            destPiece.isProtected = true;
-        }
-        ;
-        return false;
-    };
     ;
     return King;
 }(Piece_1.default));

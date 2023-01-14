@@ -15,7 +15,9 @@ export default abstract class Piece {
     constructor(piece: PieceKind, side: Side);
     isMultiBehavioral(): this is DynamicBehavior;
     updateLines(): void;
-    influenceEmptySquare(square: Square): boolean;
-    influenceOccupiedSquare(square: Square, playableLine: MoveLine): boolean;
+    influenceEmptySquare: (square: Square) => boolean;
+    influenceOccupiedSquare: (square: Square, playableLine: MoveLine) => boolean;
+    altInfluenceEmptySquare(square: Square): boolean;
+    altInfluenceOccupiedSquare(square: Square, playableLine: MoveLine): boolean;
     logMove(to: ShortPosition, didCapture?: boolean): string;
 }

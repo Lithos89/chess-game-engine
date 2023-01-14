@@ -1,5 +1,5 @@
 
-import { isNull } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
 import { BOARD_POSITIONS, type ShortPosition, type Side, SIDES, PieceKind } from '../../logic/terms';
@@ -172,6 +172,7 @@ class BoardManager {
     // Kings are updated after basic pieces to make sure that a king cannot move into a line of check and if it is already in check
     this.updateKings(kings as { [side in Side] : King});
 
+    this.applyPins(basicPieces, kings);
     //? Could add a pin updating function here that takes the kings and the other pieces and loops over all of the basic pieces to detect pins
 
     // checks.push(...(sideLastMoved === "white" ? whiteChecks : blackChecks));
@@ -183,44 +184,17 @@ class BoardManager {
     this.updateState();
   };
 
-  private loopLines = (
-    moveLines: MoveLine[],
-    emptySquareCallback: ((linePos: ShortPosition, controlledSquares?) => boolean),
-    occupiedSquareCallback: (linePos: ShortPosition, playableLine?: MoveLine) => boolean
+  private updateLines = (
+    piece: Piece,
+    useCaptureLines: boolean = false
   ) => {
+    const moveLines = useCaptureLines ? piece.captureLines : piece.legalLines;
+    const influenceEmptySquare = useCaptureLines ? piece.altInfluenceEmptySquare : piece.influenceEmptySquare;
+    const influenceOccupiedSquare = useCaptureLines ? piece.altInfluenceOccupiedSquare : piece.influenceOccupiedSquare;
+
     const playableLines: MoveLine[] = [];
 
     for (const moveLine of moveLines) { 
-      const playableLine: MoveLine = [];
-
-      // * Further line search is stopped when a piece is detected, resulting in [empty..., capture?]
-      for (const linePos of moveLine) {
-        const isSquareOccupied = !(this.boardSquares[linePos].piece === null);
-
-        if (isSquareOccupied) {
-          const captureAvailable = occupiedSquareCallback(linePos, playableLine);
-          if (captureAvailable)
-            playableLine.push(linePos);
-
-          break;
-        } else {
-          const moveAvailable = emptySquareCallback(linePos);
-          if (moveAvailable)
-            playableLine.push(linePos);
-        };
-      };
-      playableLines.push(playableLine);
-    };
-
-    return playableLines.flat();
-  };
-
-  private updateLines = (
-    piece: Piece
-  ) => {
-    const playableLines: MoveLine[] = [];
-
-    for (const moveLine of piece.legalLines) { 
       const playableLine: MoveLine = [];
 
       // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
@@ -229,12 +203,12 @@ class BoardManager {
         const isSquareUnoccupied = isNull(square.piece);
 
         if (isSquareUnoccupied) {
-          const moveAvailable = piece.influenceEmptySquare(square);
+          const moveAvailable = influenceEmptySquare(square);
 
           if (moveAvailable)
             playableLine.push(linePos);
         } else {
-          const captureAvailable = piece.influenceOccupiedSquare(square, playableLine);
+          const captureAvailable = influenceOccupiedSquare(square, playableLine);
 
           if (captureAvailable)
             playableLine.push(linePos);
@@ -244,33 +218,6 @@ class BoardManager {
       };
       playableLines.push(playableLine);
     };
-
-    if (piece instanceof Pawn){
-      for (const moveLine of piece.captureLines) { 
-        const playableLine: MoveLine = [];
-
-        // * Further line search is stop ped when a piece is detected, resulting in [empty..., capture?]
-        for (const linePos of moveLine) {
-          const square = this.boardSquares[linePos];
-          const isSquareUnoccupied = isNull(square.piece);
-
-          if (isSquareUnoccupied) {
-            const moveAvailable = piece.altInfluenceEmptySquare(square);
-
-            if (moveAvailable)
-              playableLine.push(linePos);
-          } else {
-            const captureAvailable = piece.altInfluenceOccupiedSquare(square, playableLine);
-
-            if (captureAvailable)
-              playableLine.push(linePos);
-
-            break;
-          };
-        };
-        playableLines.push(playableLine);
-      };
-    }
 
     return playableLines.flat();
   };
@@ -285,12 +232,10 @@ class BoardManager {
       const regularMoves = this.updateLines(piece);
       piece.availableMoves.push(...regularMoves);
 
-      // if (!isEmpty(piece.captureAlgorithms)) {
-      // !: Note that this if clause is not scalable as is
-      // if (piece instanceof Pawn) {
-      //   const captureMoves = this.updateLines(piece);
-      //   piece.availableMoves.push(...captureMoves);
-      // };
+      if (!isEmpty(piece.captureAlgorithms)) {
+        const captureMoves = this.updateLines(piece, true);
+        piece.availableMoves.push(...captureMoves);
+      };
     };
 
     return [checks, controlledSquares];
@@ -313,6 +258,63 @@ class BoardManager {
       king.availableMoves.push(...newMoves);
     };
   };
+
+  private applyPins(basicPieces: {[side in Side]: Piece[]}, kings: {[side in Side]: King}) {
+    for (const i in SIDES) {
+      const side = SIDES[i];
+      const enemySide = SIDES[1 - Number(i)];
+      const enemyKing = kings[enemySide];
+      const enemyPos = convertPosition(enemyKing.position) as ShortPosition
+      for (const piece of [...basicPieces[side]]) {
+        for (const fullLine of piece.legalLines) {
+          const posIndex = fullLine.indexOf(enemyPos);
+          if (posIndex !== -1) {
+            const attackLine = fullLine.filter((_, i) => i < posIndex);
+
+            console.info(attackLine);
+
+            let pinnedPiece: Piece | null = null;
+
+            for (const _pos of attackLine) {
+              const destPiece = this.boardSquares[_pos].piece;
+              if (destPiece !== null && destPiece.side !== side) {
+                if (pinnedPiece instanceof Piece) {
+                  pinnedPiece = null;
+                  break;
+                } else {
+                  pinnedPiece = destPiece;
+                }
+              }
+            };
+
+            if (pinnedPiece) {
+              console.log(pinnedPiece);
+              pinnedPiece.availableMoves = pinnedPiece.availableMoves.filter((move) => attackLine.includes(move) || move === convertPosition(piece.position));
+            }
+            // let i = 0;
+            // const pinnedPiece: Piece | null = null;
+
+            // const pos = line[i];
+            // while(pos !== enemyPos) {
+            //   const destPiece = this.boardSquares[pos].piece;
+
+            //   if (destPiece?.side === enemySide) {
+                
+            //   }
+            // }
+
+            // for (const pos of line) {
+            //   const destPiece = this.boardSquares[pos].piece;
+
+            //   if (destPiece?.side === enemySide) {
+                
+            //   }
+            // }
+          }
+        }
+      }
+    }
+  }
 };
 
 export default BoardManager;

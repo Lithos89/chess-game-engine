@@ -151,7 +151,7 @@ class Game implements Observable {
         .map((attack) => EventManager.forceCheckResolve(
             this.boardManager.boardSquares,
             attack,
-            SIDES[1 - SIDES.indexOf(sideLastMoved)]
+            sideLastMoved
           )
         )
         .some(Boolean);

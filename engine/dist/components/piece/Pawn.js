@@ -32,6 +32,10 @@ var Pawn = /** @class */ (function (_super) {
         _this.moved = false;
         _this.influenceEmptySquare = function () { return true; };
         _this.influenceOccupiedSquare = function () { return false; };
+        _this.altInfluenceEmptySquare = function (square) {
+            square.controlled[_this.side] = true;
+            return false;
+        };
         _this.altInfluenceOccupiedSquare = function (square, playableLine) {
             var destPiece = square.piece;
             if (destPiece.side !== _this.side) {
@@ -57,11 +61,6 @@ var Pawn = /** @class */ (function (_super) {
     Pawn.prototype.loadMoveAlgorithms = function () {
         var fileDistance = this.moved ? 1 : 2;
         return [core_1.default.file(fileDistance, this.direction)];
-    };
-    ;
-    Pawn.prototype.altInfluenceEmptySquare = function (square) {
-        square.controlled[this.side] = true;
-        return false;
     };
     ;
     return Pawn;

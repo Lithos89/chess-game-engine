@@ -20,7 +20,7 @@ var EventManager = /** @class */ (function () {
         for (var boardPos in board) {
             var square = board[boardPos];
             var piece = square.piece;
-            if ((0, lodash_1.isNull)(piece) || piece.side !== side) {
+            if ((0, lodash_1.isNull)(piece) || piece.side === side) {
                 continue;
             }
             ;
