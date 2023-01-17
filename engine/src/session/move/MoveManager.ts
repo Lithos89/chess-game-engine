@@ -1,22 +1,20 @@
+import { BoardDirection } from './../../logic/terms';
 
 // Types, interfaces, constants, ...
-import { PieceKind, type Side, type ShortPosition, SIDES } from '../../logic/terms';
-import { type MoveLine } from '../../logic/algorithms/types';
+import { type Side, type ShortPosition, PieceKind, SIDES } from '../../logic/terms';
+// import { type MoveLine, Attack } from '../../logic/concepts';
 
 // Components
 import Square from '../../components/Square';
 import Piece from '../../components/piece/Piece';
+import King from '../../components/piece/King';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
 
 // Util
-import convertPosition from '../../utils/position/convertPosition';
-
-interface Attack {
-  attackPiece: Piece,
-  frontAttackLine: MoveLine
-};
+import convertPosition from '../../utils/regulation/position/convertPosition';
+import calcDistance from '../../utils/regulation/position/calcDistance';
 
 //*: Functions to include in this class
 /*
@@ -37,7 +35,8 @@ class MoveManager {
   };
 
   constructor(
-    private updateState: (type?: string) => void
+    private updateState: (type?: string) => void,
+    private commitCastle: (king: King, direction: BoardDirection) => void
   ) {};
 
   public takebackMove = () => {
@@ -94,10 +93,14 @@ class MoveManager {
     if (originPiece.isMultiBehavioral() && originPiece.moved === false)
       originPiece.moved = true;
 
-    dest.setPiece(originPiece);
+    if (originPiece instanceof King && calcDistance(origin, dest) > 1) {
+      const castleDirection = dest.position.col === 'c' ? '-' : '+';
+      dest.setPiece(originPiece);
+      this.commitCastle(originPiece, castleDirection);
+    } else {
+      dest.setPiece(originPiece);
+    }
 
-    // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
-    // console.log(this.moveLL.listMoves());
     this.updateState('board');
   };
 };

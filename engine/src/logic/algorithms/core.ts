@@ -3,7 +3,7 @@ import { isUndefined } from 'lodash';
 
 // Types, interface, constants, ...
 import { ROWS, COLUMNS, type Row, type Column, type Position, type ShortPosition, type BoardDirection } from '../terms';
-import { type MoveLine } from './types';
+import { type MoveLine } from '../concepts';
 
 // Utils
 import indexInRange from '../../utils/common/indexInRange';

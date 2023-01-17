@@ -22,7 +22,6 @@ var MoveManager_1 = require("../move/MoveManager");
 var EventManager_1 = require("./EventManager");
 // State Management
 var Observer_1 = require("../../state/Observer");
-;
 var Game = /** @class */ (function () {
     function Game(side, id) {
         var _this = this;
@@ -99,8 +98,6 @@ var Game = /** @class */ (function () {
         this.updateMoves = function (sideLastMoved) {
             var checks = [];
             _this.boardManager.processAvailableMoves(checks, sideLastMoved);
-            console.info("checks");
-            console.info(checks);
             if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
                 var isCheckmate = (Array.from(checks))
                     .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved); })
@@ -123,7 +120,7 @@ var Game = /** @class */ (function () {
         var altBoard = side === "white";
         this.boardManager = new BoardManager_1.default(this.startingFormation, altBoard, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-        this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); });
+        this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }, function (king, direction) { return _this.boardManager.commitCastle(king, direction); });
         // this.moveManager.updateMoves(this.boardManager.boardSquares);
         this.updateMoves();
     }

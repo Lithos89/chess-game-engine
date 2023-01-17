@@ -1,5 +1,5 @@
 import { type Side } from '../../logic/terms';
-import { type MoveLine } from '../../logic/algorithms/types';
+import { type MoveLine } from '../../logic/concepts';
 import DynamicBehavior from './interfaces/dynamicBehavior';
 import Piece from './Piece';
 declare class Rook extends Piece implements DynamicBehavior {

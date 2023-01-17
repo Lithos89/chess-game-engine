@@ -22,4 +22,5 @@ export declare enum PieceKind {
     Queen = "q",
     King = "k"
 }
+export type SquareColor = 'light' | 'dark';
 export {};

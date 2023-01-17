@@ -1,14 +1,12 @@
 
 // Types, interfaces, constants, ...
-import { type Position, type ShortPosition, type Side } from '../logic/terms';
+import { type Position, type ShortPosition, type Side, type SquareColor } from '../logic/terms';
 
 // Components
 import Piece from './piece/Piece';
 
 // Utils
-import convertPosition from '../utils/position/convertPosition';
-
-export type SquareColor = 'light' | 'dark';
+import convertPosition from '../utils/regulation/position/convertPosition';
 
 class Square {
   // only allow position to be set

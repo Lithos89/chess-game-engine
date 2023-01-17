@@ -2,14 +2,15 @@
 import { isEmpty, isEqual, isString, isUndefined } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition, type Side, SIDES } from '../../logic/terms';
+import { type ShortPosition, type Side, type BoardDirection, SIDES } from '../../logic/terms';
 import { type PieceListings } from '../../formation/structure/pieceCollection';
-import { MoveLine } from '../../logic/algorithms/types';
+import { Attack } from '../../logic/concepts';
 import defaultStartingFormation from '../../formation/setups/start';
 
 // Components
 import Square from '../../components/Square';
 import Piece from '../../components/piece/Piece';
+import King from '../../components/piece/King';
 
 // Game Management
 import BoardManager from '../board/BoardManager';
@@ -19,11 +20,6 @@ import EventManager from './EventManager';
 // State Management
 import Observer from '../../state/Observer';
 import Observable from 'state/observable';
-
-interface Attack {
-  attackPiece: Piece,
-  frontAttackLine: MoveLine
-};
 
 class Game implements Observable {
   readonly id: string;
@@ -53,7 +49,7 @@ class Game implements Observable {
     );
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-    this.moveManager = new MoveManager((type?: string) => this.signalState(type));
+    this.moveManager = new MoveManager((type?: string) => this.signalState(type), (king: King, direction: BoardDirection) => this.boardManager.commitCastle(king, direction));
     // this.moveManager.updateMoves(this.boardManager.boardSquares);
     this.updateMoves();
   };
@@ -143,8 +139,6 @@ class Game implements Observable {
   public updateMoves = (sideLastMoved?: Side) => {
     const checks: Attack[] = [];
     this.boardManager.processAvailableMoves(checks, sideLastMoved);
-    console.info("checks")
-    console.info(checks)
 
     if (!isEmpty(checks) && !isUndefined(sideLastMoved)) {
       const isCheckmate = (Array.from(checks))

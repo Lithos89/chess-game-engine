@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type ShortPosition } from '../../logic/terms';
-import { type MoveLine } from '../../logic/algorithms/types';
+import { type MoveLine } from '../../logic/concepts';
 // Class interfaces
 import DynamicBehavior from './interfaces/dynamicBehavior';
 

@@ -4,8 +4,8 @@ var lodash_1 = require("lodash");
 var King_1 = require("../../components/piece/King");
 var Pawn_1 = require("../../components/piece/Pawn");
 // Utils
-var convertPosition_1 = require("../../utils/position/convertPosition");
-;
+var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
+var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var EventManager = /** @class */ (function () {
     function EventManager() {
     }
@@ -15,7 +15,6 @@ var EventManager = /** @class */ (function () {
         var attackPiece = _a.attackPiece, frontAttackLine = _a.frontAttackLine;
         var preventitiveMoves = [];
         var king;
-        console.info(attackPiece);
         //* Blocking or capturing
         for (var boardPos in board) {
             var square = board[boardPos];
@@ -44,13 +43,19 @@ var EventManager = /** @class */ (function () {
             piece.availableMoves = playableMoves;
         }
         var kingMoves = new Set(king.availableMoves);
-        console.info(kingMoves);
         // Remove the positions that are still in the attacking piece's lines of attack
         if (!(attackPiece instanceof Pawn_1.default)) {
             attackPiece.legalLines.flat(2).forEach(function (pos) {
                 console.info(pos);
                 kingMoves.delete(pos);
             });
+        }
+        //* Remove the ability for the king to castle out of the check
+        for (var _c = 0, _d = king.legalLines.flat(2); _c < _d.length; _c++) {
+            var pos = _d[_c];
+            if ((0, calcDistance_1.default)(king.position, (0, convertPosition_1.default)(pos)) > 1) {
+                kingMoves.delete(pos);
+            }
         }
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);

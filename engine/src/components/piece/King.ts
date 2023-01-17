@@ -2,8 +2,8 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type Side, type ShortPosition, PieceKind, SIDES } from '../../logic/terms';
-import { type MoveLine } from '../../logic/algorithms/types';
+import { type Side, type ShortPosition, type BoardDirection, PieceKind } from '../../logic/terms';
+import { Attack } from '../../logic/concepts';
 
 // Components
 import Piece from './Piece';
@@ -14,52 +14,51 @@ import Search from '../../logic/algorithms/core';
 import DynamicBehavior from './interfaces/dynamicBehavior';
 
 // Utils
-import convertPosition from '../../utils/position/convertPosition';
-
-interface Attack {
-  attackPiece: Piece,
-  frontAttackLine: MoveLine
-};
+import convertPosition from '../../utils/regulation/position/convertPosition';
+import calcDistance from '../../utils/regulation/position/calcDistance';
 
 class King extends Piece implements DynamicBehavior {
   public movementAlgorithms: null;
   public moved: boolean = false;
 
-  //? See how this static implementation works when it comes to multiple games or sessions
-  // TODO: Add error handling to make sure that both properties are filled and that they do not become overwritten
   public enemyKing: King;
 
   public checks: Attack[] = [];
+
+  public castleAvailableCallback: (direction: BoardDirection) => boolean;
 
   constructor(side: Side) {
     super(PieceKind.King, side);
   };
 
-  loadMoveAlgorithms = () => [Search.file(1), Search.diagonals(1), Search.rank(1)];
-
-  // public override influenceEmptySquare = (controlledSquares, enemyKing) => (linePos: ShortPosition) => {
-  //   const enemySide = enemyKing.side;
-  //   if (!controlledSquares[enemySide].has(linePos)) {
-  //     if (!enemyKing.legalLines.flat(2).includes(linePos)) {
-  //       return true;
-  //     };
-  //   };
-  //   return false;
-  // };
+  public loadMoveAlgorithms() {
+    // const left = this.side === 'white' ? '-' : '+';
+    // const right = this.side === 'white' ? '+' : '-';
+    const rankMoveAlgorithm = this.moved ? Search.rank(1) : Search.rank(2);
+    return [Search.file(1), Search.diagonals(1), rankMoveAlgorithm];
+  };
 
   public override influenceEmptySquare = (square: Square): boolean => {
     const enemySide = this.enemyKing.side;
-
-    console.log(this.legalLines);
 
     if (!square.controlled[enemySide]) {
       const enemyKingControlledSquares: ShortPosition[] = this.enemyKing.legalLines.flat(2);
       const squareShortPos: ShortPosition = convertPosition(square.position) as ShortPosition;
 
-      console.log(enemyKingControlledSquares)
-      console.log(squareShortPos)
       if (!enemyKingControlledSquares.includes(squareShortPos)) {
-        return true;
+
+        if (calcDistance(this.position, square.position) > 1) {
+          const castlingDirection: BoardDirection = square.position.col === 'g' ? '+' : '-';
+          const canCastleToSquare = this.castleAvailableCallback(castlingDirection);
+
+          if (canCastleToSquare)
+            return true;
+          else
+            return false;
+        } else {
+          square.controlled[this.side] = true;
+          return true;
+        }
       };
     };
     return false;
@@ -79,8 +78,6 @@ class King extends Piece implements DynamicBehavior {
 
     return false;
   };
-
-
 };
 
 export default King;

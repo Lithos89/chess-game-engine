@@ -23,34 +23,32 @@ var Piece_1 = require("./Piece");
 // Algorithms
 var core_1 = require("../../logic/algorithms/core");
 // Utils
-var convertPosition_1 = require("../../utils/position/convertPosition");
-;
+var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
+var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
     function King(side) {
         var _this = _super.call(this, terms_1.PieceKind.King, side) || this;
         _this.moved = false;
         _this.checks = [];
-        _this.loadMoveAlgorithms = function () { return [core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(1)]; };
-        // public override influenceEmptySquare = (controlledSquares, enemyKing) => (linePos: ShortPosition) => {
-        //   const enemySide = enemyKing.side;
-        //   if (!controlledSquares[enemySide].has(linePos)) {
-        //     if (!enemyKing.legalLines.flat(2).includes(linePos)) {
-        //       return true;
-        //     };
-        //   };
-        //   return false;
-        // };
         _this.influenceEmptySquare = function (square) {
             var enemySide = _this.enemyKing.side;
-            console.log(_this.legalLines);
             if (!square.controlled[enemySide]) {
                 var enemyKingControlledSquares = _this.enemyKing.legalLines.flat(2);
                 var squareShortPos = (0, convertPosition_1.default)(square.position);
-                console.log(enemyKingControlledSquares);
-                console.log(squareShortPos);
                 if (!enemyKingControlledSquares.includes(squareShortPos)) {
-                    return true;
+                    if ((0, calcDistance_1.default)(_this.position, square.position) > 1) {
+                        var castlingDirection = square.position.col === 'g' ? '+' : '-';
+                        var canCastleToSquare = _this.castleAvailableCallback(castlingDirection);
+                        if (canCastleToSquare)
+                            return true;
+                        else
+                            return false;
+                    }
+                    else {
+                        square.controlled[_this.side] = true;
+                        return true;
+                    }
                 }
                 ;
             }
@@ -74,6 +72,13 @@ var King = /** @class */ (function (_super) {
         };
         return _this;
     }
+    ;
+    King.prototype.loadMoveAlgorithms = function () {
+        // const left = this.side === 'white' ? '-' : '+';
+        // const right = this.side === 'white' ? '+' : '-';
+        var rankMoveAlgorithm = this.moved ? core_1.default.rank(1) : core_1.default.rank(2);
+        return [core_1.default.file(1), core_1.default.diagonals(1), rankMoveAlgorithm];
+    };
     ;
     return King;
 }(Piece_1.default));

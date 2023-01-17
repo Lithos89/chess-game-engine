@@ -48,3 +48,7 @@ export enum PieceKind {
   Queen = 'q',
   King = 'k'
 };
+
+// SQUARE SPECIFIC
+
+export type SquareColor = 'light' | 'dark';

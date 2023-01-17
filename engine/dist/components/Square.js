@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Utils
-var convertPosition_1 = require("../utils/position/convertPosition");
+var convertPosition_1 = require("../utils/regulation/position/convertPosition");
 var Square = /** @class */ (function () {
     // constructor(position: Position | ShortPosition, color: SquareColor, initialPiece: Piece | null)
     function Square(position, color, piece) {

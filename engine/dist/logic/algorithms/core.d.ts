@@ -1,5 +1,5 @@
 import { type Position, type BoardDirection } from '../terms';
-import { type MoveLine } from './types';
+import { type MoveLine } from '../concepts';
 declare const Search: {
     diagonals: (max?: number | undefined, direction?: BoardDirection) => ({ row, col }: Position) => MoveLine[];
     file: (max?: number | undefined, direction?: BoardDirection) => ({ row, col }: Position) => MoveLine[];

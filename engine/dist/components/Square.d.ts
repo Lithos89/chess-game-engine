@@ -1,6 +1,5 @@
-import { type Position, type ShortPosition, type Side } from '../logic/terms';
+import { type Position, type ShortPosition, type Side, type SquareColor } from '../logic/terms';
 import Piece from './piece/Piece';
-export type SquareColor = 'light' | 'dark';
 declare class Square {
     readonly position: Position;
     readonly color: SquareColor;

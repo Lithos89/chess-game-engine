@@ -1,9 +1,10 @@
 
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type BoardDirection } from '../../logic/terms';
-import { type MoveLine, type MoveAlgorithm } from '../../logic/algorithms/types';
+import { type MoveLine, type MoveAlgorithm } from '../../logic/concepts';
 // Class interfaces
 import DynamicBehavior from './interfaces/dynamicBehavior';
+import AlternativeCapturing from './interfaces/alternativeCapturing';
 
 // Components
 // import Piece, { King } from './index';
@@ -15,17 +16,19 @@ import Square from '../Square';
 import Search from '../../logic/algorithms/core';
 
 
-class Pawn extends Piece implements DynamicBehavior {
+class Pawn extends Piece implements DynamicBehavior, AlternativeCapturing {
   // TODO: Fix direction so it works on the alt board orientation
   private readonly direction: BoardDirection = this.side === 'white' ? '+' : '-';
 
   public movementAlgorithms: null;
   public moved: boolean = false;
 
+  public captureLines: MoveLine[];
+  public captureAlgorithms = [Search.diagonals(1, this.direction)];
+
   constructor(side: Side) {
     super(PieceKind.Pawn, side);
     // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
-    this.captureAlgorithms = [Search.diagonals(1, this.direction)];
   };
 
   public loadMoveAlgorithms(): MoveAlgorithm[] {
@@ -38,7 +41,7 @@ class Pawn extends Piece implements DynamicBehavior {
 
   public override influenceOccupiedSquare = () => false;
 
-  public override altInfluenceEmptySquare = (square: Square): boolean => {
+  public altInfluenceEmptySquare = (square: Square): boolean => {
     square.controlled[this.side] = true;
     return false;
   };

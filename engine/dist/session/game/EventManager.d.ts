@@ -1,11 +1,6 @@
 import { type Side } from "../../logic/terms";
-import { type MoveLine } from "../../logic/algorithms/types";
+import { Attack } from "../../logic/concepts";
 import { type BoardSquareListings } from "../../formation/structure/squareCollection";
-import Piece from '../../components/piece/Piece';
-interface Attack {
-    attackPiece: Piece;
-    frontAttackLine: MoveLine;
-}
 declare class EventManager {
     static forceCheckResolve: (board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side) => boolean;
     static victoryCheck(board: BoardSquareListings): void;

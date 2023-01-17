@@ -1,9 +1,11 @@
 
 // Types, interface, constants, ...
-import { type ShortPosition, type Position } from '../../logic/terms';
+import { type ShortPosition, type Position } from '../../../logic/terms';
 
 // *: Function to convert between the alternate forms of board positions ({row, col} or `${col}${row}`)
-export default function convertPosition(position: ShortPosition | Position): ShortPosition | Position {
+function convertPosition(position: ShortPosition): Position
+function convertPosition(position: Position): ShortPosition
+function convertPosition(position: ShortPosition | Position): ShortPosition | Position {
   if (typeof position === 'string') {
     return { row: position[1], col: position[0] } as Position;
   } else if (typeof position === 'object') {
@@ -12,3 +14,5 @@ export default function convertPosition(position: ShortPosition | Position): Sho
     throw Error('Unable to convert position of ' + position);
   };
 };
+
+export default convertPosition;

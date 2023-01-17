@@ -1,4 +1,5 @@
-import Square, { type SquareColor } from './../../components/Square';
+import { type SquareColor } from '../../logic/terms';
+import Square from './../../components/Square';
 export interface PresentedSquare {
     color: SquareColor;
     focus: {

@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
+var King_1 = require("../../components/piece/King");
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // Util
-var convertPosition_1 = require("../../utils/position/convertPosition");
-;
+var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
+var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 //*: Functions to include in this class
 /*
   - Victory check
@@ -17,9 +18,10 @@ var convertPosition_1 = require("../../utils/position/convertPosition");
 */
 // *: The purpose of MoveManager will be to keep track of available moves, forced plays, signal someone has won, execute legal moves, and more...
 var MoveManager = /** @class */ (function () {
-    function MoveManager(updateState) {
+    function MoveManager(updateState, commitCastle) {
         var _this = this;
         this.updateState = updateState;
+        this.commitCastle = commitCastle;
         this.moveLL = new MoveHistoryLL_1.default();
         this.captures = {
             white: { p: 0, r: 0, h: 0, b: 0, q: 0 },
@@ -70,9 +72,14 @@ var MoveManager = /** @class */ (function () {
             _this.updateState('move-log');
             if (originPiece.isMultiBehavioral() && originPiece.moved === false)
                 originPiece.moved = true;
-            dest.setPiece(originPiece);
-            // this.moveLL.addMove(originPiece.side + ' ' + originPiece.kind + ' ' + originPiece.position.col + originPiece.position.row);
-            // console.log(this.moveLL.listMoves());
+            if (originPiece instanceof King_1.default && (0, calcDistance_1.default)(origin, dest) > 1) {
+                var castleDirection = dest.position.col === 'c' ? '-' : '+';
+                dest.setPiece(originPiece);
+                _this.commitCastle(originPiece, castleDirection);
+            }
+            else {
+                dest.setPiece(originPiece);
+            }
             _this.updateState('board');
         };
     }

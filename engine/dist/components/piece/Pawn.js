@@ -30,6 +30,7 @@ var Pawn = /** @class */ (function (_super) {
         // TODO: Fix direction so it works on the alt board orientation
         _this.direction = _this.side === 'white' ? '+' : '-';
         _this.moved = false;
+        _this.captureAlgorithms = [core_1.default.diagonals(1, _this.direction)];
         _this.influenceEmptySquare = function () { return true; };
         _this.influenceOccupiedSquare = function () { return false; };
         _this.altInfluenceEmptySquare = function (square) {
@@ -53,9 +54,8 @@ var Pawn = /** @class */ (function (_super) {
             }
             ;
         };
-        // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
-        _this.captureAlgorithms = [core_1.default.diagonals(1, _this.direction)];
         return _this;
+        // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
     }
     ;
     Pawn.prototype.loadMoveAlgorithms = function () {
