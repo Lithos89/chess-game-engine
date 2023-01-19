@@ -2,7 +2,7 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition, type Side, type SquareColor, type BoardDirection, SIDES, BOARD_POSITIONS } from '../../logic/terms';
+import { type ShortPosition, type Side, type Row, type Column, type SquareColor, type BoardDirection, SIDES, BOARD_POSITIONS } from '../../logic/terms';
 import { BoardSquareCondensed } from '../../formation/structure/board';
 import { type PieceListings} from '../../formation/structure/pieceCollection';
 import { type BoardSquareListings, PresentedSquare } from '../../formation/structure/squareCollection';
@@ -29,6 +29,41 @@ class BoardManager {
   public kings: {[side in Side]: King};
 
   private readonly getCurrentTurnSide: () => Side;
+
+  castleAvailabilityCallback = (side: Side) => (direction: BoardDirection): boolean => {
+    const backRank: Row = side === "white" ? "1" : "8";
+    const isKingSide = direction === '+';
+
+
+    //* Legality check for the associated Rook
+    const rookCol = isKingSide ? "h" : "a";
+    const rookSquare = this.boardSquares[`${rookCol}${backRank}` as ShortPosition]; 
+    const rookCheck = rookSquare.piece instanceof Rook && rookSquare.piece.moved === false;
+
+
+    //* Legality checks for the squares in between the King and the Rook
+    //? This could be stored as constants and be moved into a type related file
+    const kingSideCols: Column[] = ["f", "g"];
+    const queenSideCols: Column[] = ["b", "c", "d"];
+
+    const columnsToCheck = isKingSide ? kingSideCols : queenSideCols;
+
+    const isPathClear = columnsToCheck.every((col) => {
+      const square = this.boardSquares[`${col}${backRank}`];
+      const isUnnocupied = square.piece === null;
+
+      if (square.position.col === "b") {
+        return isUnnocupied;
+      } else {
+        const isControlledByEnemy = square.controlled[getEnemySide(side)] === true;
+
+        return isUnnocupied && !isControlledByEnemy;
+      };
+    });
+    
+  
+    return isPathClear && rookCheck;
+  };
 
   constructor(
     startingFormation: PieceListings,
@@ -67,61 +102,14 @@ class BoardManager {
 
       const regex: RegExp = /b|d|f|h/;
       const isEvenRow: Boolean = regex.test(position);
-      const squareColor: SquareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
+      const squareColor: SquareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'dark' : 'light';
 
       const startingPiece: Piece | null = pieceMapping[position] || null;
 
-      const temp = (side: Side) => (direction: BoardDirection): boolean => {
-        // ! Still will need to factor in alt board orientation for the different sides
-
-        if (side === "white" && direction === '+') {
-          const squaresToCheck: ShortPosition[] = ["f1", "g1"];
-
-          const clear = squaresToCheck.every((pos) => {
-            const square = this.boardSquares[pos];
-
-            const isUnnocupied = square.piece === null;
-            const isControlledByEnemy = square.controlled[getEnemySide(side)] === true;
-
-            return isUnnocupied && !isControlledByEnemy;
-          });
-
-          const rookCheck = this.boardSquares["h1"].piece instanceof Rook && !this.boardSquares["h1"].piece.moved;
-
-          if (clear && rookCheck) {
-            return true;
-          } else {
-            return false;
-          }
-        } else if (side === "white" && direction === '-') {
-          const squaresToCheck: ShortPosition[] = ["c1", "d1"];
-
-          const clear = squaresToCheck.every((pos) => {
-            const square = this.boardSquares[pos];
-
-            const isUnnocupied = square.piece === null;
-            const isControlledByEnemy = square.controlled[getEnemySide(side)] === true;
-
-            return isUnnocupied && !isControlledByEnemy;
-          });
-
-          const tempCheck = this.boardSquares["b1"].controlled[getEnemySide(side)] === false;
-
-          const rookCheck = this.boardSquares["a1"].piece instanceof Rook && !this.boardSquares["a1"].piece.moved;
-
-          if (clear && rookCheck && tempCheck) {
-            return true;
-          } else {
-            return false;
-          }
-        } else {
-          return false;
-        }
+      if (startingPiece instanceof King) {
+        startingPiece.castleAvailableCallback = this.castleAvailabilityCallback(startingPiece.side);
       };
 
-      if (startingPiece instanceof King) {
-        startingPiece.castleAvailableCallback = temp(startingPiece.side)
-      }
       this.boardSquares[position] = new Square(position, squareColor, startingPiece);
     };
   };

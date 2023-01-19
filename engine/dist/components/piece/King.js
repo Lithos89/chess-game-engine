@@ -25,6 +25,7 @@ var core_1 = require("../../logic/algorithms/core");
 // Utils
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
+var getBoardDirection_1 = require("../../utils/regulation/direction/getBoardDirection");
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
     function King(side) {
@@ -38,7 +39,7 @@ var King = /** @class */ (function (_super) {
                 var squareShortPos = (0, convertPosition_1.default)(square.position);
                 if (!enemyKingControlledSquares.includes(squareShortPos)) {
                     if ((0, calcDistance_1.default)(_this.position, square.position) > 1) {
-                        var castlingDirection = square.position.col === 'g' ? '+' : '-';
+                        var castlingDirection = (0, getBoardDirection_1.default)(_this.position, square.position, 'horizontal');
                         var canCastleToSquare = _this.castleAvailableCallback(castlingDirection);
                         if (canCastleToSquare)
                             return true;
@@ -74,8 +75,6 @@ var King = /** @class */ (function (_super) {
     }
     ;
     King.prototype.loadMoveAlgorithms = function () {
-        // const left = this.side === 'white' ? '-' : '+';
-        // const right = this.side === 'white' ? '+' : '-';
         var rankMoveAlgorithm = this.moved ? core_1.default.rank(1) : core_1.default.rank(2);
         return [core_1.default.file(1), core_1.default.diagonals(1), rankMoveAlgorithm];
     };

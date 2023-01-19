@@ -51,7 +51,6 @@ export default abstract class Piece {
   };
 
   public influenceEmptySquare = (square: Square): boolean => {
-
     square.controlled[this.side] = true;
     return true;
   };

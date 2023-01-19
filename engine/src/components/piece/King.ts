@@ -16,6 +16,7 @@ import DynamicBehavior from './interfaces/dynamicBehavior';
 // Utils
 import convertPosition from '../../utils/regulation/position/convertPosition';
 import calcDistance from '../../utils/regulation/position/calcDistance';
+import getBoardDirection from '../../utils/regulation/direction/getBoardDirection';
 
 class King extends Piece implements DynamicBehavior {
   public movementAlgorithms: null;
@@ -32,8 +33,6 @@ class King extends Piece implements DynamicBehavior {
   };
 
   public loadMoveAlgorithms() {
-    // const left = this.side === 'white' ? '-' : '+';
-    // const right = this.side === 'white' ? '+' : '-';
     const rankMoveAlgorithm = this.moved ? Search.rank(1) : Search.rank(2);
     return [Search.file(1), Search.diagonals(1), rankMoveAlgorithm];
   };
@@ -46,9 +45,8 @@ class King extends Piece implements DynamicBehavior {
       const squareShortPos: ShortPosition = convertPosition(square.position) as ShortPosition;
 
       if (!enemyKingControlledSquares.includes(squareShortPos)) {
-
         if (calcDistance(this.position, square.position) > 1) {
-          const castlingDirection: BoardDirection = square.position.col === 'g' ? '+' : '-';
+          const castlingDirection: BoardDirection = getBoardDirection(this.position, square.position, 'horizontal');
           const canCastleToSquare = this.castleAvailableCallback(castlingDirection);
 
           if (canCastleToSquare)

@@ -8,6 +8,7 @@ var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // Util
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
+var getBoardDirection_1 = require("../../utils/regulation/direction/getBoardDirection");
 //*: Functions to include in this class
 /*
   - Victory check
@@ -56,12 +57,6 @@ var MoveManager = /** @class */ (function () {
             _this.captures[terms_1.SIDES[1 - terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
             _this.updateState('capture');
         };
-        // Idea for algorithm to find out if a piece is pinned
-        /*
-          For each piece, go through it's line of attack and see if the king is in part of the line. Then if the king is a part of that line
-          go through all the squares bettween the piece and the king. Then count the number of pieces that are between the two.
-          If there is more than one piece, then restrict the pinned pieces moves to those that are between the two pieces.
-        */
         this.commitMove = function (origin, dest) {
             var originPiece = origin.piece;
             origin.piece = null;
@@ -73,7 +68,7 @@ var MoveManager = /** @class */ (function () {
             if (originPiece.isMultiBehavioral() && originPiece.moved === false)
                 originPiece.moved = true;
             if (originPiece instanceof King_1.default && (0, calcDistance_1.default)(origin, dest) > 1) {
-                var castleDirection = dest.position.col === 'c' ? '-' : '+';
+                var castleDirection = (0, getBoardDirection_1.default)(origin.position, dest.position, "horizontal");
                 dest.setPiece(originPiece);
                 _this.commitCastle(originPiece, castleDirection);
             }

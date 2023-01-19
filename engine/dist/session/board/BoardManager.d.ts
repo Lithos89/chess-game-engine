@@ -13,6 +13,7 @@ declare class BoardManager {
         [side in Side]: King;
     };
     private readonly getCurrentTurnSide;
+    castleAvailabilityCallback: (side: Side) => (direction: BoardDirection) => boolean;
     constructor(startingFormation: PieceListings, flipped: boolean, currentTurnSideCallback: () => Side, updateState: () => void);
     private initBoard;
     private initPieces;

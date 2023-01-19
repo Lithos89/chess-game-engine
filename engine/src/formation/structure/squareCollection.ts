@@ -1,3 +1,4 @@
+import { ShortPosition } from './../../logic/terms';
 
 // Types, interfaces, constants, ...
 import { type SquareColor } from '../../logic/terms';
@@ -15,5 +16,5 @@ export interface PresentedSquare {
 };
 
 export type BoardSquareListings = {
-  [shortPosition: string]: Square;
+  [shortPosition in ShortPosition]?: Square;
 };

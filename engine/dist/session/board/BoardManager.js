@@ -29,6 +29,32 @@ var BoardManager = /** @class */ (function () {
         this.updateState = updateState;
         this.boardSquares = {};
         this.squareHighlighting = {};
+        this.castleAvailabilityCallback = function (side) { return function (direction) {
+            var backRank = side === "white" ? "1" : "8";
+            var isKingSide = direction === '+';
+            //* Legality check for the associated Rook
+            var rookCol = isKingSide ? "h" : "a";
+            var rookSquare = _this.boardSquares["".concat(rookCol).concat(backRank)];
+            var rookCheck = rookSquare.piece instanceof Rook_1.default && rookSquare.piece.moved === false;
+            //* Legality checks for the squares in between the King and the Rook
+            //? This could be stored as constants and be moved into a type related file
+            var kingSideCols = ["f", "g"];
+            var queenSideCols = ["b", "c", "d"];
+            var columnsToCheck = isKingSide ? kingSideCols : queenSideCols;
+            var isPathClear = columnsToCheck.every(function (col) {
+                var square = _this.boardSquares["".concat(col).concat(backRank)];
+                var isUnnocupied = square.piece === null;
+                if (square.position.col === "b") {
+                    return isUnnocupied;
+                }
+                else {
+                    var isControlledByEnemy = square.controlled[(0, getEnemySide_1.default)(side)] === true;
+                    return isUnnocupied && !isControlledByEnemy;
+                }
+                ;
+            });
+            return isPathClear && rookCheck;
+        }; };
         /*--------------------------------------------STATE MANAGEMENT---------------------------------------------*/
         // TODO: Fix the paramters so that it tracks the different highlighted action type
         this.compileBoard = function () {
@@ -104,55 +130,16 @@ var BoardManager = /** @class */ (function () {
     };
     ;
     BoardManager.prototype.initSquares = function (pieceMapping) {
-        var _this = this;
         for (var tileIndex in terms_1.BOARD_POSITIONS) {
             var position = terms_1.BOARD_POSITIONS[tileIndex];
             var regex = /b|d|f|h/;
             var isEvenRow = regex.test(position);
-            var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
+            var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'dark' : 'light';
             var startingPiece = pieceMapping[position] || null;
-            var temp = function (side) { return function (direction) {
-                // ! Still will need to factor in alt board orientation for the different sides
-                if (side === "white" && direction === '+') {
-                    var squaresToCheck = ["f1", "g1"];
-                    var clear = squaresToCheck.every(function (pos) {
-                        var square = _this.boardSquares[pos];
-                        var isUnnocupied = square.piece === null;
-                        var isControlledByEnemy = square.controlled[(0, getEnemySide_1.default)(side)] === true;
-                        return isUnnocupied && !isControlledByEnemy;
-                    });
-                    var rookCheck = _this.boardSquares["h1"].piece instanceof Rook_1.default && !_this.boardSquares["h1"].piece.moved;
-                    if (clear && rookCheck) {
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                }
-                else if (side === "white" && direction === '-') {
-                    var squaresToCheck = ["c1", "d1"];
-                    var clear = squaresToCheck.every(function (pos) {
-                        var square = _this.boardSquares[pos];
-                        var isUnnocupied = square.piece === null;
-                        var isControlledByEnemy = square.controlled[(0, getEnemySide_1.default)(side)] === true;
-                        return isUnnocupied && !isControlledByEnemy;
-                    });
-                    var tempCheck = _this.boardSquares["b1"].controlled[(0, getEnemySide_1.default)(side)] === false;
-                    var rookCheck = _this.boardSquares["a1"].piece instanceof Rook_1.default && !_this.boardSquares["a1"].piece.moved;
-                    if (clear && rookCheck && tempCheck) {
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                }
-                else {
-                    return false;
-                }
-            }; };
             if (startingPiece instanceof King_1.default) {
-                startingPiece.castleAvailableCallback = temp(startingPiece.side);
+                startingPiece.castleAvailableCallback = this.castleAvailabilityCallback(startingPiece.side);
             }
+            ;
             this.boardSquares[position] = new Square_1.default(position, squareColor, startingPiece);
         }
         ;
@@ -297,22 +284,6 @@ var BoardManager = /** @class */ (function () {
                                 ;
                             }
                         }
-                        // if (!isNull(destPiece) && destPiece.side !== side) {
-                        //   if (pinnedPiece instanceof Piece) {
-                        //     //* More than one enemy piece is between the attack, therefore no pin
-                        //     pinnedPiece = null;
-                        //   } else {
-                        //     pinnedPiece = destPiece;
-                        //   };
-                        // };
-                        // if (!isNull(destPiece) && destPiece.side !== side) {
-                        //   if (pinnedPiece instanceof Piece) {
-                        //     //* More than one enemy piece is between the attack, therefore no pin
-                        //     pinnedPiece = null;
-                        //   } else {
-                        //     pinnedPiece = destPiece;
-                        //   };
-                        // };
                     }
                     ;
                     if (pinnedPiece) {

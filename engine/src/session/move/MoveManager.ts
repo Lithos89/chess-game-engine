@@ -2,7 +2,6 @@ import { BoardDirection } from './../../logic/terms';
 
 // Types, interfaces, constants, ...
 import { type Side, type ShortPosition, PieceKind, SIDES } from '../../logic/terms';
-// import { type MoveLine, Attack } from '../../logic/concepts';
 
 // Components
 import Square from '../../components/Square';
@@ -15,6 +14,7 @@ import MoveHistoryLL from './MoveHistoryLL';
 // Util
 import convertPosition from '../../utils/regulation/position/convertPosition';
 import calcDistance from '../../utils/regulation/position/calcDistance';
+import getBoardDirection from '../../utils/regulation/direction/getBoardDirection';
 
 //*: Functions to include in this class
 /*
@@ -70,13 +70,6 @@ class MoveManager {
     this.updateState('capture');
   }
 
-  // Idea for algorithm to find out if a piece is pinned
-  /*
-    For each piece, go through it's line of attack and see if the king is in part of the line. Then if the king is a part of that line
-    go through all the squares bettween the piece and the king. Then count the number of pieces that are between the two.
-    If there is more than one piece, then restrict the pinned pieces moves to those that are between the two pieces.
-  */
-
   public commitMove = (origin: Square, dest: Square): void => {
     const originPiece = origin.piece;
     origin.piece = null;
@@ -94,7 +87,7 @@ class MoveManager {
       originPiece.moved = true;
 
     if (originPiece instanceof King && calcDistance(origin, dest) > 1) {
-      const castleDirection = dest.position.col === 'c' ? '-' : '+';
+      const castleDirection = getBoardDirection(origin.position, dest.position, "horizontal");
       dest.setPiece(originPiece);
       this.commitCastle(originPiece, castleDirection);
     } else {
