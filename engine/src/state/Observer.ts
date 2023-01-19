@@ -1,6 +1,6 @@
 
 // State Management
-import Observable from 'state/observable';
+import Observable from './observable';
 
 // Game Management
 import Match from '../session/match/Match';

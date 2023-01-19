@@ -24,18 +24,17 @@ const Session = () => {
   const [matchInfo, setMatchInfo] = useState(null);
   const [match, setMatch] = useState(initialMatch);
 
-  const [matchLoaded, setMatchLoaded] = useState(false);
-
   // Initial Match Load
   useEffect(() => {
       match.startNewGame();
       Chess.setMatchObserver(setMatchInfo, match);
-      setMatchLoaded(true);
   }, []);
+
+  console.info(matchInfo);
 
   return (
     <Container>
-      { matchLoaded && (
+      { "currentGame" in match && (
         <Game game={match.currentGame} resign={match.resignGame}>
           { matchInfo && (
             <Fragment>

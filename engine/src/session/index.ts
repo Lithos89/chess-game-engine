@@ -27,8 +27,9 @@ function setMatchObserver(callback: (state: any) => void, match: Match) {
   Observer.matchObservers.get(match).setCallback(callback);
 };
 
-// TODO: Need to remove class drilling by moving logic to the subclasses
 function setGameObserver(callback: (state: any) => void, game: Game) {
+  console.log('here');
+  console.log(game);
   Observer.gameObservers.get(game).setCallback(callback);
 };
 
