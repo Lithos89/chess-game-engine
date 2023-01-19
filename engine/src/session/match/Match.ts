@@ -11,6 +11,8 @@ import Observable from 'state/observable';
 
 // *: Class that captures a series of games between an opponent
 class Match implements Observable {
+  public id: string;
+
   private games: Game[] = [];
   private gameCount: number = 0;
 
@@ -29,8 +31,9 @@ class Match implements Observable {
     opponent: 0,
   };
 
-  constructor(side: Side) {
-    this.gameGenerator = this.generateNextGame(side, 'test');
+  constructor(id: string, side: Side) {
+    this.id = id
+    this.gameGenerator = this.generateNextGame(side, id);
     this.observer = new Observer(this);
   };
 
@@ -89,11 +92,37 @@ class Match implements Observable {
   });
 
   signalState = (type?: string) => {
-    const matchInfo = this.getMatchStats();
-    // ?: Will make state an object containing the nessecary info in the future
-    const state = matchInfo;
-
-    this.observer.commitState(state);
+    switch (type) {
+      case 'info': {
+        const matchInfo = this.getMatchStats();
+        this.observer.commitState(prevState => ({ ...prevState, matchInfo }));
+        break;
+      }
+      case 'current-game': {
+        this.observer.commitState(prevState => ({ ...prevState, currentGame: this.currentGame }));
+        break;
+      }
+      case 'controller': {
+        this.observer.commitState(prevState => ({
+          ...prevState,
+          controller: {
+            resign: this.resignGame,
+          },
+        }));
+        break;
+      }
+      default: {
+        const matchInfo = this.getMatchStats();
+        this.observer.commitState({
+          matchInfo,
+          currentGame: this.currentGame,
+          controller: {
+            resign: this.resignGame,
+          },
+        });
+        break;
+      }
+    };
   };
 
   private updateWins(result: Side | 'draw') {

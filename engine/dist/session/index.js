@@ -12,14 +12,12 @@ function startSession() {
     });
 }
 ;
-function setMatchObserver(callback, match) {
-    Observer_1.default.matchObservers.get(match).setCallback(callback);
+function setMatchObserver(callback, matchId) {
+    Observer_1.default.matchObservers.get(matchId).setCallback(callback);
 }
 ;
-function setGameObserver(callback, game) {
-    console.log('here');
-    console.log(game);
-    Observer_1.default.gameObservers.get(game).setCallback(callback);
+function setGameObserver(callback, gameId) {
+    Observer_1.default.gameObservers.get(gameId).setCallback(callback);
 }
 ;
 exports.default = { startSession: startSession, setMatchObserver: setMatchObserver, setGameObserver: setGameObserver };

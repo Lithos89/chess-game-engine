@@ -9,8 +9,9 @@ declare class Game implements Observable {
     private boardManager;
     private moveManager;
     private observer;
+    private moveController;
     constructor(side: Side, id: string);
-    signalState: (type?: string) => void;
+    signalState: (type?: string, data?: {}) => void;
     private takeTurn;
     protected attemptHighlight: (position?: ShortPosition) => boolean;
     protected attemptMove: (from: ShortPosition, to: ShortPosition) => boolean;

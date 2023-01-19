@@ -18,18 +18,25 @@ const Container = styled.div`
 `;
 
 const Game = ({ game, resign, children }) => {
-  const [gameData, setGameData] = useState({});
+  const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
   const [selectedPiecePos, setSelectedPiecePos] = useState(null);
 
   useEffect(() => {
-    Chess.setGameObserver(setGameData, game);
-    setMoveController(game);
+    Chess.setGameObserver(setGameData, 'test_white_0');
     setGameLoaded(true);
-  }, [game])
+  }, [])
+
+  useEffect(() => {
+    if (gameData && "moveController" in gameData) {
+      setMoveController(gameData.moveController)
+    }
+  }, [gameData])
 
   console.info(gameData)
+
+  console.info(moveController)
 
   // Piece Selection
   const selectPiece = useCallback((pos, piece) => {
@@ -47,7 +54,7 @@ const Game = ({ game, resign, children }) => {
             moveController.selectSquare(pos);
           };
       } else {
-        if (piece && piece.side === game.currentTurnSide) {
+        if (piece && piece.side === gameData.currentTurnSide) {
           setSelectedPiecePos(pos);
           moveController.selectSquare(pos);
         };
@@ -56,7 +63,7 @@ const Game = ({ game, resign, children }) => {
   }, [selectedPiecePos, moveController, gameLoaded]);
 
   return (
-      gameLoaded && moveController && gameData && (
+      gameLoaded && gameData && moveController !== null && (
         <Container>
           <Board squares={gameData.board} update={selectPiece}/>
           <Menu undo={moveController.undo} resign={resign} moveLog={gameData.moveLog} captures={gameData.captures}>

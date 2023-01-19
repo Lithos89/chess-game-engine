@@ -20,45 +20,48 @@ var lodash_1 = require("lodash");
 var Game_1 = require("./Game");
 var GameController = /** @class */ (function (_super) {
     __extends(GameController, _super);
-    function GameController() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function GameController(side, id) {
+        var _this = _super.call(this, side, id) || this;
         _this.selectedSquarePos = null;
+        // *: Move highlighting management for selecting/deselecting a square with a piece
+        _this.selectSquare = function (position) {
+            console.info(position);
+            var isNewSelection = (0, lodash_1.isNull)(_this.selectedSquarePos);
+            //* Selecting a square while no square is highlighted
+            if (isNewSelection) {
+                var didHighlight = _this.attemptHighlight(position);
+                if (didHighlight)
+                    _this.selectedSquarePos = position;
+                //* Selecting the same square or a new square, triggering unhighlighting
+            }
+            else {
+                var didUnhighlight = _this.attemptHighlight();
+                if (didUnhighlight)
+                    _this.selectedSquarePos = null;
+            }
+            ;
+        };
+        // TODO: Add more to this function
+        _this.move = function (from, to) {
+            if (from !== to) {
+                return _this.attemptMove(from, to);
+            }
+            else {
+                return false;
+            }
+            ;
+        };
+        // TODO: Add more to this function
+        _this.requestUndo = function () {
+            _this.undo();
+        };
+        _this.signalState('move-controller', {
+            selectSquare: _this.selectSquare,
+            move: _this.move,
+            undo: _this.undo,
+        });
         return _this;
     }
-    // *: Move highlighting management for selecting/deselecting a square with a piece
-    GameController.prototype.selectSquare = function (position) {
-        console.info(position);
-        var isNewSelection = (0, lodash_1.isNull)(this.selectedSquarePos);
-        //* Selecting a square while no square is highlighted
-        if (isNewSelection) {
-            var didHighlight = this.attemptHighlight(position);
-            if (didHighlight)
-                this.selectedSquarePos = position;
-            //* Selecting the same square or a new square, triggering unhighlighting
-        }
-        else {
-            var didUnhighlight = this.attemptHighlight();
-            if (didUnhighlight)
-                this.selectedSquarePos = null;
-        }
-        ;
-    };
-    ;
-    // TODO: Add more to this function
-    GameController.prototype.move = function (from, to) {
-        if (from !== to) {
-            return this.attemptMove(from, to);
-        }
-        else {
-            return false;
-        }
-        ;
-    };
-    ;
-    // TODO: Add more to this function
-    GameController.prototype.requestUndo = function () {
-        this.undo();
-    };
     ;
     return GameController;
 }(Game_1.default));

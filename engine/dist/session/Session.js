@@ -13,7 +13,7 @@ var Session = /** @class */ (function () {
         // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
         this.startNewMatch = function (playerSide) {
             if (playerSide === void 0) { playerSide = 'white'; }
-            var match = new Match_1.default(playerSide);
+            var match = new Match_1.default('test', playerSide);
             _this.matches.push(match);
             _this.updateCurrentMatch();
             return match;

@@ -1,9 +1,9 @@
-import Observable from 'state/observable';
+import Observable from './observable';
 import Match from '../session/match/Match';
 import Game from '../session/game/Game';
 declare class Observer<T extends Observable> {
-    static gameObservers: Map<Game, Observer<Game>>;
-    static matchObservers: Map<Match, Observer<Match>>;
+    static gameObservers: Map<string, Observer<Game>>;
+    static matchObservers: Map<string, Observer<Match>>;
     private manager;
     private updateState;
     constructor(manager: T, setStateCallback?: (state: any) => void);

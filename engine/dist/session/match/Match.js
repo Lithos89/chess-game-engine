@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __generator = (this && this.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -34,7 +45,7 @@ var GameController_1 = require("../game/GameController");
 var Observer_1 = require("../../state/Observer");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
-    function Match(side) {
+    function Match(id, side) {
         var _this = this;
         this.games = [];
         this.gameCount = 0;
@@ -64,12 +75,38 @@ var Match = /** @class */ (function () {
             games: _this.games.length,
         }); };
         this.signalState = function (type) {
-            var matchInfo = _this.getMatchStats();
-            // ?: Will make state an object containing the nessecary info in the future
-            var state = matchInfo;
-            _this.observer.commitState(state);
+            switch (type) {
+                case 'info': {
+                    var matchInfo_1 = _this.getMatchStats();
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { matchInfo: matchInfo_1 })); });
+                    break;
+                }
+                case 'current-game': {
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { currentGame: _this.currentGame })); });
+                    break;
+                }
+                case 'controller': {
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { controller: {
+                            resign: _this.resignGame,
+                        } })); });
+                    break;
+                }
+                default: {
+                    var matchInfo = _this.getMatchStats();
+                    _this.observer.commitState({
+                        matchInfo: matchInfo,
+                        currentGame: _this.currentGame,
+                        controller: {
+                            resign: _this.resignGame,
+                        },
+                    });
+                    break;
+                }
+            }
+            ;
         };
-        this.gameGenerator = this.generateNextGame(side, 'test');
+        this.id = id;
+        this.gameGenerator = this.generateNextGame(side, id);
         this.observer = new Observer_1.default(this);
     }
     ;

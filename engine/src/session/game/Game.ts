@@ -34,6 +34,8 @@ class Game implements Observable {
 
   private observer: Observer<Game>;
 
+  private moveController;
+
   constructor(side: Side, id: string) {
     this.id = id;
     this.playerSide = side;
@@ -54,11 +56,11 @@ class Game implements Observable {
     this.updateMoves();
   };
 
-  public signalState = (type?: string) => {
+  public signalState = (type?: string, data?: {}) => {
     switch (type) {
       case 'board': {
         const boardState = this.boardManager.compileBoard();
-        this.observer.commitState(prevState => ({ ...prevState, board: boardState }));
+        this.observer.commitState(prevState => ({ ...prevState, board: boardState, currentTurnSide: this.currentTurnSide }));
         break;
       }
       case 'capture': {
@@ -71,10 +73,22 @@ class Game implements Observable {
         this.observer.commitState(prevState => ({ ...prevState, moveLog: moveHistory }));
         break;
       }
+      case 'move-controller': {
+        const moveController = data;
+        this.moveController = moveController
+        this.observer.commitState(prevState => ({ ...prevState, moveController, currentTurnSide: this.currentTurnSide }));
+        break;
+      }
       default: {
         const boardState = this.boardManager.compileBoard();
         const moveHistory = this.moveManager.getMoveHistory();
-        this.observer.commitState({ board: boardState, moveLog: moveHistory });
+        const moveController = this.moveController ?? {}
+        this.observer.commitState({
+          board: boardState,
+          moveLog: moveHistory,
+          currentTurnSide: this.currentTurnSide,
+          moveController,
+        });
         break;
       }
     };
@@ -111,7 +125,7 @@ class Game implements Observable {
     const destSquare: Square = this.boardManager.boardSquares[to];
 
     //* Move Validity checks
-    const isLegal = originSquare?.piece?.availableMoves.includes(to);
+    const isLegal = originSquare.piece?.availableMoves.includes(to);
     const isValidSide = isEqual(originSquare?.piece.side, this.currentTurnSide);
 
     if (isLegal && isValidSide) {

@@ -2,7 +2,7 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type ShortPosition } from 'logic/terms';
+import { type Side, type ShortPosition } from 'logic/terms';
 
 // Game Management
 import Game from './Game';
@@ -10,8 +10,17 @@ import Game from './Game';
 class GameController extends Game {
   private selectedSquarePos: ShortPosition | null = null;
 
+  constructor(side: Side, id: string) {
+    super(side, id)
+    this.signalState('move-controller', {
+      selectSquare: this.selectSquare,
+      move: this.move,
+      undo: this.undo,
+    })
+  };
+
   // *: Move highlighting management for selecting/deselecting a square with a piece
-  public selectSquare(position: ShortPosition) {
+  public selectSquare = (position: ShortPosition) => {
     console.info(position);
     const isNewSelection = isNull(this.selectedSquarePos);
 
@@ -33,7 +42,7 @@ class GameController extends Game {
   };
 
   // TODO: Add more to this function
-  public move(from: ShortPosition, to: ShortPosition): boolean {
+  public move = (from: ShortPosition, to: ShortPosition): boolean => {
     if (from !== to) {
       return this.attemptMove(from, to);
     } else {
@@ -42,7 +51,7 @@ class GameController extends Game {
   };
 
   // TODO: Add more to this function
-  public requestUndo() {
+  public requestUndo = () => {
     this.undo();
   };
 };

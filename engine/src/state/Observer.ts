@@ -8,8 +8,8 @@ import Game from '../session/game/Game';
 
 class Observer<T extends Observable> {
   // ?: Consider making these accessible by a id that is specified by a specific type
-  static gameObservers: Map<Game, Observer<Game>> = new Map();
-  static matchObservers: Map<Match, Observer<Match>> = new Map();
+  static gameObservers: Map<string, Observer<Game>> = new Map();
+  static matchObservers: Map<string, Observer<Match>> = new Map();
   
   private manager: Observable; // Class that needs to persist state to client
   private updateState: (state: any) => void;
@@ -22,9 +22,9 @@ class Observer<T extends Observable> {
     this.updateState = setStateCallback;
 
     if (manager instanceof Match) {
-      Observer.matchObservers.set(manager, this);
+      Observer.matchObservers.set(manager.id, this);
     } else if (manager instanceof Game) {
-      Observer.gameObservers.set(manager, this);
+      Observer.gameObservers.set(manager.id, this);
     };
   };
 

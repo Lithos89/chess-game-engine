@@ -28,11 +28,12 @@ var Game = /** @class */ (function () {
         this.startingFormation = start_1.default;
         this.currentTurnSide = 'white';
         this.turnCount = 0;
-        this.signalState = function (type) {
+        this.signalState = function (type, data) {
+            var _a;
             switch (type) {
                 case 'board': {
                     var boardState_1 = _this.boardManager.compileBoard();
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { board: boardState_1 })); });
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { board: boardState_1, currentTurnSide: _this.currentTurnSide })); });
                     break;
                 }
                 case 'capture': {
@@ -45,10 +46,22 @@ var Game = /** @class */ (function () {
                     _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { moveLog: moveHistory_1 })); });
                     break;
                 }
+                case 'move-controller': {
+                    var moveController_1 = data;
+                    _this.moveController = moveController_1;
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { moveController: moveController_1, currentTurnSide: _this.currentTurnSide })); });
+                    break;
+                }
                 default: {
                     var boardState = _this.boardManager.compileBoard();
                     var moveHistory = _this.moveManager.getMoveHistory();
-                    _this.observer.commitState({ board: boardState, moveLog: moveHistory });
+                    var moveController = (_a = _this.moveController) !== null && _a !== void 0 ? _a : {};
+                    _this.observer.commitState({
+                        board: boardState,
+                        moveLog: moveHistory,
+                        currentTurnSide: _this.currentTurnSide,
+                        moveController: moveController,
+                    });
                     break;
                 }
             }
@@ -79,7 +92,7 @@ var Game = /** @class */ (function () {
             var originSquare = _this.boardManager.boardSquares[from];
             var destSquare = _this.boardManager.boardSquares[to];
             //* Move Validity checks
-            var isLegal = (_a = originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece) === null || _a === void 0 ? void 0 : _a.availableMoves.includes(to);
+            var isLegal = (_a = originSquare.piece) === null || _a === void 0 ? void 0 : _a.availableMoves.includes(to);
             var isValidSide = (0, lodash_1.isEqual)(originSquare === null || originSquare === void 0 ? void 0 : originSquare.piece.side, _this.currentTurnSide);
             if (isLegal && isValidSide) {
                 _this.moveManager.commitMove(originSquare, destSquare);

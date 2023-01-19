@@ -1,7 +1,6 @@
-import { BoardDirection } from './../../logic/terms';
 
 // Types, interfaces, constants, ...
-import { type Side, type ShortPosition, PieceKind, SIDES } from '../../logic/terms';
+import { type Side, type ShortPosition, type BoardDirection, PieceKind, SIDES } from '../../logic/terms';
 
 // Components
 import Square from '../../components/Square';

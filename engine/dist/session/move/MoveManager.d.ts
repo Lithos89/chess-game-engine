@@ -1,5 +1,4 @@
-import { BoardDirection } from './../../logic/terms';
-import { type Side, PieceKind } from '../../logic/terms';
+import { type Side, type BoardDirection, PieceKind } from '../../logic/terms';
 import Square from '../../components/Square';
 import King from '../../components/piece/King';
 import MoveHistoryLL from './MoveHistoryLL';

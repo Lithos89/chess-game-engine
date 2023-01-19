@@ -20,7 +20,7 @@ class Session {
 
   // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
   public startNewMatch = (playerSide: Side = 'white'): Match => {
-    const match = new Match(playerSide);
+    const match = new Match('test', playerSide);
     this.matches.push(match);
     this.updateCurrentMatch();
 

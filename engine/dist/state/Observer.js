@@ -24,10 +24,10 @@ var Observer = /** @class */ (function () {
         this.manager = manager;
         this.updateState = setStateCallback;
         if (manager instanceof Match_1.default) {
-            Observer.matchObservers.set(manager, this);
+            Observer.matchObservers.set(manager.id, this);
         }
         else if (manager instanceof Game_1.default) {
-            Observer.gameObservers.set(manager, this);
+            Observer.gameObservers.set(manager.id, this);
         }
         ;
     }

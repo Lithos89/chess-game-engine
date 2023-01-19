@@ -21,26 +21,26 @@ const initialMatch = matchController.newMatch();
 
 const Session = () => {
 
-  const [matchInfo, setMatchInfo] = useState(null);
-  const [match, setMatch] = useState(initialMatch);
+  const [matchData, setMatchData] = useState(null);
 
   // Initial Match Load
   useEffect(() => {
-      match.startNewGame();
-      Chess.setMatchObserver(setMatchInfo, match);
+      initialMatch.startNewGame();
+      Chess.setMatchObserver(setMatchData, 'test')
+      // Chess.setMatchObserver(setMatchInfo, match);
   }, []);
 
-  console.info(matchInfo);
+  console.info(matchData);
 
   return (
     <Container>
-      { "currentGame" in match && (
-        <Game game={match.currentGame} resign={match.resignGame}>
-          { matchInfo && (
+      { matchData && (
+        <Game game={matchData.currentGame} resign={matchData.resignGame}>
+          { matchData.matchInfo && (
             <Fragment>
-              <h1>Side: {matchInfo.currentSide}</h1>
-              <h5>You: {matchInfo.wins.player}   Computer: {matchInfo.wins.opponent}</h5>
-              <h4>{matchInfo.games}</h4>
+              <h1>Side: {matchData.matchInfo.currentSide}</h1>
+              <h5>You: {matchData.matchInfo.wins.player}   Computer: {matchData.matchInfo.wins.opponent}</h5>
+              <h4>{matchData.matchInfo.games}</h4>
             </Fragment>
           )}
         </Game>
