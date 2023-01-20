@@ -5,7 +5,7 @@ declare class Session {
     private currentMatch;
     static getCurrentSession: () => Session;
     constructor();
-    startNewMatch: (playerSide?: Side) => Match;
+    startNewMatch: (playerSide?: Side) => string;
     private updateCurrentMatch;
     getCurrentMatch: () => Match;
 }

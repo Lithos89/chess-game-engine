@@ -8,6 +8,8 @@ declare class Observer<T extends Observable> {
     private updateState;
     constructor(manager: T, setStateCallback?: (state: any) => void);
     setCallback: (setStateCallback: (state: any) => void) => void;
-    commitState: (state: {} | ((prevState: {}) => {})) => void;
+    commitState: (state: {} | ((prevState: {
+        [key: string]: any;
+    }) => {})) => void;
 }
 export default Observer;

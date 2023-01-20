@@ -19,12 +19,13 @@ class Session {
   };
 
   // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
-  public startNewMatch = (playerSide: Side = 'white'): Match => {
-    const match = new Match('test', playerSide);
+  public startNewMatch = (playerSide: Side = 'white'): string => {
+    const matchId = `match_${this.matches.length}`;
+    const match = new Match(matchId, playerSide);
     this.matches.push(match);
     this.updateCurrentMatch();
 
-    return match;
+    return match.id;
   };
 
   // ?: Could make it so that it update the currently active matches, allowing for more than one match to be active at the same time

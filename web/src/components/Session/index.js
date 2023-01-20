@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useReducer } from 'react';
 
 // Modules
 import Chess from 'chess-engine';
@@ -17,25 +17,52 @@ const Container = styled.div`
 `;
 
 const matchController = Chess.startSession();
-const initialMatch = matchController.newMatch();
+const initialMatchId = matchController.newMatch();
+
+function matchReducer(state, action) {
+  switch(action) {
+    case 'controller': 
+      return {
+        ...state,
+        
+      }
+  }
+}
 
 const Session = () => {
 
+  // Make this into useReducer instead of useState
+  const [match, setMatch] = useState(null);
   const [matchData, setMatchData] = useState(null);
+  const [matchController, setMatchController] = useState(null);
+
+  const [gameStarted, setGameStarted] = useState(false);
 
   // Initial Match Load
   useEffect(() => {
-      initialMatch.startNewGame();
-      Chess.setMatchObserver(setMatchData, 'test')
-      // Chess.setMatchObserver(setMatchInfo, match);
+      Chess.setMatchObserver(setMatch, initialMatchId);
   }, []);
 
-  console.info(matchData);
+  useEffect(() => {
+    if (match) {
+      setMatchData(match.data);
+      setMatchController(match.controller);
+    };
+  }, [match]);
+
+  useEffect(() => {
+    if (matchController && !gameStarted) {
+      matchController.newGame();
+      setGameStarted(true);
+    }
+  }, [matchController, gameStarted]);
+
+  console.info(match)
 
   return (
     <Container>
-      { matchData && (
-        <Game game={matchData.currentGame} resign={matchData.resignGame}>
+      { matchData && matchController && (
+        <Game gameId={matchData.currentGame} resign={matchController.resignGame}>
           { matchData.matchInfo && (
             <Fragment>
               <h1>Side: {matchData.matchInfo.currentSide}</h1>

@@ -1,11 +1,11 @@
 import { type Side } from '../../logic/terms';
-import GameController from '../game/GameController';
+import Game from '../game/Game';
 import Observable from 'state/observable';
 declare class Match implements Observable {
     id: string;
     private games;
     private gameCount;
-    currentGame: GameController;
+    currentGame: Game;
     private selectedGameIndex;
     protected currentSide: Side;
     private readonly gameGenerator;

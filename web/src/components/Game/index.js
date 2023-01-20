@@ -17,26 +17,24 @@ const Container = styled.div`
   margin: 0 15%;
 `;
 
-const Game = ({ game, resign, children }) => {
+const Game = ({ gameId, resign, children }) => {
   const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
   const [selectedPiecePos, setSelectedPiecePos] = useState(null);
 
   useEffect(() => {
-    Chess.setGameObserver(setGameData, 'test_white_0');
-    setGameLoaded(true);
-  }, [])
+    if (gameId) {
+      Chess.setGameObserver(setGameData, gameId);
+      setGameLoaded(true);
+    }
+  }, [gameId]);
 
   useEffect(() => {
     if (gameData && "moveController" in gameData) {
       setMoveController(gameData.moveController)
     }
-  }, [gameData])
-
-  console.info(gameData)
-
-  console.info(moveController)
+  }, [gameData]);
 
   // Piece Selection
   const selectPiece = useCallback((pos, piece) => {
@@ -71,7 +69,7 @@ const Game = ({ game, resign, children }) => {
           </Menu>
         </Container>
       )
-  )
-}
+  );
+};
 
 export default Game;

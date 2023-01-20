@@ -58,7 +58,8 @@ var Match = /** @class */ (function () {
         /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
         this.startNewGame = function () {
             _this.gameGenerator.next();
-            _this.signalState();
+            console.log("New game started inside the match class");
+            // this.signalState();
         };
         // TODO: Will need to change this to act like resigning (freezing the current game)
         this.resignGame = function () {
@@ -78,27 +79,31 @@ var Match = /** @class */ (function () {
             switch (type) {
                 case 'info': {
                     var matchInfo_1 = _this.getMatchStats();
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { matchInfo: matchInfo_1 })); });
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { data: __assign(__assign({}, prevState.data), { info: matchInfo_1 }) })); });
                     break;
                 }
                 case 'current-game': {
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { currentGame: _this.currentGame })); });
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { data: __assign(__assign({}, prevState.data), { currentGame: _this.currentGame.id }) })); });
                     break;
                 }
                 case 'controller': {
                     _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { controller: {
+                            newGame: _this.startNewGame,
                             resign: _this.resignGame,
                         } })); });
                     break;
                 }
                 default: {
-                    var matchInfo = _this.getMatchStats();
-                    _this.observer.commitState({
-                        matchInfo: matchInfo,
-                        currentGame: _this.currentGame,
-                        controller: {
-                            resign: _this.resignGame,
-                        },
+                    var matchInfo_2 = _this.getMatchStats();
+                    _this.observer.commitState(function (prevState) {
+                        var _a;
+                        return ({
+                            data: __assign(__assign({}, (_a = prevState === null || prevState === void 0 ? void 0 : prevState.data) !== null && _a !== void 0 ? _a : []), { info: matchInfo_2 }),
+                            controller: {
+                                newGame: _this.startNewGame,
+                                resign: _this.resignGame,
+                            },
+                        });
                     });
                     break;
                 }
@@ -123,10 +128,10 @@ var Match = /** @class */ (function () {
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
                     newGame = new GameController_1.default(side, gameID);
+                    this.storeGame(newGame);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
-                    this.storeGame(newGame);
                     _nextSideIndex = (terms_1.SIDES.length - 1) - terms_1.SIDES.indexOf(side);
                     side = terms_1.SIDES[_nextSideIndex];
                     return [3 /*break*/, 1];
@@ -143,7 +148,7 @@ var Match = /** @class */ (function () {
         this.games.push(game);
         this.currentSide = game.playerSide;
         this.gameCount += 1;
-        console.info(this.currentGame.id);
+        this.signalState('current-game');
     };
     ;
     Match.prototype.updateWins = function (result) {
@@ -162,7 +167,7 @@ var Match = /** @class */ (function () {
             ;
         }
         ;
-        this.signalState();
+        this.signalState('info');
     };
     ;
     return Match;

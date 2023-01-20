@@ -16,7 +16,7 @@ class Match implements Observable {
   private games: Game[] = [];
   private gameCount: number = 0;
 
-  public currentGame: GameController;
+  public currentGame: Game;
   private selectedGameIndex: number = 0;
 
   protected currentSide: Side;
@@ -42,7 +42,8 @@ class Match implements Observable {
 
   public startNewGame = () => {
     this.gameGenerator.next();
-    this.signalState();
+    console.log("New game started inside the match class")
+    // this.signalState();
   };
 
   // TODO: Will need to change this to act like resigning (freezing the current game)
@@ -62,8 +63,8 @@ class Match implements Observable {
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
       const newGame = new GameController(side, gameID);
-      yield newGame;
       this.storeGame(newGame);
+      yield newGame;
       const _nextSideIndex = (SIDES.length - 1) - SIDES.indexOf(side);
       side = SIDES[_nextSideIndex];
     };
@@ -71,7 +72,7 @@ class Match implements Observable {
     return;
   };
 
-  private storeGame(game: GameController) {
+  private storeGame(game: Game) {
     // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
     this.currentGame = game;
     this.games.push(game);
@@ -79,7 +80,7 @@ class Match implements Observable {
     this.currentSide = game.playerSide;
     this.gameCount += 1;
 
-    console.info(this.currentGame.id);
+    this.signalState('current-game');
   };
 
   
@@ -91,21 +92,34 @@ class Match implements Observable {
     games: this.games.length,
   });
 
-  signalState = (type?: string) => {
+  public signalState = (type?: string) => {
     switch (type) {
       case 'info': {
         const matchInfo = this.getMatchStats();
-        this.observer.commitState(prevState => ({ ...prevState, matchInfo }));
+        this.observer.commitState(prevState => ({
+          ...prevState,
+          data: {
+            ...prevState.data,
+            info: matchInfo, 
+          },
+        }));
         break;
       }
       case 'current-game': {
-        this.observer.commitState(prevState => ({ ...prevState, currentGame: this.currentGame }));
+        this.observer.commitState(prevState => ({
+          ...prevState,
+          data: {
+            ...prevState.data,
+            currentGame: this.currentGame.id,
+          },
+        }));
         break;
       }
       case 'controller': {
         this.observer.commitState(prevState => ({
           ...prevState,
           controller: {
+            newGame: this.startNewGame,
             resign: this.resignGame,
           },
         }));
@@ -113,13 +127,17 @@ class Match implements Observable {
       }
       default: {
         const matchInfo = this.getMatchStats();
-        this.observer.commitState({
-          matchInfo,
-          currentGame: this.currentGame,
+        this.observer.commitState(prevState => ({
+          data: {
+            ...prevState?.data ?? [],
+            info: matchInfo,
+            // currentGame: this.currentGame?.id,
+          },
           controller: {
+            newGame: this.startNewGame,
             resign: this.resignGame,
           },
-        });
+        }));
         break;
       }
     };
@@ -139,7 +157,7 @@ class Match implements Observable {
       };
     };
 
-    this.signalState();
+    this.signalState('info');
   };
 };
 
