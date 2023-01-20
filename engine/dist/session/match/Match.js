@@ -83,7 +83,8 @@ var Match = /** @class */ (function () {
                     break;
                 }
                 case 'current-game': {
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { data: __assign(__assign({}, prevState.data), { currentGame: _this.currentGame.id }) })); });
+                    var matchInfo_2 = _this.getMatchStats();
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { data: __assign(__assign({}, prevState.data), { info: matchInfo_2, currentGame: _this.currentGame.id }) })); });
                     break;
                 }
                 case 'controller': {
@@ -94,11 +95,11 @@ var Match = /** @class */ (function () {
                     break;
                 }
                 default: {
-                    var matchInfo_2 = _this.getMatchStats();
+                    var matchInfo_3 = _this.getMatchStats();
                     _this.observer.commitState(function (prevState) {
                         var _a;
                         return ({
-                            data: __assign(__assign({}, (_a = prevState === null || prevState === void 0 ? void 0 : prevState.data) !== null && _a !== void 0 ? _a : []), { info: matchInfo_2 }),
+                            data: __assign(__assign({}, (_a = prevState === null || prevState === void 0 ? void 0 : prevState.data) !== null && _a !== void 0 ? _a : []), { info: matchInfo_3 }),
                             controller: {
                                 newGame: _this.startNewGame,
                                 resign: _this.resignGame,

@@ -1,3 +1,4 @@
+
 import { Fragment, useEffect, useState, useReducer } from 'react';
 
 // Modules
@@ -19,15 +20,15 @@ const Container = styled.div`
 const matchController = Chess.startSession();
 const initialMatchId = matchController.newMatch();
 
-function matchReducer(state, action) {
-  switch(action) {
-    case 'controller': 
-      return {
-        ...state,
+// function matchReducer(state, action) {
+//   switch(action) {
+//     case 'controller': 
+//       return {
+//         ...state,
         
-      }
-  }
-}
+//       }
+//   }
+// }
 
 const Session = () => {
 
@@ -62,12 +63,12 @@ const Session = () => {
   return (
     <Container>
       { matchData && matchController && (
-        <Game gameId={matchData.currentGame} resign={matchController.resignGame}>
-          { matchData.matchInfo && (
+        <Game gameId={matchData.currentGame} resign={matchController.resign}>
+          { matchData.info && (
             <Fragment>
-              <h1>Side: {matchData.matchInfo.currentSide}</h1>
-              <h5>You: {matchData.matchInfo.wins.player}   Computer: {matchData.matchInfo.wins.opponent}</h5>
-              <h4>{matchData.matchInfo.games}</h4>
+              <h1>Side: {matchData.info.currentSide}</h1>
+              <h5>You: {matchData.info.wins.player}   Computer: {matchData.info.wins.opponent}</h5>
+              <h4>{matchData.info.games}</h4>
             </Fragment>
           )}
         </Game>

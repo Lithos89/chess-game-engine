@@ -1,3 +1,4 @@
+
 import styled from 'styled-components';
 import CapturesDisplay from './CapturesDisplay';
 import MoveHistory from './MoveHistory';

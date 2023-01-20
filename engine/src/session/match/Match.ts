@@ -7,7 +7,7 @@ import GameController from '../game/GameController';
 
 // State Management
 import Observer from '../../state/Observer';
-import Observable from 'state/observable';
+import Observable from '../../state/observable';
 
 // *: Class that captures a series of games between an opponent
 class Match implements Observable {
@@ -42,7 +42,6 @@ class Match implements Observable {
 
   public startNewGame = () => {
     this.gameGenerator.next();
-    console.log("New game started inside the match class")
     // this.signalState();
   };
 
@@ -106,10 +105,12 @@ class Match implements Observable {
         break;
       }
       case 'current-game': {
+        const matchInfo = this.getMatchStats();
         this.observer.commitState(prevState => ({
           ...prevState,
           data: {
             ...prevState.data,
+            info: matchInfo,
             currentGame: this.currentGame.id,
           },
         }));
@@ -131,7 +132,6 @@ class Match implements Observable {
           data: {
             ...prevState?.data ?? [],
             info: matchInfo,
-            // currentGame: this.currentGame?.id,
           },
           controller: {
             newGame: this.startNewGame,
