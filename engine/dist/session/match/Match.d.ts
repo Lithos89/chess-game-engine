@@ -1,6 +1,6 @@
 import { type Side } from '../../logic/terms';
 import Game from '../game/Game';
-import Observable from 'state/observable';
+import Observable from '../../state/observable';
 declare class Match implements Observable {
     id: string;
     private games;

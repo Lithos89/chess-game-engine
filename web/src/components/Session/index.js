@@ -74,7 +74,7 @@ const Session = () => {
         </Game>
       )}
     </Container>
-  )
+  );
 };
 
 export default Session;

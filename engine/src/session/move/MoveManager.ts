@@ -6,6 +6,7 @@ import { type Side, type ShortPosition, type BoardDirection, PieceKind, SIDES } 
 import Square from '../../components/Square';
 import Piece from '../../components/piece/Piece';
 import King from '../../components/piece/King';
+import Pawn from '../../components/piece/Pawn';
 
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
@@ -14,6 +15,7 @@ import MoveHistoryLL from './MoveHistoryLL';
 import convertPosition from '../../utils/regulation/position/convertPosition';
 import calcDistance from '../../utils/regulation/position/calcDistance';
 import getBoardDirection from '../../utils/regulation/direction/getBoardDirection';
+import createPiece from '../../utils/piece/createPiece';
 
 //*: Functions to include in this class
 /*
@@ -89,6 +91,10 @@ class MoveManager {
       const castleDirection = getBoardDirection(origin.position, dest.position, "horizontal");
       dest.setPiece(originPiece);
       this.commitCastle(originPiece, castleDirection);
+    } else if (originPiece instanceof Pawn && ["1", "8"].includes(dest.position.row)) {
+      const promotedPawn = createPiece(PieceKind.Queen, originPiece.side);
+      promotedPawn
+      dest.setPiece(promotedPawn);
     } else {
       dest.setPiece(originPiece);
     }

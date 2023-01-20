@@ -2,7 +2,10 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type Side, type ShortPosition } from 'logic/terms';
+import { type Side, type ShortPosition, PieceKind } from 'logic/terms';
+
+// Components
+import Piece from '../../components/piece/Piece';
 
 // Game Management
 import Game from './Game';
@@ -15,9 +18,24 @@ class GameController extends Game {
     this.signalState('move-controller', {
       selectSquare: this.selectSquare,
       move: this.move,
-      undo: this.undo,
+      undo: this.requestUndo,
     })
   };
+
+  // public promotionSelection = (piece: Exclude<PieceKind, ['k','p']>): Piece => {
+  //   let newPiece: Piece;
+  //   switch(piece) {
+  //     case PieceKind.Bishop:
+  //       return PieceKind.Bishop;
+  //     case PieceKind.Knight:
+  //       return PieceKind.Knight;
+  //     case PieceKind.Queen:
+  //       return PieceKind.Queen;
+  //     case PieceKind.Rook:
+  //       return PieceKind.Rook;
+
+  //   };
+  // };
 
   // *: Move highlighting management for selecting/deselecting a square with a piece
   public selectSquare = (position: ShortPosition) => {

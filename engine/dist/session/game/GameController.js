@@ -23,6 +23,19 @@ var GameController = /** @class */ (function (_super) {
     function GameController(side, id) {
         var _this = _super.call(this, side, id) || this;
         _this.selectedSquarePos = null;
+        // public promotionSelection = (piece: Exclude<PieceKind, ['k','p']>): Piece => {
+        //   let newPiece: Piece;
+        //   switch(piece) {
+        //     case PieceKind.Bishop:
+        //       return PieceKind.Bishop;
+        //     case PieceKind.Knight:
+        //       return PieceKind.Knight;
+        //     case PieceKind.Queen:
+        //       return PieceKind.Queen;
+        //     case PieceKind.Rook:
+        //       return PieceKind.Rook;
+        //   };
+        // };
         // *: Move highlighting management for selecting/deselecting a square with a piece
         _this.selectSquare = function (position) {
             console.info(position);
@@ -58,7 +71,7 @@ var GameController = /** @class */ (function (_super) {
         _this.signalState('move-controller', {
             selectSquare: _this.selectSquare,
             move: _this.move,
-            undo: _this.undo,
+            undo: _this.requestUndo,
         });
         return _this;
     }

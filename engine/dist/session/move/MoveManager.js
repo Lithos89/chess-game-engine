@@ -3,12 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 var King_1 = require("../../components/piece/King");
+var Pawn_1 = require("../../components/piece/Pawn");
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
 // Util
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var getBoardDirection_1 = require("../../utils/regulation/direction/getBoardDirection");
+var createPiece_1 = require("../../utils/piece/createPiece");
 //*: Functions to include in this class
 /*
   - Victory check
@@ -71,6 +73,10 @@ var MoveManager = /** @class */ (function () {
                 var castleDirection = (0, getBoardDirection_1.default)(origin.position, dest.position, "horizontal");
                 dest.setPiece(originPiece);
                 _this.commitCastle(originPiece, castleDirection);
+            }
+            else if (originPiece instanceof Pawn_1.default && ["1", "8"].includes(dest.position.row)) {
+                var promotedPawn = (0, createPiece_1.default)(terms_1.PieceKind.Queen, originPiece.side);
+                dest.setPiece(promotedPawn);
             }
             else {
                 dest.setPiece(originPiece);

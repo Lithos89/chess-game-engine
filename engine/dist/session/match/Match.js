@@ -58,7 +58,6 @@ var Match = /** @class */ (function () {
         /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
         this.startNewGame = function () {
             _this.gameGenerator.next();
-            console.log("New game started inside the match class");
             // this.signalState();
         };
         // TODO: Will need to change this to act like resigning (freezing the current game)
