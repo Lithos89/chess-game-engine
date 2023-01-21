@@ -20,8 +20,8 @@ var lodash_1 = require("lodash");
 var Game_1 = require("./Game");
 var GameController = /** @class */ (function (_super) {
     __extends(GameController, _super);
-    function GameController(side, id) {
-        var _this = _super.call(this, side, id) || this;
+    function GameController(id, side) {
+        var _this = _super.call(this, id, side) || this;
         _this.selectedSquarePos = null;
         // public promotionSelection = (piece: Exclude<PieceKind, ['k','p']>): Piece => {
         //   let newPiece: Piece;

@@ -64,14 +64,8 @@ class EventManager {
 
     king.availableMoves = Array.from(kingMoves);
 
-
     return isEmpty(king.availableMoves) && isEmpty(preventitiveMoves);
-    
   };
-
-  static victoryCheck(board: BoardSquareListings) {
-
-  }
 };
 
 export default EventManager;

@@ -23,9 +23,10 @@ var EventManager_1 = require("./EventManager");
 // State Management
 var Observer_1 = require("../../state/Observer");
 var Game = /** @class */ (function () {
-    function Game(side, id) {
+    function Game(id, side) {
         var _this = this;
         this.startingFormation = start_1.default;
+        this.playerSide = null;
         this.currentTurnSide = 'white';
         this.turnCount = 0;
         this.signalState = function (type, data) {
@@ -104,6 +105,20 @@ var Game = /** @class */ (function () {
             }
             ;
         };
+        this.genRandomMove = function (side) {
+            var possibleMoves = [];
+            Object.keys(_this.boardManager.boardSquares).forEach(function (pos) {
+                var piece = _this.boardManager.boardSquares[pos].piece;
+                if ((piece === null || piece === void 0 ? void 0 : piece.side) === side) {
+                    piece.availableMoves.forEach(function (val) {
+                        possibleMoves.push([pos, val]);
+                    });
+                }
+                ;
+            });
+            var _selection = Math.floor(Math.random() * possibleMoves.length);
+            return possibleMoves[_selection];
+        };
         // TODO: Add more checks and functionality here
         this.undo = function () {
             _this.moveManager.takebackMove();
@@ -128,10 +143,10 @@ var Game = /** @class */ (function () {
             _this.signalState('board');
         };
         this.id = id;
-        this.playerSide = side;
+        if (side)
+            this.playerSide = side;
         this.observer = new Observer_1.default(this);
-        var altBoard = side === "white";
-        this.boardManager = new BoardManager_1.default(this.startingFormation, altBoard, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
+        this.boardManager = new BoardManager_1.default(this.startingFormation, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
         this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }, function (king, direction) { return _this.boardManager.commitCastle(king, direction); });
         // this.moveManager.updateMoves(this.boardManager.boardSquares);
@@ -143,6 +158,12 @@ var Game = /** @class */ (function () {
         this.updateMoves(this.currentTurnSide);
         this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
+        if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+            var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
+            console.log(from, to);
+            this.moveManager.commitMove(this.boardManager.boardSquares[from], this.boardManager.boardSquares[to]);
+            this.takeTurn();
+        }
     };
     ;
     return Game;

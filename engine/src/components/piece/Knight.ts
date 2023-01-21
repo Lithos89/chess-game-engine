@@ -1,3 +1,4 @@
+
 // Types, interfaces, constants, ...
 import { PieceKind, type Side } from '../../logic/terms';
 
@@ -8,11 +9,8 @@ import Piece from './Piece';
 import Search from '../../logic/algorithms/core';
 
 class Knight extends Piece {
+  public kind = PieceKind.Knight;
   public movementAlgorithms = [Search.Ls()];
-
-  constructor(side: Side) {
-    super(PieceKind.Knight, side);
-  };
 };
 
 export default Knight;

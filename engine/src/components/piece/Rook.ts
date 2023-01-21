@@ -11,12 +11,10 @@ import Piece from './Piece';
 import Search from '../../logic/algorithms/core';
 
 class Rook extends Piece implements DynamicBehavior {
+  public kind = PieceKind.Rook;
+
   public movementAlgorithms: null;
   public moved: boolean = false;
-  
-  constructor(side: Side) {
-    super(PieceKind.Rook, side);
-  };
 
   loadMoveAlgorithms = () => [Search.file(), Search.rank()];
 };

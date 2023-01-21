@@ -23,12 +23,12 @@ var Piece_1 = require("./Piece");
 var core_1 = require("../../logic/algorithms/core");
 var Bishop = /** @class */ (function (_super) {
     __extends(Bishop, _super);
-    function Bishop(side) {
-        var _this = _super.call(this, terms_1.PieceKind.Bishop, side) || this;
+    function Bishop() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.kind = terms_1.PieceKind.Bishop;
         _this.movementAlgorithms = [core_1.default.diagonals()];
         return _this;
     }
-    ;
     return Bishop;
 }(Piece_1.default));
 ;

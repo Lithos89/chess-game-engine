@@ -1,6 +1,6 @@
 
 // Types, interfaces, constants, ...
-import { type Side, type ShortPosition, type BoardDirection, PieceKind, SIDES } from '../../logic/terms';
+import { type Side, type ShortPosition, type BoardDirection, PieceKind } from '../../logic/terms';
 
 // Components
 import Square from '../../components/Square';
@@ -11,11 +11,12 @@ import Pawn from '../../components/piece/Pawn';
 // Classes
 import MoveHistoryLL from './MoveHistoryLL';
 
-// Util
+// Utils
 import convertPosition from '../../utils/regulation/position/convertPosition';
 import calcDistance from '../../utils/regulation/position/calcDistance';
 import getBoardDirection from '../../utils/regulation/direction/getBoardDirection';
 import createPiece from '../../utils/piece/createPiece';
+import getEnemySide from '../../utils/regulation/side/getEnemySide';
 
 //*: Functions to include in this class
 /*
@@ -67,7 +68,7 @@ class MoveManager {
   };
 
   private capture = (piece: Piece) => {
-    this.captures[SIDES[1 - SIDES.indexOf(piece.side)]][piece.kind] += 1;
+    this.captures[getEnemySide(piece.side)][piece.kind] += 1;
     this.updateState('capture');
   }
 
@@ -75,13 +76,12 @@ class MoveManager {
     const originPiece = origin.piece;
     origin.piece = null;
 
-    const destPiece = dest.piece;
+    const capturedPiece = dest.piece;
 
-    if (destPiece !== null)
-      this.capture(destPiece)
+    if (capturedPiece !== null)
+      this.capture(capturedPiece)
 
-    this.moveLL.addMove(originPiece.logMove(convertPosition(dest.position) as ShortPosition, !!destPiece));
-
+    this.moveLL.addMove(originPiece.logMove(convertPosition(dest.position) as ShortPosition, !!capturedPiece));
     this.updateState('move-log');
 
     if (originPiece.isMultiBehavioral() && originPiece.moved === false)
@@ -93,7 +93,6 @@ class MoveManager {
       this.commitCastle(originPiece, castleDirection);
     } else if (originPiece instanceof Pawn && ["1", "8"].includes(dest.position.row)) {
       const promotedPawn = createPiece(PieceKind.Queen, originPiece.side);
-      promotedPawn
       dest.setPiece(promotedPawn);
     } else {
       dest.setPiece(originPiece);
@@ -101,6 +100,13 @@ class MoveManager {
 
     this.updateState('board');
   };
+
+  // public transferPiece(origin: Square, dest: Square) {
+  //   const originPiece = origin.piece;
+  //   origin.removePiece();
+
+  //   dest.setPiece(originPiece);
+  // }
 };
 
 export default MoveManager;

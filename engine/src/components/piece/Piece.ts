@@ -1,4 +1,3 @@
-import { BoardDirection } from './../../logic/terms';
 
 // Types, interfaces, constants, ...
 import { PieceKind, type Side, type ShortPosition, type Position } from '../../logic/terms';
@@ -14,14 +13,14 @@ import King from './King';
 export default abstract class Piece {
   public position: Position;
   public isProtected: boolean = false;
+  abstract readonly kind: PieceKind;
 
   public legalLines: MoveLine[]; // Legal lines of movement
   public availableMoves: ShortPosition[];
 
-  abstract movementAlgorithms: MoveAlgorithm[];
+  abstract movementAlgorithms: MoveAlgorithm[] | null;
 
   constructor(
-    public readonly kind: PieceKind,
     public readonly side: Side
   ) {};
   
@@ -72,6 +71,7 @@ export default abstract class Piece {
     return false; 
   };
 
+  
   /*------------------------------------MOVE LOGGING-----------------------------*/
 
   // ?: See whether capture should have a default value, be optional, or be required.

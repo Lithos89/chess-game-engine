@@ -67,19 +67,18 @@ class BoardManager {
 
   constructor(
     startingFormation: PieceListings,
-    flipped: boolean,
     currentTurnSideCallback: () => Side,
     private updateState: () => void
   ) {
     this.getCurrentTurnSide = currentTurnSideCallback;
-    this.initBoard(startingFormation, flipped);
+    this.initBoard(startingFormation);
   };
 
 
   /*--------------------------------------------INITIALIZATION---------------------------------------------*/
 
-  private initBoard(pieceConfiguration: PieceListings, flipped: boolean = false) {
-    pieceConfiguration = flipped ? pieceConfiguration : flipFormation(pieceConfiguration);
+  private initBoard(pieceConfiguration: PieceListings) {
+    pieceConfiguration = pieceConfiguration;
 
     const startingPieces = this.initPieces(pieceConfiguration);
     this.initSquares(startingPieces);
@@ -107,7 +106,7 @@ class BoardManager {
       const startingPiece: Piece | null = pieceMapping[position] || null;
 
       if (startingPiece instanceof King) {
-        startingPiece.castleAvailableCallback = this.castleAvailabilityCallback(startingPiece.side);
+        startingPiece.setCastleAvailableCallback(this.castleAvailabilityCallback(startingPiece.side));
       };
 
       this.boardSquares[position] = new Square(position, squareColor, startingPiece);
@@ -340,10 +339,9 @@ class BoardManager {
       const destSquare = this.boardSquares[to];
 
       const originPiece = originSquare.piece;
-      originSquare.piece = null;
+      originSquare.removePiece();
 
       destSquare.setPiece(originPiece);
-
     };
 
     if (king.side === 'white') {

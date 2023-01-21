@@ -9,11 +9,9 @@ import Piece from './Piece';
 import Search from '../../logic/algorithms/core';
 
 class Bishop extends Piece {
-  public movementAlgorithms = [Search.diagonals()];
+  public kind = PieceKind.Bishop;
 
-  constructor(side: Side) {
-    super(PieceKind.Bishop, side);
-  };
+  public movementAlgorithms = [Search.diagonals()];
 };
 
 export default Bishop;

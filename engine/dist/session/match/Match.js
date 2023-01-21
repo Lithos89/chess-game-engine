@@ -38,23 +38,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Types, interfaces, constants, ...
-var terms_1 = require("../../logic/terms");
 var GameController_1 = require("../game/GameController");
 // State Management
 var Observer_1 = require("../../state/Observer");
+var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 // *: Class that captures a series of games between an opponent
 var Match = /** @class */ (function () {
     function Match(id, side) {
         var _this = this;
         this.games = [];
         this.gameCount = 0;
-        this.selectedGameIndex = 0;
         // *: In the case of a tie, add 0.5 to each side
         this.wins = {
             player: 0,
             opponent: 0,
         };
+        this.selectedGameIndex = 0;
         /*--------------------------------------------GAME MANAGEMENT---------------------------------------------*/
         this.startNewGame = function () {
             _this.gameGenerator.next();
@@ -63,8 +62,7 @@ var Match = /** @class */ (function () {
         // TODO: Will need to change this to act like resigning (freezing the current game)
         this.resignGame = function () {
             // *: Give the victory to the opponent
-            var _opponentSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(_this.currentSide)];
-            _this.updateWins(_opponentSide);
+            _this.updateWins((0, getEnemySide_1.default)(_this.currentSide));
             // ?: For now, resigning starts the next game.
             _this.startNewGame();
         };
@@ -115,9 +113,8 @@ var Match = /** @class */ (function () {
         this.observer = new Observer_1.default(this);
     }
     ;
-    // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
     Match.prototype.generateNextGame = function (startingSide, id, matchLength) {
-        var side, gameID, newGame, _nextSideIndex;
+        var side, gameID, newGame;
         if (matchLength === void 0) { matchLength = 100; }
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -127,13 +124,12 @@ var Match = /** @class */ (function () {
                 case 1:
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
-                    newGame = new GameController_1.default(side, gameID);
+                    newGame = new GameController_1.default(gameID, side);
                     this.storeGame(newGame);
                     return [4 /*yield*/, newGame];
                 case 2:
                     _a.sent();
-                    _nextSideIndex = (terms_1.SIDES.length - 1) - terms_1.SIDES.indexOf(side);
-                    side = terms_1.SIDES[_nextSideIndex];
+                    side = (0, getEnemySide_1.default)(side);
                     return [3 /*break*/, 1];
                 case 3:
                     ;

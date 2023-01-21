@@ -9,11 +9,9 @@ import Piece from './Piece';
 import Search from '../../logic/algorithms/core';
 
 class Queen extends Piece {
+  public kind = PieceKind.Queen;
+  
   public movementAlgorithms = [Search.diagonals(), Search.file(), Search.rank()];
-
-  constructor(side: Side) {
-    super(PieceKind.Queen, side);
-  };
 };
 
 export default Queen;

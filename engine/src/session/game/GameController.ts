@@ -13,8 +13,8 @@ import Game from './Game';
 class GameController extends Game {
   private selectedSquarePos: ShortPosition | null = null;
 
-  constructor(side: Side, id: string) {
-    super(side, id)
+  constructor(id: string, side?: Side) {
+    super(id, side)
     this.signalState('move-controller', {
       selectSquare: this.selectSquare,
       move: this.move,

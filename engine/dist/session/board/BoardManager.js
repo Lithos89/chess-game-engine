@@ -17,14 +17,12 @@ var Square_1 = require("../../components/Square");
 var Piece_1 = require("../../components/piece/Piece");
 var King_1 = require("../../components/piece/King");
 var Rook_1 = require("../../components/piece/Rook");
-// Utils
-var flipFormation_1 = require("../../utils/board/flipFormation");
 var sortPieces_1 = require("../../utils/board/sortPieces");
 var createPiece_1 = require("../../utils/piece/createPiece");
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 var BoardManager = /** @class */ (function () {
-    function BoardManager(startingFormation, flipped, currentTurnSideCallback, updateState) {
+    function BoardManager(startingFormation, currentTurnSideCallback, updateState) {
         var _this = this;
         this.updateState = updateState;
         this.boardSquares = {};
@@ -108,13 +106,12 @@ var BoardManager = /** @class */ (function () {
             ;
         };
         this.getCurrentTurnSide = currentTurnSideCallback;
-        this.initBoard(startingFormation, flipped);
+        this.initBoard(startingFormation);
     }
     ;
     /*--------------------------------------------INITIALIZATION---------------------------------------------*/
-    BoardManager.prototype.initBoard = function (pieceConfiguration, flipped) {
-        if (flipped === void 0) { flipped = false; }
-        pieceConfiguration = flipped ? pieceConfiguration : (0, flipFormation_1.default)(pieceConfiguration);
+    BoardManager.prototype.initBoard = function (pieceConfiguration) {
+        pieceConfiguration = pieceConfiguration;
         var startingPieces = this.initPieces(pieceConfiguration);
         this.initSquares(startingPieces);
     };
@@ -137,7 +134,7 @@ var BoardManager = /** @class */ (function () {
             var squareColor = ((Number(tileIndex) % 8) + Number(isEvenRow)) % 2 === 0 ? 'dark' : 'light';
             var startingPiece = pieceMapping[position] || null;
             if (startingPiece instanceof King_1.default) {
-                startingPiece.castleAvailableCallback = this.castleAvailabilityCallback(startingPiece.side);
+                startingPiece.setCastleAvailableCallback(this.castleAvailabilityCallback(startingPiece.side));
             }
             ;
             this.boardSquares[position] = new Square_1.default(position, squareColor, startingPiece);
@@ -315,7 +312,7 @@ var BoardManager = /** @class */ (function () {
             var originSquare = _this.boardSquares[from];
             var destSquare = _this.boardSquares[to];
             var originPiece = originSquare.piece;
-            originSquare.piece = null;
+            originSquare.removePiece();
             destSquare.setPiece(originPiece);
         };
         if (king.side === 'white') {

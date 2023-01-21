@@ -9,8 +9,6 @@ var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var EventManager = /** @class */ (function () {
     function EventManager() {
     }
-    EventManager.victoryCheck = function (board) {
-    };
     EventManager.forceCheckResolve = function (board, _a, side) {
         var attackPiece = _a.attackPiece, frontAttackLine = _a.frontAttackLine;
         var preventitiveMoves = [];

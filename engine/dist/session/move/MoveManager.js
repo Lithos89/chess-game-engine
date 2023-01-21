@@ -6,11 +6,12 @@ var King_1 = require("../../components/piece/King");
 var Pawn_1 = require("../../components/piece/Pawn");
 // Classes
 var MoveHistoryLL_1 = require("./MoveHistoryLL");
-// Util
+// Utils
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var getBoardDirection_1 = require("../../utils/regulation/direction/getBoardDirection");
 var createPiece_1 = require("../../utils/piece/createPiece");
+var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 //*: Functions to include in this class
 /*
   - Victory check
@@ -56,16 +57,16 @@ var MoveManager = /** @class */ (function () {
             return compiledMoves;
         };
         this.capture = function (piece) {
-            _this.captures[terms_1.SIDES[1 - terms_1.SIDES.indexOf(piece.side)]][piece.kind] += 1;
+            _this.captures[(0, getEnemySide_1.default)(piece.side)][piece.kind] += 1;
             _this.updateState('capture');
         };
         this.commitMove = function (origin, dest) {
             var originPiece = origin.piece;
             origin.piece = null;
-            var destPiece = dest.piece;
-            if (destPiece !== null)
-                _this.capture(destPiece);
-            _this.moveLL.addMove(originPiece.logMove((0, convertPosition_1.default)(dest.position), !!destPiece));
+            var capturedPiece = dest.piece;
+            if (capturedPiece !== null)
+                _this.capture(capturedPiece);
+            _this.moveLL.addMove(originPiece.logMove((0, convertPosition_1.default)(dest.position), !!capturedPiece));
             _this.updateState('move-log');
             if (originPiece.isMultiBehavioral() && originPiece.moved === false)
                 originPiece.moved = true;

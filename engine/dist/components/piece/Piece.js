@@ -3,9 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 var Piece = /** @class */ (function () {
-    function Piece(kind, side) {
+    function Piece(side) {
         var _this = this;
-        this.kind = kind;
         this.side = side;
         this.isProtected = false;
         this.influenceEmptySquare = function (square) {

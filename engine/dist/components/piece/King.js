@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = require("lodash");
 // Types, interfaces, constants, ...
 var terms_1 = require("../../logic/terms");
 // Components
@@ -26,39 +25,41 @@ var core_1 = require("../../logic/algorithms/core");
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");
 var calcDistance_1 = require("../../utils/regulation/position/calcDistance");
 var getBoardDirection_1 = require("../../utils/regulation/direction/getBoardDirection");
+var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 var King = /** @class */ (function (_super) {
     __extends(King, _super);
-    function King(side) {
-        var _this = _super.call(this, terms_1.PieceKind.King, side) || this;
+    function King() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.kind = terms_1.PieceKind.King;
+        _this.movementAlgorithms = null;
         _this.moved = false;
         _this.checks = [];
         _this.influenceEmptySquare = function (square) {
-            var enemySide = _this.enemyKing.side;
-            if (!square.controlled[enemySide]) {
-                var enemyKingControlledSquares = _this.enemyKing.legalLines.flat(2);
-                var squareShortPos = (0, convertPosition_1.default)(square.position);
-                if (!enemyKingControlledSquares.includes(squareShortPos)) {
-                    if ((0, calcDistance_1.default)(_this.position, square.position) > 1) {
-                        var castlingDirection = (0, getBoardDirection_1.default)(_this.position, square.position, 'horizontal');
-                        var canCastleToSquare = _this.castleAvailableCallback(castlingDirection);
-                        if (canCastleToSquare)
-                            return true;
-                        else
-                            return false;
-                    }
-                    else {
-                        square.controlled[_this.side] = true;
-                        return true;
-                    }
+            var squarePos = (0, convertPosition_1.default)(square.position);
+            var enemySide = (0, getEnemySide_1.default)(_this.side);
+            var enemyKingControlledSquares = _this.enemyKing.legalLines.flat(2);
+            //?: enemyKingControlledSquares used because kings are update one after the other, causing bugs if not used (could fix)
+            var squareControlledByEnemy = square.controlled[enemySide] || enemyKingControlledSquares.includes(squarePos);
+            if (!squareControlledByEnemy) {
+                var castlingMove = (0, calcDistance_1.default)(_this.position, square.position) > 1;
+                if (castlingMove) {
+                    var castlingDirection = (0, getBoardDirection_1.default)(_this.position, square.position, 'horizontal');
+                    return _this.isCastleAvailable(castlingDirection);
+                }
+                else {
+                    square.controlled[_this.side] = true;
+                    return true;
                 }
                 ;
             }
+            else {
+                return false;
+            }
             ;
-            return false;
         };
         _this.influenceOccupiedSquare = function (square) {
             var destPiece = square.piece;
-            var simpleCaptureAvailable = !(0, lodash_1.isNull)(destPiece) && destPiece.side !== _this.side;
+            var simpleCaptureAvailable = (destPiece === null || destPiece === void 0 ? void 0 : destPiece.side) === (0, getEnemySide_1.default)(_this.side);
             if (simpleCaptureAvailable) {
                 if (!(destPiece === null || destPiece === void 0 ? void 0 : destPiece.isProtected)) {
                     return true;
@@ -73,10 +74,14 @@ var King = /** @class */ (function (_super) {
         };
         return _this;
     }
-    ;
     King.prototype.loadMoveAlgorithms = function () {
-        var rankMoveAlgorithm = this.moved ? core_1.default.rank(1) : core_1.default.rank(2);
-        return [core_1.default.file(1), core_1.default.diagonals(1), rankMoveAlgorithm];
+        var rankMoveDistance = this.moved ? 1 : 2;
+        return [core_1.default.file(1), core_1.default.diagonals(1), core_1.default.rank(rankMoveDistance)];
+    };
+    ;
+    /*----------------------------------CASTLING------------------------------*/
+    King.prototype.setCastleAvailableCallback = function (callback) {
+        this.isCastleAvailable = callback;
     };
     ;
     return King;

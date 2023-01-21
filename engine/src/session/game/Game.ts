@@ -19,13 +19,13 @@ import EventManager from './EventManager';
 
 // State Management
 import Observer from '../../state/Observer';
-import Observable from 'state/observable';
+import Observable from '../../state/observable';
 
 class Game implements Observable {
   readonly id: string;
   private readonly startingFormation: PieceListings = defaultStartingFormation;
 
-  readonly playerSide: Side;
+  readonly playerSide: Side | null = null;
   private currentTurnSide: Side = 'white';
   private turnCount: number = 0;
 
@@ -36,22 +36,25 @@ class Game implements Observable {
 
   private moveController;
 
-  constructor(side: Side, id: string) {
+  constructor(id: string, side?: Side) {
     this.id = id;
-    this.playerSide = side;
+
+    if (side)
+      this.playerSide = side;
 
     this.observer = new Observer(this);
 
-    const altBoard = side === "white";
     this.boardManager = new BoardManager(
       this.startingFormation,
-      altBoard,
       () => this.currentTurnSide,
       () => this.signalState('board')
     );
 
     // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
-    this.moveManager = new MoveManager((type?: string) => this.signalState(type), (king: King, direction: BoardDirection) => this.boardManager.commitCastle(king, direction));
+    this.moveManager = new MoveManager(
+      (type?: string) => this.signalState(type),
+      (king: King, direction: BoardDirection) => this.boardManager.commitCastle(king, direction)
+    );
     // this.moveManager.updateMoves(this.boardManager.boardSquares);
     this.updateMoves();
   };
@@ -101,6 +104,16 @@ class Game implements Observable {
     this.updateMoves(this.currentTurnSide);
     this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
+
+    if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+      const [from, to] = this.genRandomMove(this.currentTurnSide);
+      console.log(from, to)
+      this.moveManager.commitMove(
+        this.boardManager.boardSquares[from],
+        this.boardManager.boardSquares[to]
+      );
+      this.takeTurn();
+    }
   };
 
   //* Returns whether the highlight was performed successfully
@@ -135,6 +148,21 @@ class Game implements Observable {
     } else {
       return false;
     };
+  };
+
+  protected genRandomMove = (side: Side) => {
+    const possibleMoves = [];
+    Object.keys(this.boardManager.boardSquares).forEach((pos) => {
+      const piece = this.boardManager.boardSquares[pos as ShortPosition].piece;
+      if (piece?.side === side) {
+        piece.availableMoves.forEach((val) => {
+          possibleMoves.push([pos, val]);
+        });
+      };
+    });
+    
+    const _selection = Math.floor(Math.random() * possibleMoves.length);
+    return possibleMoves[_selection];
   };
 
   // TODO: Add more checks and functionality here

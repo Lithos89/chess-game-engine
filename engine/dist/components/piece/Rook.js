@@ -23,13 +23,13 @@ var Piece_1 = require("./Piece");
 var core_1 = require("../../logic/algorithms/core");
 var Rook = /** @class */ (function (_super) {
     __extends(Rook, _super);
-    function Rook(side) {
-        var _this = _super.call(this, terms_1.PieceKind.Rook, side) || this;
+    function Rook() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.kind = terms_1.PieceKind.Rook;
         _this.moved = false;
         _this.loadMoveAlgorithms = function () { return [core_1.default.file(), core_1.default.rank()]; };
         return _this;
     }
-    ;
     return Rook;
 }(Piece_1.default));
 ;

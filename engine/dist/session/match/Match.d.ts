@@ -5,12 +5,12 @@ declare class Match implements Observable {
     id: string;
     private games;
     private gameCount;
+    private readonly wins;
     currentGame: Game;
     private selectedGameIndex;
     protected currentSide: Side;
     private readonly gameGenerator;
     private observer;
-    private readonly wins;
     constructor(id: string, side: Side);
     startNewGame: () => void;
     resignGame: () => void;

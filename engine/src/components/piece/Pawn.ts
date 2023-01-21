@@ -17,6 +17,7 @@ import Search from '../../logic/algorithms/core';
 
 
 class Pawn extends Piece implements DynamicBehavior, AlternativeCapturing {
+  public kind = PieceKind.Pawn;
   // TODO: Fix direction so it works on the alt board orientation
   private readonly direction: BoardDirection = this.side === 'white' ? '+' : '-';
 
@@ -25,11 +26,7 @@ class Pawn extends Piece implements DynamicBehavior, AlternativeCapturing {
 
   public captureLines: MoveLine[];
   public captureAlgorithms = [Search.diagonals(1, this.direction)];
-
-  constructor(side: Side) {
-    super(PieceKind.Pawn, side);
-    // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
-  };
+  
 
   public loadMoveAlgorithms(): MoveAlgorithm[] {
     const fileDistance = this.moved ? 1 : 2;
@@ -37,9 +34,15 @@ class Pawn extends Piece implements DynamicBehavior, AlternativeCapturing {
     return [Search.file(fileDistance, this.direction)];
   };
 
+
+  /*-------------------------STANDARD INFLUENCE/MOVEMENT-------------------------*/
+
   public override influenceEmptySquare = () => true;
 
   public override influenceOccupiedSquare = () => false;
+
+
+  /*------------------------ALTERNATIVE INFLUENCE/MOVEMENT------------------------*/
 
   public altInfluenceEmptySquare = (square: Square): boolean => {
     square.controlled[this.side] = true;
@@ -48,6 +51,7 @@ class Pawn extends Piece implements DynamicBehavior, AlternativeCapturing {
 
   public altInfluenceOccupiedSquare = (square: Square, playableLine: MoveLine) => {
     const destPiece = square.piece;
+    
     if (destPiece.side !== this.side) {
       if (destPiece instanceof King) {
         destPiece.checks.push({ attackPiece: this, frontAttackLine: playableLine });

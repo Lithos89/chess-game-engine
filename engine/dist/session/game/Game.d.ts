@@ -1,20 +1,21 @@
 import { type ShortPosition, type Side } from '../../logic/terms';
-import Observable from 'state/observable';
+import Observable from '../../state/observable';
 declare class Game implements Observable {
     readonly id: string;
     private readonly startingFormation;
-    readonly playerSide: Side;
+    readonly playerSide: Side | null;
     private currentTurnSide;
     private turnCount;
     private boardManager;
     private moveManager;
     private observer;
     private moveController;
-    constructor(side: Side, id: string);
+    constructor(id: string, side?: Side);
     signalState: (type?: string, data?: {}) => void;
     private takeTurn;
     protected attemptHighlight: (position?: ShortPosition) => boolean;
     protected attemptMove: (from: ShortPosition, to: ShortPosition) => boolean;
+    protected genRandomMove: (side: Side) => any;
     protected undo: () => void;
     updateMoves: (sideLastMoved?: Side) => void;
 }

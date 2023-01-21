@@ -8,6 +8,7 @@ import GameController from '../game/GameController';
 // State Management
 import Observer from '../../state/Observer';
 import Observable from '../../state/observable';
+import getEnemySide from '../../utils/regulation/side/getEnemySide';
 
 // *: Class that captures a series of games between an opponent
 class Match implements Observable {
@@ -16,20 +17,19 @@ class Match implements Observable {
   private games: Game[] = [];
   private gameCount: number = 0;
 
-  public currentGame: Game;
-  private selectedGameIndex: number = 0;
-
-  protected currentSide: Side;
-
-  private readonly gameGenerator: Generator<Game, Game, Game>;
-
-  private observer: Observer<Match>;
-
   // *: In the case of a tie, add 0.5 to each side
   private readonly wins: { player: number, opponent: number } = {
     player: 0,
     opponent: 0,
   };
+
+  public currentGame: Game;
+  private selectedGameIndex: number = 0;
+  protected currentSide: Side;
+
+  private readonly gameGenerator: Generator<unknown, void, Game>;
+
+  private observer: Observer<Match>;
 
   constructor(id: string, side: Side) {
     this.id = id
@@ -48,24 +48,21 @@ class Match implements Observable {
   // TODO: Will need to change this to act like resigning (freezing the current game)
   public resignGame = () => {
     // *: Give the victory to the opponent
-    const _opponentSide = SIDES[1 - SIDES.indexOf(this.currentSide)];
-    this.updateWins(_opponentSide);
+    this.updateWins(getEnemySide(this.currentSide));
 
     // ?: For now, resigning starts the next game.
     this.startNewGame();
   };
 
-  // TODO: Review the generator when it finished because I suspect that it doesn't behave correctly
-  private * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<Game, Game, Game> {
+  private * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<unknown, void, Game> {
     let side: Side = startingSide;
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new GameController(side, gameID);
+      const newGame = new GameController(gameID, side);
       this.storeGame(newGame);
       yield newGame;
-      const _nextSideIndex = (SIDES.length - 1) - SIDES.indexOf(side);
-      side = SIDES[_nextSideIndex];
+      side = getEnemySide(side);
     };
 
     return;
@@ -85,7 +82,7 @@ class Match implements Observable {
   
   /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
 
-  private getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side, games: number } => ({
+  private getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side | null, games: number } => ({
     wins: this.wins,
     currentSide: this.currentSide,
     games: this.games.length,

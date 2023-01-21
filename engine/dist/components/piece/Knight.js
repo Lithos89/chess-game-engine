@@ -23,12 +23,12 @@ var Piece_1 = require("./Piece");
 var core_1 = require("../../logic/algorithms/core");
 var Knight = /** @class */ (function (_super) {
     __extends(Knight, _super);
-    function Knight(side) {
-        var _this = _super.call(this, terms_1.PieceKind.Knight, side) || this;
+    function Knight() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.kind = terms_1.PieceKind.Knight;
         _this.movementAlgorithms = [core_1.default.Ls()];
         return _this;
     }
-    ;
     return Knight;
 }(Piece_1.default));
 ;

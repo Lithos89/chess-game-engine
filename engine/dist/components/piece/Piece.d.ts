@@ -4,14 +4,14 @@ import DynamicBehavior from './interfaces/dynamicBehavior';
 import AlternativeCapturing from './interfaces/alternativeCapturing';
 import Square from '../Square';
 export default abstract class Piece {
-    readonly kind: PieceKind;
     readonly side: Side;
     position: Position;
     isProtected: boolean;
+    abstract readonly kind: PieceKind;
     legalLines: MoveLine[];
     availableMoves: ShortPosition[];
-    abstract movementAlgorithms: MoveAlgorithm[];
-    constructor(kind: PieceKind, side: Side);
+    abstract movementAlgorithms: MoveAlgorithm[] | null;
+    constructor(side: Side);
     isMultiBehavioral(): this is DynamicBehavior;
     hasAlternativeCapturing(): this is AlternativeCapturing;
     updateLines(): void;

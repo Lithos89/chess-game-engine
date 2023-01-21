@@ -25,14 +25,17 @@ var King_1 = require("./King");
 var core_1 = require("../../logic/algorithms/core");
 var Pawn = /** @class */ (function (_super) {
     __extends(Pawn, _super);
-    function Pawn(side) {
-        var _this = _super.call(this, terms_1.PieceKind.Pawn, side) || this;
+    function Pawn() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.kind = terms_1.PieceKind.Pawn;
         // TODO: Fix direction so it works on the alt board orientation
         _this.direction = _this.side === 'white' ? '+' : '-';
         _this.moved = false;
         _this.captureAlgorithms = [core_1.default.diagonals(1, _this.direction)];
+        /*-------------------------STANDARD INFLUENCE/MOVEMENT-------------------------*/
         _this.influenceEmptySquare = function () { return true; };
         _this.influenceOccupiedSquare = function () { return false; };
+        /*------------------------ALTERNATIVE INFLUENCE/MOVEMENT------------------------*/
         _this.altInfluenceEmptySquare = function (square) {
             square.controlled[_this.side] = true;
             return false;
@@ -55,9 +58,7 @@ var Pawn = /** @class */ (function (_super) {
             ;
         };
         return _this;
-        // ?: Could use the constructor for the direction to be implemented correctly using a value that is obtained from the game/board
     }
-    ;
     Pawn.prototype.loadMoveAlgorithms = function () {
         var fileDistance = this.moved ? 1 : 2;
         return [core_1.default.file(fileDistance, this.direction)];
