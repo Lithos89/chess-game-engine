@@ -63,7 +63,7 @@ const Session = () => {
   return (
     <Container>
       { matchData && matchController && (
-        <Game gameId={matchData.currentGame} resign={matchController.resign}>
+        <Game gameId={matchData.currentGame}>
           { matchData.info && (
             <Fragment>
               <h1>Side: {matchData.info.currentSide}</h1>

@@ -17,6 +17,7 @@ var Square_1 = require("../../components/Square");
 var Piece_1 = require("../../components/piece/Piece");
 var King_1 = require("../../components/piece/King");
 var Rook_1 = require("../../components/piece/Rook");
+// Utils
 var sortPieces_1 = require("../../utils/board/sortPieces");
 var createPiece_1 = require("../../utils/piece/createPiece");
 var convertPosition_1 = require("../../utils/regulation/position/convertPosition");

@@ -20,14 +20,16 @@ import EventManager from './EventManager';
 // State Management
 import Observer from '../../state/Observer';
 import Observable from '../../state/observable';
+import getEnemySide from '../../utils/regulation/side/getEnemySide';
 
 class Game implements Observable {
   readonly id: string;
   private readonly startingFormation: PieceListings = defaultStartingFormation;
 
   readonly playerSide: Side | null = null;
-  private currentTurnSide: Side = 'white';
+  protected currentTurnSide: Side = 'white';
   private turnCount: number = 0;
+  protected isOver: boolean = false;
 
   private boardManager: BoardManager;
   private moveManager: MoveManager;
@@ -35,6 +37,9 @@ class Game implements Observable {
   private observer: Observer<Game>;
 
   private moveController;
+
+  protected signalFinish: (result: Side | 'draw') => (() => {});
+  protected startNextGameCallback = () => {};
 
   constructor(id: string, side?: Side) {
     this.id = id;
@@ -57,13 +62,28 @@ class Game implements Observable {
     );
     // this.moveManager.updateMoves(this.boardManager.boardSquares);
     this.updateMoves();
+
+    if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
+      const [from, to] = this.genRandomMove(this.currentTurnSide);
+      console.log(from, to)
+      this.moveManager.commitMove(
+        this.boardManager.boardSquares[from],
+        this.boardManager.boardSquares[to]
+      );
+      this.takeTurn();
+    }
   };
 
   public signalState = (type?: string, data?: {}) => {
     switch (type) {
       case 'board': {
         const boardState = this.boardManager.compileBoard();
-        this.observer.commitState(prevState => ({ ...prevState, board: boardState, currentTurnSide: this.currentTurnSide }));
+        this.observer.commitState(prevState => ({
+          ...prevState,
+          finished: this.isOver,
+          board: boardState,
+          currentTurnSide: this.currentTurnSide
+        }));
         break;
       }
       case 'capture': {
@@ -90,6 +110,7 @@ class Game implements Observable {
           board: boardState,
           moveLog: moveHistory,
           currentTurnSide: this.currentTurnSide,
+          finished: this.isOver,
           moveController,
         });
         break;
@@ -101,11 +122,16 @@ class Game implements Observable {
   //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
 
   private takeTurn() {
-    this.updateMoves(this.currentTurnSide);
-    this.currentTurnSide = SIDES[1 - SIDES.indexOf(this.currentTurnSide)];
     this.turnCount += 1;
+    this.updateMoves(this.currentTurnSide);
 
-    if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+    if (this.isOver) {
+      this.startNextGameCallback = this.signalFinish(this.currentTurnSide);
+    }
+
+    this.currentTurnSide = getEnemySide(this.currentTurnSide);
+
+    if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
       const [from, to] = this.genRandomMove(this.currentTurnSide);
       console.log(from, to)
       this.moveManager.commitMove(
@@ -170,14 +196,6 @@ class Game implements Observable {
     this.moveManager.takebackMove();
   };
 
-
-
-
-
-
-
-
-
   public updateMoves = (sideLastMoved?: Side) => {
     const checks: Attack[] = [];
     this.boardManager.processAvailableMoves(checks, sideLastMoved);
@@ -195,7 +213,16 @@ class Game implements Observable {
 
       console.info(this.boardManager.boardSquares);
       if (isCheckmate) {
-        console.info("Checkmate");  
+        console.info("Checkmate");
+        this.isOver = true;
+
+        if (this.playerSide) {
+          if (this.playerSide === this.currentTurnSide) {
+            console.info(this.playerSide + 'has won')
+          } else {
+            console.info('The computer has won')
+          }
+        }
       } else {
         console.info("Check");
       };

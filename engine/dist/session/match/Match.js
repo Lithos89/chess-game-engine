@@ -59,13 +59,6 @@ var Match = /** @class */ (function () {
             _this.gameGenerator.next();
             // this.signalState();
         };
-        // TODO: Will need to change this to act like resigning (freezing the current game)
-        this.resignGame = function () {
-            // *: Give the victory to the opponent
-            _this.updateWins((0, getEnemySide_1.default)(_this.currentSide));
-            // ?: For now, resigning starts the next game.
-            _this.startNewGame();
-        };
         /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
         this.getMatchStats = function () { return ({
             wins: _this.wins,
@@ -87,7 +80,7 @@ var Match = /** @class */ (function () {
                 case 'controller': {
                     _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { controller: {
                             newGame: _this.startNewGame,
-                            resign: _this.resignGame,
+                            // resign: this.resignGame,
                         } })); });
                     break;
                 }
@@ -99,7 +92,7 @@ var Match = /** @class */ (function () {
                             data: __assign(__assign({}, (_a = prevState === null || prevState === void 0 ? void 0 : prevState.data) !== null && _a !== void 0 ? _a : []), { info: matchInfo_3 }),
                             controller: {
                                 newGame: _this.startNewGame,
-                                resign: _this.resignGame,
+                                // resign: this.resignGame,
                             },
                         });
                     });
@@ -108,11 +101,37 @@ var Match = /** @class */ (function () {
             }
             ;
         };
+        this.updateWins = function (result) {
+            if (result === 'draw') {
+                _this.wins.player += 0.5;
+                _this.wins.opponent += 0.5;
+            }
+            else {
+                var playerWon = result === _this.currentSide;
+                if (playerWon) {
+                    _this.wins.player += 1;
+                }
+                else {
+                    _this.wins.opponent += 1;
+                }
+                ;
+            }
+            ;
+            _this.signalState('info');
+            return _this.gameGenerator.next;
+        };
         this.id = id;
         this.gameGenerator = this.generateNextGame(side, id);
         this.observer = new Observer_1.default(this);
     }
     ;
+    // // TODO: Will need to change this to act like resigning (freezing the current game)
+    // public resignGame = () => {
+    //   // *: Give the victory to the opponent
+    //   this.updateWins(getEnemySide(this.currentSide));
+    //   // ?: For now, resigning starts the next game.
+    //   this.startNewGame();
+    // };
     Match.prototype.generateNextGame = function (startingSide, id, matchLength) {
         var side, gameID, newGame;
         if (matchLength === void 0) { matchLength = 100; }
@@ -124,7 +143,7 @@ var Match = /** @class */ (function () {
                 case 1:
                     if (!(this.games.length < matchLength)) return [3 /*break*/, 3];
                     gameID = "".concat(id, "_").concat(side, "_").concat(this.gameCount);
-                    newGame = new GameController_1.default(gameID, side);
+                    newGame = new GameController_1.default(gameID, side, this.updateWins);
                     this.storeGame(newGame);
                     return [4 /*yield*/, newGame];
                 case 2:
@@ -145,25 +164,6 @@ var Match = /** @class */ (function () {
         this.currentSide = game.playerSide;
         this.gameCount += 1;
         this.signalState('current-game');
-    };
-    ;
-    Match.prototype.updateWins = function (result) {
-        if (result === 'draw') {
-            this.wins.player += 0.5;
-            this.wins.opponent += 0.5;
-        }
-        else {
-            var playerWon = result === this.currentSide;
-            if (playerWon) {
-                this.wins.player += 1;
-            }
-            else {
-                this.wins.opponent += 1;
-            }
-            ;
-        }
-        ;
-        this.signalState('info');
     };
     ;
     return Match;

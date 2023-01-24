@@ -40,21 +40,29 @@ var EventManager = /** @class */ (function () {
             ;
             piece.availableMoves = playableMoves;
         }
+        ;
         var kingMoves = new Set(king.availableMoves);
-        // Remove the positions that are still in the attacking piece's lines of attack
+        //* Remove the positions that are still in the attacking piece's lines of attack
         if (!(attackPiece instanceof Pawn_1.default)) {
-            attackPiece.legalLines.flat(2).forEach(function (pos) {
-                console.info(pos);
-                kingMoves.delete(pos);
+            attackPiece.legalLines.forEach(function (line) {
+                if (line.includes((0, convertPosition_1.default)(king.position))) {
+                    line.forEach(function (pos) {
+                        kingMoves.delete(pos);
+                    });
+                }
+                ;
             });
         }
+        ;
         //* Remove the ability for the king to castle out of the check
         for (var _c = 0, _d = king.legalLines.flat(2); _c < _d.length; _c++) {
             var pos = _d[_c];
             if ((0, calcDistance_1.default)(king.position, (0, convertPosition_1.default)(pos)) > 1) {
                 kingMoves.delete(pos);
             }
+            ;
         }
+        ;
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);
     };

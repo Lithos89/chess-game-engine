@@ -12,8 +12,6 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
-// Types, interfaces, constants, ...
-var terms_1 = require("../../logic/terms");
 var start_1 = require("../../formation/setups/start");
 var Piece_1 = require("../../components/piece/Piece");
 // Game Management
@@ -22,6 +20,7 @@ var MoveManager_1 = require("../move/MoveManager");
 var EventManager_1 = require("./EventManager");
 // State Management
 var Observer_1 = require("../../state/Observer");
+var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 var Game = /** @class */ (function () {
     function Game(id, side) {
         var _this = this;
@@ -29,12 +28,14 @@ var Game = /** @class */ (function () {
         this.playerSide = null;
         this.currentTurnSide = 'white';
         this.turnCount = 0;
+        this.isOver = false;
+        this.startNextGameCallback = function () { };
         this.signalState = function (type, data) {
             var _a;
             switch (type) {
                 case 'board': {
                     var boardState_1 = _this.boardManager.compileBoard();
-                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { board: boardState_1, currentTurnSide: _this.currentTurnSide })); });
+                    _this.observer.commitState(function (prevState) { return (__assign(__assign({}, prevState), { finished: _this.isOver, board: boardState_1, currentTurnSide: _this.currentTurnSide })); });
                     break;
                 }
                 case 'capture': {
@@ -61,6 +62,7 @@ var Game = /** @class */ (function () {
                         board: boardState,
                         moveLog: moveHistory,
                         currentTurnSide: _this.currentTurnSide,
+                        finished: _this.isOver,
                         moveController: moveController,
                     });
                     break;
@@ -133,6 +135,15 @@ var Game = /** @class */ (function () {
                 console.info(_this.boardManager.boardSquares);
                 if (isCheckmate) {
                     console.info("Checkmate");
+                    _this.isOver = true;
+                    if (_this.playerSide) {
+                        if (_this.playerSide === _this.currentTurnSide) {
+                            console.info(_this.playerSide + 'has won');
+                        }
+                        else {
+                            console.info('The computer has won');
+                        }
+                    }
                 }
                 else {
                     console.info("Check");
@@ -151,14 +162,23 @@ var Game = /** @class */ (function () {
         this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }, function (king, direction) { return _this.boardManager.commitCastle(king, direction); });
         // this.moveManager.updateMoves(this.boardManager.boardSquares);
         this.updateMoves();
+        if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
+            var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
+            console.log(from, to);
+            this.moveManager.commitMove(this.boardManager.boardSquares[from], this.boardManager.boardSquares[to]);
+            this.takeTurn();
+        }
     }
     ;
     //--------------------------------HIGHLIGHTING AND MOVEMENT----------------//
     Game.prototype.takeTurn = function () {
-        this.updateMoves(this.currentTurnSide);
-        this.currentTurnSide = terms_1.SIDES[1 - terms_1.SIDES.indexOf(this.currentTurnSide)];
         this.turnCount += 1;
-        if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+        this.updateMoves(this.currentTurnSide);
+        if (this.isOver) {
+            this.startNextGameCallback = this.signalFinish(this.currentTurnSide);
+        }
+        this.currentTurnSide = (0, getEnemySide_1.default)(this.currentTurnSide);
+        if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
             var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
             console.log(from, to);
             this.moveManager.commitMove(this.boardManager.boardSquares[from], this.boardManager.boardSquares[to]);

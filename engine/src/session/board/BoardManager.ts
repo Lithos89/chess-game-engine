@@ -15,7 +15,6 @@ import King from '../../components/piece/King';
 import Rook from '../../components/piece/Rook';
 
 // Utils
-import flipFormation from '../../utils/board/flipFormation';
 import sortPieces from '../../utils/board/sortPieces';
 import createPiece from '../../utils/piece/createPiece';
 import convertPosition from '../../utils/regulation/position/convertPosition';

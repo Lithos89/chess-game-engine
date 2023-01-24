@@ -4,12 +4,15 @@ declare class Game implements Observable {
     readonly id: string;
     private readonly startingFormation;
     readonly playerSide: Side | null;
-    private currentTurnSide;
+    protected currentTurnSide: Side;
     private turnCount;
+    protected isOver: boolean;
     private boardManager;
     private moveManager;
     private observer;
     private moveController;
+    protected signalFinish: (result: Side | 'draw') => (() => {});
+    protected startNextGameCallback: () => void;
     constructor(id: string, side?: Side);
     signalState: (type?: string, data?: {}) => void;
     private takeTurn;

@@ -13,7 +13,6 @@ declare class Match implements Observable {
     private observer;
     constructor(id: string, side: Side);
     startNewGame: () => void;
-    resignGame: () => void;
     private generateNextGame;
     private storeGame;
     private getMatchStats;

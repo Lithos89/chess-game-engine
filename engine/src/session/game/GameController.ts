@@ -4,22 +4,25 @@ import { isNull } from 'lodash';
 // Types, interfaces, constants, ...
 import { type Side, type ShortPosition, PieceKind } from 'logic/terms';
 
-// Components
-import Piece from '../../components/piece/Piece';
-
 // Game Management
 import Game from './Game';
+
+// Utils
+import getEnemySide from '../../utils/regulation/side/getEnemySide';
 
 class GameController extends Game {
   private selectedSquarePos: ShortPosition | null = null;
 
-  constructor(id: string, side?: Side) {
-    super(id, side)
+  constructor(id: string, side: Side = null, finishedCallback: (result: Side | 'draw') => (() => {})) {
+    super(id, side);
+    this.signalFinish = finishedCallback;
     this.signalState('move-controller', {
       selectSquare: this.selectSquare,
       move: this.move,
       undo: this.requestUndo,
-    })
+      startNext: this.startNextGame,
+      resign: this.resign,
+    });
   };
 
   // public promotionSelection = (piece: Exclude<PieceKind, ['k','p']>): Piece => {
@@ -71,6 +74,21 @@ class GameController extends Game {
   // TODO: Add more to this function
   public requestUndo = () => {
     this.undo();
+  };
+
+  public startNextGame = () => {
+    if (this.isOver) {
+      this.startNextGameCallback();
+    };
+  };
+
+  public resign = () => {
+    // *: Give the victory to the opponent
+    if (!this.isOver) {
+      this.isOver = true;
+      this.startNextGameCallback = this.signalFinish(getEnemySide(this.currentTurnSide));
+      this.signalState();
+    };
   };
 };
 

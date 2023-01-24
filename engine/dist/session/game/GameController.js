@@ -18,9 +18,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = require("lodash");
 // Game Management
 var Game_1 = require("./Game");
+// Utils
+var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 var GameController = /** @class */ (function (_super) {
     __extends(GameController, _super);
-    function GameController(id, side) {
+    function GameController(id, side, finishedCallback) {
+        if (side === void 0) { side = null; }
         var _this = _super.call(this, id, side) || this;
         _this.selectedSquarePos = null;
         // public promotionSelection = (piece: Exclude<PieceKind, ['k','p']>): Piece => {
@@ -68,10 +71,28 @@ var GameController = /** @class */ (function (_super) {
         _this.requestUndo = function () {
             _this.undo();
         };
+        _this.startNextGame = function () {
+            if (_this.isOver) {
+                _this.startNextGameCallback();
+            }
+            ;
+        };
+        _this.resign = function () {
+            // *: Give the victory to the opponent
+            if (!_this.isOver) {
+                _this.isOver = true;
+                _this.startNextGameCallback = _this.signalFinish((0, getEnemySide_1.default)(_this.currentTurnSide));
+                _this.signalState();
+            }
+            ;
+        };
+        _this.signalFinish = finishedCallback;
         _this.signalState('move-controller', {
             selectSquare: _this.selectSquare,
             move: _this.move,
             undo: _this.requestUndo,
+            startNext: _this.startNextGame,
+            resign: _this.resign,
         });
         return _this;
     }

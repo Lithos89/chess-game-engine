@@ -14,10 +14,10 @@ import Pawn from '../../components/piece/Pawn';
 // Utils
 import convertPosition from '../../utils/regulation/position/convertPosition';
 import calcDistance from '../../utils/regulation/position/calcDistance';
+
 class EventManager {
   static forceCheckResolve = (board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side) => {
     const preventitiveMoves: ShortPosition[] = []
-
     let king: King;
 
     //* Blocking or capturing
@@ -43,24 +43,27 @@ class EventManager {
         };
       };
       piece.availableMoves = playableMoves;
-    }
+    };
 
-    const kingMoves: Set<ShortPosition> = new Set(king.availableMoves)
+    const kingMoves: Set<ShortPosition> = new Set(king.availableMoves);
     
-    // Remove the positions that are still in the attacking piece's lines of attack
+    //* Remove the positions that are still in the attacking piece's lines of attack
     if (!(attackPiece instanceof Pawn)) {
-      attackPiece.legalLines.flat(2).forEach((pos) => {
-        console.info(pos)
-        kingMoves.delete(pos as ShortPosition)
-      })
-    }
+      attackPiece.legalLines.forEach((line) => {
+        if (line.includes(convertPosition(king.position))) {
+          line.forEach((pos) => {
+            kingMoves.delete(pos as ShortPosition);
+          });
+        };
+      });
+    };
 
     //* Remove the ability for the king to castle out of the check
     for (const pos of king.legalLines.flat(2)) {
       if (calcDistance(king.position, convertPosition(pos)) > 1) {
         kingMoves.delete(pos);
-      }
-    }
+      };
+    };
 
     king.availableMoves = Array.from(kingMoves);
 

@@ -64,8 +64,17 @@ const Game = ({ gameId, resign, children }) => {
   return (
       gameLoaded && gameData && moveController !== null && (
         <Container>
-          <Board squares={gameData.board} update={selectPiece}/>
-          <Menu undo={moveController.undo} resign={resign} moveLog={gameData.moveLog} captures={gameData.captures}>
+          <Board
+            squares={gameData.board}
+            update={!gameData.finished ? selectPiece : () => {}}
+          />
+          <Menu
+            undo={!gameData.finished ? moveController.undo : () => {}}
+            resign={moveController.resign}
+            moveLog={gameData.moveLog}
+            captures={gameData.captures}
+            next={gameData.finished ? moveController.startNext : null}
+          >
             {children}
           </Menu>
         </Container>

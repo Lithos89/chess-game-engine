@@ -1,3 +1,4 @@
+
 // Types, interfaces, constants, ...
 import { type Side, SIDES } from '../../logic/terms';
 
@@ -45,21 +46,21 @@ class Match implements Observable {
     // this.signalState();
   };
 
-  // TODO: Will need to change this to act like resigning (freezing the current game)
-  public resignGame = () => {
-    // *: Give the victory to the opponent
-    this.updateWins(getEnemySide(this.currentSide));
+  // // TODO: Will need to change this to act like resigning (freezing the current game)
+  // public resignGame = () => {
+  //   // *: Give the victory to the opponent
+  //   this.updateWins(getEnemySide(this.currentSide));
 
-    // ?: For now, resigning starts the next game.
-    this.startNewGame();
-  };
+  //   // ?: For now, resigning starts the next game.
+  //   this.startNewGame();
+  // };
 
   private * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<unknown, void, Game> {
     let side: Side = startingSide;
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new GameController(gameID, side);
+      const newGame = new GameController(gameID, side, this.updateWins);
       this.storeGame(newGame);
       yield newGame;
       side = getEnemySide(side);
@@ -118,7 +119,7 @@ class Match implements Observable {
           ...prevState,
           controller: {
             newGame: this.startNewGame,
-            resign: this.resignGame,
+            // resign: this.resignGame,
           },
         }));
         break;
@@ -132,7 +133,7 @@ class Match implements Observable {
           },
           controller: {
             newGame: this.startNewGame,
-            resign: this.resignGame,
+            // resign: this.resignGame,
           },
         }));
         break;
@@ -140,7 +141,7 @@ class Match implements Observable {
     };
   };
 
-  private updateWins(result: Side | 'draw') {
+  private updateWins = (result: Side | 'draw') => {
     if (result === 'draw') {
       this.wins.player += 0.5;
       this.wins.opponent += 0.5;
@@ -155,6 +156,8 @@ class Match implements Observable {
     };
 
     this.signalState('info');
+
+    return this.gameGenerator.next;
   };
 };
 

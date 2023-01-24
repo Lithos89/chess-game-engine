@@ -9,7 +9,7 @@ const MenuContainer = styled.div`
   background-color: #ccc;
 `;
 
-const Menu = ({ undo, resign, moveLog, captures, children }) => {
+const Menu = ({ undo, resign, moveLog, captures, next, children }) => {
 
   return(
     <MenuContainer>
@@ -19,6 +19,9 @@ const Menu = ({ undo, resign, moveLog, captures, children }) => {
       {captures && <CapturesDisplay captures={captures}/>}
       <button onClick={undo}> Undo </button>
       <button onClick={resign}> Resign </button>
+      { next && (
+        <button onClick={next}> Start Next </button>
+      )}
     </MenuContainer>
   );
 };
