@@ -1,9 +1,9 @@
 import { type ShortPosition, type Side } from '../../logic/terms';
 import Observable from '../../state/observable';
 declare class Game implements Observable {
+    private readonly playerSide;
     readonly id: string;
     private readonly startingFormation;
-    readonly playerSide: Side | null;
     protected currentTurnSide: Side;
     private turnCount;
     protected isOver: boolean;
@@ -11,9 +11,9 @@ declare class Game implements Observable {
     private moveManager;
     private observer;
     private moveController;
-    protected signalFinish: (result: Side | 'draw') => (() => {});
+    protected signalFinish: (result: Side | 'draw') => (() => void);
     protected startNextGameCallback: () => void;
-    constructor(id: string, side?: Side);
+    constructor(id: string, playerSide?: Side | null);
     signalState: (type?: string, data?: {}) => void;
     private takeTurn;
     protected attemptHighlight: (position?: ShortPosition) => boolean;

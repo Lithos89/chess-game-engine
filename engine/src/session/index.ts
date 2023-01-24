@@ -1,6 +1,7 @@
 
 // Types, interfaces, constants, ...
 import { type Side } from '../logic/terms';
+import { type MatchMode } from '../logic/concepts';
 
 // Game Management
 import Session from './Session';
@@ -9,7 +10,7 @@ import Session from './Session';
 import Observer from '../state/Observer';
 
 interface MatchController {
-  newMatch: (playerSide: Side) => void,
+  newMatch: (mode: MatchMode, primarySide?: Side) => void,
   //?: Add here more properties as the app progresses
 };
 

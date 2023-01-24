@@ -1,6 +1,7 @@
 import { type Side } from '../logic/terms';
+import { type MatchMode } from '../logic/concepts';
 interface MatchController {
-    newMatch: (playerSide: Side) => void;
+    newMatch: (mode: MatchMode, primarySide?: Side) => void;
 }
 declare function startSession(): MatchController;
 declare function setMatchObserver(callback: (state: any) => void, matchId: string): void;

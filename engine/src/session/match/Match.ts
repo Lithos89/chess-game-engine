@@ -1,6 +1,7 @@
 
 // Types, interfaces, constants, ...
-import { type Side, SIDES } from '../../logic/terms';
+import { type Side } from '../../logic/terms';
+import { type MatchMode } from '../../logic/concepts';
 
 // Game Management
 import Game from '../game/Game';
@@ -9,9 +10,20 @@ import GameController from '../game/GameController';
 // State Management
 import Observer from '../../state/Observer';
 import Observable from '../../state/observable';
+
+// Utils
 import getEnemySide from '../../utils/regulation/side/getEnemySide';
 
-// *: Class that captures a series of games between an opponent
+interface MatchStats {
+  wins: {
+    player: number,
+    opponent: number
+  },
+  currentSide: Side,
+  games: number,
+};
+
+// *: Class that governs a series of games between an opponent
 class Match implements Observable {
   public id: string;
 
@@ -27,13 +39,16 @@ class Match implements Observable {
   public currentGame: Game;
   private selectedGameIndex: number = 0;
   protected currentSide: Side;
-
   private readonly gameGenerator: Generator<unknown, void, Game>;
 
   private observer: Observer<Match>;
 
-  constructor(id: string, side: Side) {
-    this.id = id
+  constructor(
+    id: string,
+    side: Side,
+    private readonly mode: MatchMode
+  ) {
+    this.id = id;
     this.gameGenerator = this.generateNextGame(side, id);
     this.observer = new Observer(this);
   };
@@ -43,25 +58,17 @@ class Match implements Observable {
 
   public startNewGame = () => {
     this.gameGenerator.next();
-    // this.signalState();
   };
-
-  // // TODO: Will need to change this to act like resigning (freezing the current game)
-  // public resignGame = () => {
-  //   // *: Give the victory to the opponent
-  //   this.updateWins(getEnemySide(this.currentSide));
-
-  //   // ?: For now, resigning starts the next game.
-  //   this.startNewGame();
-  // };
 
   private * generateNextGame(startingSide: Side, id: string, matchLength: number = 100): Generator<unknown, void, Game> {
     let side: Side = startingSide;
 
     while (this.games.length < matchLength) {
       const gameID = `${id}_${side}_${this.gameCount}`;
-      const newGame = new GameController(gameID, side, this.updateWins);
-      this.storeGame(newGame);
+      const gameSide = this.mode === 'local' ? null : side;
+
+      const newGame = new GameController(gameID, gameSide, this.updateWins);
+      this.storeGame(newGame, side);
       yield newGame;
       side = getEnemySide(side);
     };
@@ -69,12 +76,12 @@ class Match implements Observable {
     return;
   };
 
-  private storeGame(game: Game) {
+  private storeGame(game: Game, primarySide: Side) {
     // *: Assumes you want to go to the game that you are storing (a.k.a creating) 
     this.currentGame = game;
     this.games.push(game);
 
-    this.currentSide = game.playerSide;
+    this.currentSide = primarySide;
     this.gameCount += 1;
 
     this.signalState('current-game');
@@ -83,11 +90,31 @@ class Match implements Observable {
   
   /*-----------------------------------------------MATCH INFO----------------------------------------------------*/
 
-  private getMatchStats = (): { wins: { player: number, opponent: number }, currentSide: Side | null, games: number } => ({
+  private getMatchStats = (): MatchStats => ({
     wins: this.wins,
     currentSide: this.currentSide,
     games: this.games.length,
   });
+
+  private updateWins = (result: Side | 'draw'): (() => void) => {
+    if (result === 'draw') {
+      this.wins.player += 0.5;
+      this.wins.opponent += 0.5;
+    } else {
+      const playerWon = result === this.currentSide;
+      
+      if (playerWon)
+        this.wins.player += 1;
+      else
+        this.wins.opponent += 1;
+    };
+
+    this.signalState('info');
+    return this.startNewGame;
+  };
+
+
+  /*-------------------------------------------STATE MANAGEMENT---------------------------------------------*/
 
   public signalState = (type?: string) => {
     switch (type) {
@@ -113,17 +140,16 @@ class Match implements Observable {
           },
         }));
         break;
-      }
+      };
       case 'controller': {
         this.observer.commitState(prevState => ({
           ...prevState,
           controller: {
-            newGame: this.startNewGame,
-            // resign: this.resignGame,
+            newGame: this.startNewGame
           },
         }));
         break;
-      }
+      };
       default: {
         const matchInfo = this.getMatchStats();
         this.observer.commitState(prevState => ({
@@ -132,32 +158,12 @@ class Match implements Observable {
             info: matchInfo,
           },
           controller: {
-            newGame: this.startNewGame,
-            // resign: this.resignGame,
+            newGame: this.startNewGame
           },
         }));
         break;
-      }
-    };
-  };
-
-  private updateWins = (result: Side | 'draw') => {
-    if (result === 'draw') {
-      this.wins.player += 0.5;
-      this.wins.opponent += 0.5;
-    } else {
-      const playerWon = result === this.currentSide;
-      
-      if (playerWon) {
-        this.wins.player += 1;
-      } else {
-        this.wins.opponent += 1;
       };
     };
-
-    this.signalState('info');
-
-    return this.gameGenerator.next;
   };
 };
 

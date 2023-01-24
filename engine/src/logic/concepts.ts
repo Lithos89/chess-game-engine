@@ -5,6 +5,10 @@ import { type ShortPosition, type Position } from './terms';
 // Components
 import Piece from '../components/piece/Piece';
 
+/*-------------------------------------------GAMEPLAY--------------------------------------------*/
+
+export type MatchMode = 'computer' | 'local'; //? Will add more in the future like 'online'
+
 
 /*--------------------------------------------MOVEMENT---------------------------------------------*/
 

@@ -10,11 +10,10 @@ var Session = /** @class */ (function () {
     function Session() {
         var _this = this;
         this.matches = [];
-        // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
-        this.startNewMatch = function (playerSide) {
-            if (playerSide === void 0) { playerSide = 'white'; }
+        this.startNewMatch = function (mode, primarySide) {
+            if (primarySide === void 0) { primarySide = 'white'; }
             var matchId = "match_".concat(_this.matches.length);
-            var match = new Match_1.default(matchId, playerSide);
+            var match = new Match_1.default(matchId, primarySide, mode);
             _this.matches.push(match);
             _this.updateCurrentMatch();
             return match.id;

@@ -44,13 +44,6 @@ class Square {
   removePiece() {
     this.piece = null;
   };
-
-  // transferPiece(destSquare: Square) {
-  //   const piece = this.piece;
-
-  //   destSquare.
-  //   this.piece = null;
-  // };
 };
 
 export default Square;

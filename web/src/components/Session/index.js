@@ -18,7 +18,7 @@ const Container = styled.div`
 `;
 
 const matchController = Chess.startSession();
-const initialMatchId = matchController.newMatch();
+const initialMatchId = matchController.newMatch('computer');
 
 // function matchReducer(state, action) {
 //   switch(action) {
@@ -58,17 +58,19 @@ const Session = () => {
     }
   }, [matchController, gameStarted]);
 
-  console.info(match)
-
   return (
     <Container>
       { matchData && matchController && (
         <Game gameId={matchData.currentGame}>
           { matchData.info && (
             <Fragment>
-              <h1>Side: {matchData.info.currentSide}</h1>
-              <h5>You: {matchData.info.wins.player}   Computer: {matchData.info.wins.opponent}</h5>
-              <h4>{matchData.info.games}</h4>
+              <h1>Turn: {matchData.info.currentSide}</h1>
+              {
+                false ? 
+                  <h5>You: {matchData.info.wins.player}   Computer: {matchData.info.wins.opponent}</h5> :
+                  <h5>Player1: {matchData.info.wins.player}   Player2: {matchData.info.wins.opponent}</h5>
+              }
+              <h4>Game: #{matchData.info.games}</h4>
             </Fragment>
           )}
         </Game>

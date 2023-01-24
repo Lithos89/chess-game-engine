@@ -1,5 +1,6 @@
 
 // Types, interfaces, constants, ...
+import { type MatchMode } from '../logic/concepts';
 import { type Side } from '../logic/terms';
 
 // Game Management
@@ -18,10 +19,9 @@ class Session {
     Session.getCurrentSession = () => this;
   };
 
-  // ?: Could also add an 'opponent' parameter in the future (if players/different AI's become available)
-  public startNewMatch = (playerSide: Side = 'white'): string => {
+  public startNewMatch = (mode: MatchMode, primarySide: Side = 'white'): string => {
     const matchId = `match_${this.matches.length}`;
-    const match = new Match(matchId, playerSide);
+    const match = new Match(matchId, primarySide, mode);
     this.matches.push(match);
     this.updateCurrentMatch();
 

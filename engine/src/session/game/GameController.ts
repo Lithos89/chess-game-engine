@@ -2,7 +2,8 @@
 import { isNull } from 'lodash';
 
 // Types, interfaces, constants, ...
-import { type Side, type ShortPosition, PieceKind } from 'logic/terms';
+import { type Side, type ShortPosition, PieceKind } from '../../logic/terms';
+import { type MatchMode } from '../../logic/concepts';
 
 // Game Management
 import Game from './Game';
@@ -13,7 +14,7 @@ import getEnemySide from '../../utils/regulation/side/getEnemySide';
 class GameController extends Game {
   private selectedSquarePos: ShortPosition | null = null;
 
-  constructor(id: string, side: Side = null, finishedCallback: (result: Side | 'draw') => (() => {})) {
+  constructor(id: string, side: Side = null, finishedCallback: (result: Side | 'draw') => (() => void)) {
     super(id, side);
     this.signalFinish = finishedCallback;
     this.signalState('move-controller', {

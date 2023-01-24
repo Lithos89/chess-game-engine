@@ -22,10 +22,12 @@ var EventManager_1 = require("./EventManager");
 var Observer_1 = require("../../state/Observer");
 var getEnemySide_1 = require("../../utils/regulation/side/getEnemySide");
 var Game = /** @class */ (function () {
-    function Game(id, side) {
+    function Game(id, playerSide) {
+        if (playerSide === void 0) { playerSide = null; }
         var _this = this;
+        this.playerSide = playerSide;
         this.startingFormation = start_1.default;
-        this.playerSide = null;
+        // readonly playerSide: Side | null = null;
         this.currentTurnSide = 'white';
         this.turnCount = 0;
         this.isOver = false;
@@ -154,13 +156,10 @@ var Game = /** @class */ (function () {
             _this.signalState('board');
         };
         this.id = id;
-        if (side)
-            this.playerSide = side;
         this.observer = new Observer_1.default(this);
         this.boardManager = new BoardManager_1.default(this.startingFormation, function () { return _this.currentTurnSide; }, function () { return _this.signalState('board'); });
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
         this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }, function (king, direction) { return _this.boardManager.commitCastle(king, direction); });
-        // this.moveManager.updateMoves(this.boardManager.boardSquares);
         this.updateMoves();
         if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
             var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];

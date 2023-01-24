@@ -1,3 +1,4 @@
+import { type MatchMode } from '../logic/concepts';
 import { type Side } from '../logic/terms';
 import Match from './match/Match';
 declare class Session {
@@ -5,7 +6,7 @@ declare class Session {
     private currentMatch;
     static getCurrentSession: () => Session;
     constructor();
-    startNewMatch: (playerSide?: Side) => string;
+    startNewMatch: (mode: MatchMode, primarySide?: Side) => string;
     private updateCurrentMatch;
     getCurrentMatch: () => Match;
 }

@@ -26,7 +26,7 @@ class Game implements Observable {
   readonly id: string;
   private readonly startingFormation: PieceListings = defaultStartingFormation;
 
-  readonly playerSide: Side | null = null;
+  // readonly playerSide: Side | null = null;
   protected currentTurnSide: Side = 'white';
   private turnCount: number = 0;
   protected isOver: boolean = false;
@@ -38,14 +38,11 @@ class Game implements Observable {
 
   private moveController;
 
-  protected signalFinish: (result: Side | 'draw') => (() => {});
+  protected signalFinish: (result: Side | 'draw') => (() => void);
   protected startNextGameCallback = () => {};
 
-  constructor(id: string, side?: Side) {
+  constructor(id: string, private readonly playerSide: Side | null = null) {
     this.id = id;
-
-    if (side)
-      this.playerSide = side;
 
     this.observer = new Observer(this);
 
@@ -60,7 +57,6 @@ class Game implements Observable {
       (type?: string) => this.signalState(type),
       (king: King, direction: BoardDirection) => this.boardManager.commitCastle(king, direction)
     );
-    // this.moveManager.updateMoves(this.boardManager.boardSquares);
     this.updateMoves();
 
     if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
