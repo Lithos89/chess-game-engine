@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var terms_1 = require("../logic/terms");
 // Game Management
 var Match_1 = require("./match/Match");
 /*
@@ -13,7 +14,8 @@ var Session = /** @class */ (function () {
         this.startNewMatch = function (mode, primarySide) {
             if (primarySide === void 0) { primarySide = 'white'; }
             var matchId = "match_".concat(_this.matches.length);
-            var match = new Match_1.default(matchId, primarySide, mode);
+            var side = primarySide === 'random' ? terms_1.SIDES[Math.floor(Math.random() * 2)] : primarySide;
+            var match = new Match_1.default(matchId, side, mode);
             _this.matches.push(match);
             _this.updateCurrentMatch();
             return match.id;

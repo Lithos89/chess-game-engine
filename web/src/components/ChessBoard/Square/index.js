@@ -13,10 +13,14 @@ const StyledSquare = styled.div`
 
 const Square = ({ color, position, piece, update, isHighlighted, action }) => {
 
+  // console.log(color);
+
   const isLight = color === 'light';
 
   const move = () => {
-    update(position, piece);
+    if (update) {
+      update(position, piece);
+    }
   }
 
   return (

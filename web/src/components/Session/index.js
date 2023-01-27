@@ -1,11 +1,11 @@
-
-import { Fragment, useEffect, useState, useReducer } from 'react';
+import { useEffect, useState } from 'react';
 
 // Modules
 import Chess from 'chess-engine';
 
 // Components
-import Game from '../Game';
+import Match from '../Match';
+import ModeSelector from './ModeSelector';
 
 // Styling
 import styled from 'styled-components';
@@ -18,63 +18,27 @@ const Container = styled.div`
 `;
 
 const matchController = Chess.startSession();
-const initialMatchId = matchController.newMatch('computer');
-
-// function matchReducer(state, action) {
-//   switch(action) {
-//     case 'controller': 
-//       return {
-//         ...state,
-        
-//       }
-//   }
-// }
 
 const Session = () => {
+  const [mode, setMode] = useState(null);
+  const [matchId, setMatchId] = useState(null);
 
-  // Make this into useReducer instead of useState
-  const [match, setMatch] = useState(null);
-  const [matchData, setMatchData] = useState(null);
-  const [matchController, setMatchController] = useState(null);
-
-  const [gameStarted, setGameStarted] = useState(false);
-
-  // Initial Match Load
-  useEffect(() => {
-      Chess.setMatchObserver(setMatch, initialMatchId);
-  }, []);
+  const selectMode = (mode) => {
+    setMode(mode);
+  };
 
   useEffect(() => {
-    if (match) {
-      setMatchData(match.data);
-      setMatchController(match.controller);
+    if (mode) {
+      const matchId = matchController.newMatch(mode.mode, mode.side);
+      setMatchId(matchId);
     };
-  }, [match]);
-
-  useEffect(() => {
-    if (matchController && !gameStarted) {
-      matchController.newGame();
-      setGameStarted(true);
-    }
-  }, [matchController, gameStarted]);
+  }, [mode]);
 
   return (
     <Container>
-      { matchData && matchController && (
-        <Game gameId={matchData.currentGame}>
-          { matchData.info && (
-            <Fragment>
-              <h1>Turn: {matchData.info.currentSide}</h1>
-              {
-                false ? 
-                  <h5>You: {matchData.info.wins.player}   Computer: {matchData.info.wins.opponent}</h5> :
-                  <h5>Player1: {matchData.info.wins.player}   Player2: {matchData.info.wins.opponent}</h5>
-              }
-              <h4>Game: #{matchData.info.games}</h4>
-            </Fragment>
-          )}
-        </Game>
-      )}
+      {/* {!matchId && <ModeSelector selector={selectMode} /> } */}
+      <ModeSelector selector={selectMode} />
+      <Match matchId={matchId ?? null} mode={mode?.mode} />
     </Container>
   );
 };

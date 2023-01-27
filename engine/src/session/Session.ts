@@ -1,7 +1,7 @@
 
 // Types, interfaces, constants, ...
 import { type MatchMode } from '../logic/concepts';
-import { type Side } from '../logic/terms';
+import { SIDES, type Side } from '../logic/terms';
 
 // Game Management
 import Match from './match/Match';
@@ -19,9 +19,10 @@ class Session {
     Session.getCurrentSession = () => this;
   };
 
-  public startNewMatch = (mode: MatchMode, primarySide: Side = 'white'): string => {
+  public startNewMatch = (mode: MatchMode, primarySide: Side | 'random' = 'white'): string => {
     const matchId = `match_${this.matches.length}`;
-    const match = new Match(matchId, primarySide, mode);
+    const side = primarySide === 'random' ? SIDES[Math.floor(Math.random() * 2)] : primarySide
+    const match = new Match(matchId, side, mode);
     this.matches.push(match);
     this.updateCurrentMatch();
 

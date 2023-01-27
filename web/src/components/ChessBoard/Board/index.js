@@ -5,6 +5,7 @@ import Square from 'components/ChessBoard/Square';
 // Determine either to create the background frame of the board dynamically or use an image
 // TODO: Add frame to board
 const Background = styled.div`
+  min-width: 50vw;
   display: flex;
   /* flex-direction: row-reverse; */
   background-color: brown;
@@ -13,6 +14,21 @@ const Background = styled.div`
   padding: 20px;
   /* border: 5px brown solid; */
 `;
+
+const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+const rows = ['1', '2', '3', '4', '5', '6', '7', '8'];
+
+const tempSquares = columns.flatMap((col, i) => 
+rows.map((row, j) => {
+  const _index = i * 8 + j;
+
+  const regex = /b|d|f|h/;
+  const isEvenRow = regex.test(col);
+
+  const shade = (_index % 8 + Number(isEvenRow)) % 2 === 0 ? 'dark' : 'light';
+  return <Square key={_index} color={shade} />
+})
+);
 
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
 const Board = ({ squares, update }) => {
@@ -33,23 +49,27 @@ const Board = ({ squares, update }) => {
   //   </Background>
   // );
 
+
+  const temp = squares ?
+    squares.map(({position, square, piece }) => (
+        <Square
+          key={position}
+          color={square.color}
+          position={position}
+          piece={piece}
+          update={update}
+          isHighlighted={square.focus.highlighted}
+          action={square.focus.action}
+        />
+      )
+    ) : 
+    tempSquares;
+
+    console.log(temp)
+    
   return (
     <Background>
-        {
-          squares.map(({position, square, piece }) => {
-            return (
-              <Square
-                key={position}
-                color={square.color}
-                position={position}
-                piece={piece}
-                update={update}
-                isHighlighted={square.focus.highlighted}
-                action={square.focus.action}
-              />
-            )
-          })
-        }
+        {temp}
     </Background>
   );
 };

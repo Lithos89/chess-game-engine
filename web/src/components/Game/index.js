@@ -11,6 +11,7 @@ import Menu from './Menu';
 import styled from 'styled-components';
 
 const Container = styled.div`
+  width: 80vw;
   display: flex;
   align-items: stretch;
   background-color: #000;
@@ -18,7 +19,7 @@ const Container = styled.div`
   margin: 0 15%;
 `;
 
-const Game = ({ gameId, resign, children }) => {
+const Game = ({ gameId, children }) => {
   const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
@@ -62,7 +63,7 @@ const Game = ({ gameId, resign, children }) => {
   }, [selectedPiecePos, moveController, gameLoaded]);
 
   return (
-      gameLoaded && gameData && moveController !== null && (
+      gameLoaded && gameData && moveController !== null ? (
         <Container>
           <Board
             squares={gameData.board}
@@ -78,6 +79,11 @@ const Game = ({ gameId, resign, children }) => {
             {children}
           </Menu>
         </Container>
+      ) : (
+      <Container>
+        <Board />
+        <Menu />
+      </Container>
       )
   );
 };

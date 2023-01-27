@@ -86,6 +86,7 @@ class GameController extends Game {
   public resign = () => {
     // *: Give the victory to the opponent
     if (!this.isOver) {
+      this.attemptHighlight();
       this.isOver = true;
       this.startNextGameCallback = this.signalFinish(getEnemySide(this.currentTurnSide));
       this.signalState();

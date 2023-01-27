@@ -80,6 +80,7 @@ var GameController = /** @class */ (function (_super) {
         _this.resign = function () {
             // *: Give the victory to the opponent
             if (!_this.isOver) {
+                _this.attemptHighlight();
                 _this.isOver = true;
                 _this.startNextGameCallback = _this.signalFinish((0, getEnemySide_1.default)(_this.currentTurnSide));
                 _this.signalState();

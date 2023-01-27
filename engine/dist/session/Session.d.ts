@@ -6,7 +6,7 @@ declare class Session {
     private currentMatch;
     static getCurrentSession: () => Session;
     constructor();
-    startNewMatch: (mode: MatchMode, primarySide?: Side) => string;
+    startNewMatch: (mode: MatchMode, primarySide?: Side | 'random') => string;
     private updateCurrentMatch;
     getCurrentMatch: () => Match;
 }
