@@ -1,3 +1,5 @@
+
+// Styling
 import { keyframes } from "styled-components";
 
 const fadeOut = keyframes`

@@ -7,11 +7,8 @@ import buttonClick from "../animations/buttonClick";
 
 const StyledBtn = styled.button`
   border-radius: 5%;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
   padding: 1em;
-
-  /* animation-name: ${buttonClick};
-  animation-duration: 1s; */
 
   :hover {
     cursor: pointer;

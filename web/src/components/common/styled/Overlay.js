@@ -4,15 +4,30 @@ import styled, { css } from "styled-components";
 import FlexContainer from "./FlexContainer";
 
 // Animations
-import fadeIn from "../animations/fadeInOut";
 import fadeOut from "../animations/fadeOut";
 
-const Container = styled.div`
+const Backdrop = styled.div`
+  display: flex;
+  align-items: center;
+  background: #000000AA;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  ${p => p.fade && css`
+    animation-name: ${fadeOut};
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+  `}
+`;
+
+const Container = styled.aside`
   position: absolute;
 
   left: 50%;
   transform: translate(-50%, 0);
-
   margin: auto;
 
   height: ${(p) => p.width};
@@ -23,23 +38,14 @@ const Container = styled.div`
   border: solid black 3px;
 `;
 
-const FadingContainer = styled(Container)`
-  /* animation-name: ${fadeIn};
-  animation-duration: 1s; */
-
-  ${p => p.fade && css`
-    animation-name: ${fadeOut};
-    animation-duration: 0.3s;
-    animation-fill-mode: forwards;
-  `}
-`;
-
 const Overlay = ({ height, width, children, fade }) => (
-  <FadingContainer height={height} width={width} fade={fade}>
-    <FlexContainer direction="column">
-      {children}
-    </FlexContainer>
-  </FadingContainer>
+  <Backdrop fade={fade}>
+    <Container height={height} width={width}> 
+      <FlexContainer direction="column">
+        {children}
+      </FlexContainer>
+    </Container>
+  </Backdrop>
 );
 
 export default Overlay;

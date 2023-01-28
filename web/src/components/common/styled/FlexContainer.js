@@ -2,10 +2,7 @@
 // Styling
 import styled from "styled-components";
 
-// Animations
-import fadeOut from "../animations/fadeOut";
-
-const Container = styled.div`
+const Container = styled.ul`
   display: flex;
   flex-direction: ${(p) => p.direction ?? "row"};
   gap: 10px;
@@ -16,24 +13,23 @@ const Container = styled.div`
   height: ${(p) => p.width ?? "auto"};
   width: ${(p) => p.height ?? "auto"};
 
-  > * {
-    flex: 1;
-  }
-
-
-  /* animation-name: ${fadeOut};
-  animation-duration: 1s; */
+  list-style: none;
 `;
 
-const FlexContainer = ({
-  direction,
-  children,
-  height,
-  width
-}) => {
+const Item = styled.li`
+  flex: 1;
+`;
+
+const FlexContainer = ({ direction, children, height, width }) => {
   return (
     <Container direction={direction} height={height} width={width}>
-      {children}
+      {
+        children.map((child, i) => (
+          <Item key={i}>
+            {child}
+          </Item>
+        ))
+      }
     </Container>
   );
 };

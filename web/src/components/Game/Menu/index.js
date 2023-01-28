@@ -1,7 +1,11 @@
 
-import styled from 'styled-components';
+// Components
 import CapturesDisplay from './CapturesDisplay';
 import MoveHistory from './MoveHistory';
+
+// Styling
+import styled from 'styled-components';
+import Button from "../../common/styled/Button";
 
 const MenuContainer = styled.div`
   flex: 3;
@@ -10,17 +14,16 @@ const MenuContainer = styled.div`
 `;
 
 const Menu = ({ undo, resign, moveLog, captures, next, children }) => {
-
   return(
     <MenuContainer>
       {/* Controllers */}
       {children}
       <MoveHistory moveLog={moveLog} />
       {captures && <CapturesDisplay captures={captures}/>}
-      <button onClick={undo}> Undo </button>
-      <button onClick={resign}> Resign </button>
+      <Button onClick={undo}> Undo </Button>
+      <Button onClick={resign}> Resign </Button>
       { next && (
-        <button onClick={next}> Start Next </button>
+        <Button onClick={next}> Start Next </Button>
       )}
     </MenuContainer>
   );

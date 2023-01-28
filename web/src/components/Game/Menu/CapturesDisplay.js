@@ -1,7 +1,8 @@
+
+// Utils
 import { getAssetLink } from 'utils';
 
 const CapturesDisplay = ({ captures }) => {
-
   const [capturedBlackPieces, capturedWhitePieces] = Object.keys(captures).map((side) => 
     Object.keys(captures[side]).map(pieceType => {
       let _amountCaptured = captures[side][pieceType];

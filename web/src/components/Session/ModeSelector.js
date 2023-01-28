@@ -1,25 +1,18 @@
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 // Styling
 import styled from "styled-components";
 import Overlay from "components/common/styled/Overlay";
 import Button from "components/common/styled/Button";
-import FlexContainer from 'components/common/styled/FlexContainer';
+import SideBox from "components/common/styled/SideBox";
 
 // Animations
 import fadeOut from "../common/animations/fadeOut";
+import RadioButtonGroup from "../common/RadioButtonGroup";
 
-const SideBox = styled(Button)`
-  padding: 20px;
-  background-color: ${(p) => p.side};
-  border: black solid ${(p) => p.active ? '6px' : '2px'};
-  border-radius: 5%;
-`;
-
-const StyledRadioButton = styled(Button)`
-  border: black solid ${(p) => p.active ? '4px' : '2px'};
-`;
+// Data
+import pieceAssets from 'data/piece-assets.json';
 
 const SubmitBtn = styled(Button)`
   padding: 20px 60px;
@@ -32,32 +25,57 @@ const FadingBtn = styled(SubmitBtn)`
     animation-name: ${fadeOut};
     animation-duration: 1s;
     animation-fill-mode: forwards;
-  }
+  };
 `;
 
-
+const ModeSelection = styled.div`
+  /* padding: 20px 60px; */
+`;
 
 const ModeSelector = ({ selector }) => {
   const [mode, setMode] = useState("computer");
   const [side, setSide] = useState("white");
   const [shouldFade, setShouldFade] = useState(false);
-  const [faded, setFaded] = useState(false);
+
+  const computerIsSelected = mode === "computer";
 
   return (
     <Overlay fade={shouldFade}>
-      <FlexContainer>
-        <StyledRadioButton active={mode === "computer"} onClick={() => setMode("computer")}>Computer</StyledRadioButton>
-        <StyledRadioButton active={mode === "local"} onClick={() => setMode("local")}>Local</StyledRadioButton>
-      </FlexContainer>
+      <Fragment>
+        <h3>Select an opponent</h3>
 
-      {mode === "computer" && (
-        <FlexContainer>
-          <SideBox active={side === "white"} onClick={() => setSide("white")} side="white" />
-          <SideBox active={side === "random"} onClick={() => setSide("random")} side="red" />
-          <SideBox active={side === "black"} onClick={() => setSide("black")} side="black" />
-        </FlexContainer>
+        <RadioButtonGroup
+            name="mode"
+            def={mode}
+            selector={setMode}
+            valueProp="mode"
+          >
+            <ModeSelection className='highlight' mode="computer">
+              <img src={pieceAssets['king_black']} draggable={true} />
+            </ModeSelection>
+            <ModeSelection className='highlight' mode="local">
+              <img src={pieceAssets['king_black']} draggable={true} />
+            </ModeSelection>
+        </RadioButtonGroup>
+      </Fragment>
+
+      {computerIsSelected && (
+        <Fragment>
+          <h3>Select a side</h3>
+          
+          <RadioButtonGroup
+            name="side"
+            def={side}
+            selector={setSide}
+            valueProp="side"
+          >
+            <SideBox side="white" />
+            <SideBox side="random" />
+            <SideBox side="black" />
+          </RadioButtonGroup>
+        </Fragment>
       )}
-      
+
       <FadingBtn onClick={() => { setShouldFade(true); selector({ mode, side });}}>Start</FadingBtn>
     </Overlay>
   )
