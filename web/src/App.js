@@ -1,6 +1,11 @@
-import Session from './components/Session';
 
+
+// Styling
 import { createGlobalStyle } from 'styled-components';
+import Theme from "./config/theme";
+
+// Components
+import Session from './components/Session';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -15,8 +20,10 @@ function App() {
   return (
     <div className="App">
       <div id="main">
-        <GlobalStyle />
-        <Session />
+        <Theme>
+          <GlobalStyle />
+          <Session />
+        </Theme>
       </div>
     </div>
   );

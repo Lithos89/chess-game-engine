@@ -2,7 +2,7 @@
 import { Fragment, useState } from 'react';
 
 // Styling
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Overlay from "components/common/styled/Overlay";
 import Button from "components/common/styled/Button";
 import SideBox from "components/common/styled/SideBox";
@@ -15,7 +15,8 @@ import RadioButtonGroup from "../common/RadioButtonGroup";
 import pieceAssets from 'data/piece-assets.json';
 
 const SubmitBtn = styled(Button)`
-  padding: 20px 60px;
+  width: 100%;
+  font-size: large;
   /* border-radius: 5%; */
   /* background-color: red; */
 `;
@@ -44,6 +45,8 @@ const ModeSelector = ({ selector }) => {
       <Fragment>
         <h3>Select an opponent</h3>
 
+        <br />
+
         <RadioButtonGroup
             name="mode"
             def={mode}
@@ -51,7 +54,7 @@ const ModeSelector = ({ selector }) => {
             valueProp="mode"
           >
             <ModeSelection className='highlight' mode="computer">
-              <img src={pieceAssets['king_black']} draggable={true} />
+              <img src={pieceAssets['queen_black']} draggable={true} />
             </ModeSelection>
             <ModeSelection className='highlight' mode="local">
               <img src={pieceAssets['king_black']} draggable={true} />
@@ -62,12 +65,18 @@ const ModeSelector = ({ selector }) => {
       {computerIsSelected && (
         <Fragment>
           <h3>Select a side</h3>
+          <br />
           
           <RadioButtonGroup
             name="side"
             def={side}
             selector={setSide}
             valueProp="side"
+            css={
+              css`
+                align-items: center;
+              `
+            }
           >
             <SideBox side="white" />
             <SideBox side="random" />

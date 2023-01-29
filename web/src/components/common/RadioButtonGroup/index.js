@@ -24,7 +24,7 @@ const RadioButtonGroup = ({ children, name, def, selector, valueProp, css }) => 
 
   return (
     <form>
-      <FlexContainer>
+      <FlexContainer css={css}>
         {radioButtons}
       </FlexContainer>
     </form>

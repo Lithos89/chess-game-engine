@@ -11,7 +11,7 @@ import ModeSelector from './ModeSelector';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  background-color: #FAFAFA;
+  background-color: ${p => p.theme.colors.gray.light};
   height: 100vh;
   display: flex;
   align-items: center;
