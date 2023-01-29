@@ -1,21 +1,9 @@
 
-import { Fragment, useEffect, useState, useReducer } from 'react';
-
-// Modules
+import { Fragment, useEffect, useState } from 'react';
 import Chess from 'chess-engine';
 
 // Components
 import Game from '../Game';
-
-// function matchReducer(state, action) {
-//   switch(action) {
-//     case 'controller': 
-//       return {
-//         ...state,
-        
-//       }
-//   }
-// }
 
 const Match = ({ matchId, mode }) => {
   // Make this into useReducer instead of useState

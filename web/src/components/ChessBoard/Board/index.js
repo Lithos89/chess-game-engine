@@ -1,17 +1,25 @@
-import styled from 'styled-components';
 
+// Components
 import Square from 'components/ChessBoard/Square';
+
+// Styling
+import styled from 'styled-components';
+import { devices } from 'config/devices';
 
 // Determine either to create the background frame of the board dynamically or use an image
 // TODO: Add frame to board
-const Background = styled.div`
-  min-width: 50vw;
+const BoardContainer = styled.div`
   display: flex;
   /* flex-direction: row-reverse; */
   background-color: brown;
   flex-wrap: wrap;
   flex: 7;
-  padding: 20px;
+
+  /* padding: 5px; */
+
+  @media ${devices.tablet} {
+    padding: 20px;
+  }
   /* border: 5px brown solid; */
 `;
 
@@ -68,9 +76,9 @@ const Board = ({ squares, update }) => {
     console.log(temp)
     
   return (
-    <Background>
+    <BoardContainer>
         {temp}
-    </Background>
+    </BoardContainer>
   );
 };
 

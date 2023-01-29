@@ -1,5 +1,4 @@
 
-// Core
 import { useState, useEffect, Fragment, useCallback } from 'react';
 import Chess from 'chess-engine';
 
@@ -9,14 +8,23 @@ import Menu from './Menu';
 
 // Styling
 import styled from 'styled-components';
+import { devices } from 'config/devices';
 
 const Container = styled.div`
-  width: 80vw;
   display: flex;
+  flex-direction: column;
+  min-width: 60%;
+  max-height: 100vh;
+
+  @media ${devices.tablet} {
+    flex-direction: row;
+    margin: 0rem 15%;
+  }
+
   align-items: stretch;
   background-color: #000;
-  padding: 10px;
-  margin: 0 15%;
+  padding: 1rem;
+  margin: auto;
 `;
 
 const Game = ({ gameId, children }) => {

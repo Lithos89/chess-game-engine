@@ -7,9 +7,6 @@ const PieceImg = styled.img`
   width: 90%;
   height: 90%;
   margin: auto;
-  /* &: {
-    cursor: move;
-  } */
 `;
 
 // TODO: Figure out how to handle nulls in this function in a more clean fashion
