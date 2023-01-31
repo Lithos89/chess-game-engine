@@ -1,6 +1,22 @@
 
+// Styling
+import styled from "styled-components";
+
 // Utils
 import { getAssetLink } from 'utils';
+
+const PieceGroup = styled.div`
+
+  display: 'inline-block';
+
+  & > * {
+    margin-left: -35px;
+  }
+
+  & > *:first-child {
+    margin-left: 0;
+  }
+`
 
 const CapturesDisplay = ({ captures }) => {
   const [capturedBlackPieces, capturedWhitePieces] = Object.keys(captures).map((side) => 
@@ -28,16 +44,16 @@ const CapturesDisplay = ({ captures }) => {
       <h3>Captures</h3>
       <div>
         {capturedBlackPieces.flatMap((val) => (
-          <div style={{ display: 'inline-block'}}>
+          <PieceGroup style={{ display: 'inline-block'}}>
             {val}
-          </div>
+          </PieceGroup>
         ))}
       </div>
       <div>
         {capturedWhitePieces.flatMap((val) => (
-          <div style={{ display: 'inline-block'}}>
+          <PieceGroup style={{ display: 'inline-block'}}>
             {val}
-          </div>
+          </PieceGroup>
         ))}
       </div>
     </div>

@@ -8,21 +8,28 @@ import ModeSelector from './ModeSelector';
 
 // Styling
 import styled from 'styled-components';
+import { devices } from 'config/devices';
 
 const Container = styled.div`
   display: flex;
   position: relative;
 
-  min-height: 100vh;
-
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  min-height: 100vh;
+  min-width: 0%;
+
+  align-items: stretch;
+  justify-content: center;
   
   // TODO: Make sure to change this to a gradient or a background picture
   background-color: ${p => p.theme.colors.gray.dark};
-  align-items: center;
+
+  @media ${devices.tablet} {
+    align-items: stretch;
+  };
 `;
 
 

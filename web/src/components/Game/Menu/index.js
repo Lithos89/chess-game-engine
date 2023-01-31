@@ -6,11 +6,20 @@ import MoveHistory from './MoveHistory';
 // Styling
 import styled from 'styled-components';
 import Button from "../../common/styled/Button";
+import { devices } from 'config/devices';
 
 const MenuContainer = styled.div`
-  flex: 3;
-  position: 'static';
+  display: flex;
+  flex-direction: column;
+  flex: 3 2;
   background-color: #ccc;
+
+  @media ${devices.tablet} {
+    min-width: 300px;
+    flex: 1 2 300px;
+    padding: 20px;
+    min-height: 0;
+  }
 `;
 
 const Menu = ({ undo, resign, moveLog, captures, next, children }) => {

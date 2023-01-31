@@ -11,6 +11,7 @@ const StyledSquare = styled.div`
   display: flex;
   background-color: ${p => p.action ? 'blue' : p.isHighlighted ? 'red' : p.primary ? 'white' : '#CCC'};
   flex: 0 0 12.5%;
+
   aspect-ratio: 1 / 1;
 
   ${p => (p.action || p.isHighlighted || p.piece) && css`

@@ -12,19 +12,32 @@ import { devices } from 'config/devices';
 
 const Container = styled.div`
   display: flex;
+  flex: 1 0;
   flex-direction: column;
-  min-width: 60%;
   max-height: 100vh;
+  justify-content: stretch;
 
   @media ${devices.tablet} {
+    min-width: 80%;
     flex-direction: row;
-    margin: 0rem 15%;
-  }
+    align-items: stretch;
+    margin: 2vh 1rem;
+  };
 
-  align-items: stretch;
+  @media ${devices.laptop} {
+    min-width: 80%;
+    max-width: 90%;
+  };
+
   background-color: #000;
-  padding: 1rem;
-  margin: auto;
+`;
+
+const Spacer = styled.div`
+  flex: 0;
+
+  @media ${devices.tablet} {
+    flex: 0.2;
+  }
 `;
 
 const Game = ({ gameId, children }) => {
@@ -77,6 +90,7 @@ const Game = ({ gameId, children }) => {
             squares={gameData.board}
             update={!gameData.finished ? selectPiece : () => {}}
           />
+          <Spacer />
           <Menu
             undo={!gameData.finished ? moveController.undo : () => {}}
             resign={moveController.resign}
@@ -90,6 +104,7 @@ const Game = ({ gameId, children }) => {
       ) : (
       <Container>
         <Board />
+        <Spacer />
         <Menu />
       </Container>
       )
