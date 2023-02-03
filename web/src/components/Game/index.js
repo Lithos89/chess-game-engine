@@ -40,7 +40,7 @@ const Spacer = styled.div`
   }
 `;
 
-const Game = ({ gameId, children }) => {
+const Game = ({ gameId, matchInfo }) => {
   const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
@@ -89,6 +89,8 @@ const Game = ({ gameId, children }) => {
           <Board
             squares={gameData.board}
             update={!gameData.finished ? selectPiece : () => {}}
+            captures={gameData.captures}
+            matchInfo={matchInfo}
           />
           <Spacer />
           <Menu
@@ -98,7 +100,6 @@ const Game = ({ gameId, children }) => {
             captures={gameData.captures}
             next={gameData.finished ? moveController.startNext : null}
           >
-            {children}
           </Menu>
         </Container>
       ) : (

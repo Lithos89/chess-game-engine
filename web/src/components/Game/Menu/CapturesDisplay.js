@@ -6,57 +6,74 @@ import styled from "styled-components";
 import { getAssetLink } from 'utils';
 
 const PieceGroup = styled.div`
+  display: inline-block;
+  max-height: 100%;
+`;
 
-  display: 'inline-block';
+const Container = styled.div`
+  /* grid-column: 2 / span 4;
+  grid-row: 2 / span 1; */
+  justify-self: start;
+`;
 
-  & > * {
+// Styling to allow for the pieces to overlap each other
+const CapturedPieceImg = styled.img`
+  height: 100%;
+  
+`;
+
+const TempDiv = styled.div`
+  display: inline-block;
+  z-index: ${p => p.z};
+  position: relative;
+  max-height: 100%;
+  height: auto;
+  width: auto;
+
+  & + & {
     margin-left: -35px;
-  }
+  };
+`;
 
-  & > *:first-child {
-    margin-left: 0;
-  }
-`
+const Temp = ({ asset, z }) => {
+  return (
+    <TempDiv z={z}>
+      <CapturedPieceImg src={asset}/>
+    </TempDiv>
+  )
+};
 
-const CapturesDisplay = ({ captures }) => {
-  const [capturedBlackPieces, capturedWhitePieces] = Object.keys(captures).map((side) => 
-    Object.keys(captures[side]).map(pieceType => {
-      let _amountCaptured = captures[side][pieceType];
-      const pieceImgs = [];
+const CapturesDisplay = ({ captures, side }) => {
+  const capturedPieces = Object.keys(captures).map(pieceType => {
+    let _amountCaptured = captures[pieceType];
+    const pieceImgs = [];
 
-      try {
-        if (_amountCaptured > 0) {
-          const asset = getAssetLink(side, pieceType);
-    
-          while (_amountCaptured > 0) {
-            pieceImgs.push(<img src={asset} key={_amountCaptured} />);
-            _amountCaptured -= 1;
-          };
+    try {
+      if (_amountCaptured > 0) {
+        const asset = getAssetLink(side, pieceType);
+  
+        while (_amountCaptured > 0) {
+          pieceImgs.push(
+            <Temp key={_amountCaptured} asset={asset} z={_amountCaptured}/>
+          );
+          _amountCaptured -= 1;
         };
-      } finally {
-        return pieceImgs;
-      }
-    })
-  );
+      };
+    } finally {
+      return pieceImgs;
+    }
+  });
 
   return(
-    <div>
-      <h3>Captures</h3>
-      <div>
-        {capturedBlackPieces.flatMap((val) => (
-          <PieceGroup style={{ display: 'inline-block'}}>
-            {val}
-          </PieceGroup>
-        ))}
-      </div>
-      <div>
-        {capturedWhitePieces.flatMap((val) => (
-          <PieceGroup style={{ display: 'inline-block'}}>
-            {val}
-          </PieceGroup>
-        ))}
-      </div>
-    </div>
+    <Container>
+      {capturedPieces.flatMap((val) => (
+        val.length !== 0 ? 
+        <PieceGroup>
+          {val}
+        </PieceGroup>
+        : null
+      ))}
+    </Container>
   );
 };
 

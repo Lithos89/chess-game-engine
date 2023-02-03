@@ -35,8 +35,8 @@ const Match = ({ matchId, mode }) => {
   }, [matchController, gameStarted]);
 
   return (
-    <Game gameId={matchData?.currentGame ?? null}>
-      { matchData?.info && (
+    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info}>
+      {/* { matchData?.info && (
         <Fragment>
           <h1>Turn: {matchData.info.currentSide}</h1>
           {
@@ -46,7 +46,7 @@ const Match = ({ matchId, mode }) => {
           }
           <h4>Game: #{matchData.info.games}</h4>
         </Fragment>
-      )}
+      )} */}
     </Game>
   );
 };

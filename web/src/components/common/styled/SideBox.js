@@ -6,9 +6,9 @@ const SideBox = styled.div`
   /* display: inline-block; */
   width: 60px;
   height: 60px;
-  background-color: ${(p) => p.side === "random" ? "red" :p.theme.colors[p.side].main};
+  background-color: ${(p) => p.side === "random" ? "red" : p.theme.color[p.side].main};
   ${p => p.bordered && css`
-    border: ${p => p.theme.colors.black.main} solid 2px;
+    border: ${p => p.theme.color.black.main} solid 2px;
   `};
   border-radius: 5%;
 `;
@@ -22,7 +22,7 @@ const SplitSideBox = styled.div`
   height: 60px;
   overflow: hidden;
 
-  border: ${p => p.theme.colors.black.main} solid 2px;
+  border: ${p => p.theme.color.black.main} solid 2px;
 
   & > * {
     flex: 1;

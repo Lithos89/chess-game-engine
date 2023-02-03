@@ -1,18 +1,20 @@
 
 // Components
 import Square from 'components/ChessBoard/Square';
+import SideDisplay from 'components/UI/SideDisplay';
 
 // Styling
 import styled from 'styled-components';
 import { devices } from 'config/devices';
 
 const TempContainer = styled.div`
+  flex: 0;
+
   display: flex;
-  max-width: 100vh;
-  flex: 1;
   flex-direction: column;
   align-items: stretch;
-  /* justify-content: stretch; */
+
+  max-width: 88vh;
 
   @media ${devices.mobileL} {
     /* padding: 10px; */
@@ -24,40 +26,41 @@ const TempContainer = styled.div`
     /* padding: 20px; */
   };
 
-  /* @media ${devices.laptopL} {
-    flex: 1;
-  } */
+  @media ${devices.laptopL} {
+    /* align-items: center; */
+    aspect-ratio: 1 / 1;
+  }
 `;
 
 const Temp2Container = styled.div`
-  @media ${devices.mobileL} {
-    flex: 3;
+  width: 100%;
+
+  flex: 1 3;
+
+  /* max-height: 4vh;
+
+  @media ${devices.tablet} {
+    max-height: 8vh;
+  }; */
+
+  /* @media ${devices.mobileL} {
+    flex: 1 1;
   };
 
   @media ${devices.laptopL} {
-    flex: 0;
-  };
-`;
-
-const Temp3Container = styled.div`
-  @media ${devices.mobileL} {
     flex: 1;
-  };
-  @media ${devices.laptopL} {
-    flex: 0;
-  };
+  }; */
 `;
 
 // Determine either to create the background frame of the board dynamically or use an image
 // TODO: Add frame to board
 const BoardContainer = styled.div`
-  flex: 1;
+  flex: 0;
 
   display: flex;
   flex-wrap: wrap;
   
-  background-color: brown;
-  /* aspect-ratio: 1 / 1; */
+  background-color: white;
   /* max-height: 100%; */
 `;
 
@@ -77,7 +80,7 @@ const tempSquares = columns.flatMap((col, i) =>
 );
 
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
-const Board = ({ squares, update }) => {
+const Board = ({ squares, update, captures, matchInfo }) => {
 
   // // !: Just a temporary solution, in the future the array will be preprocessed for the client
   // const n = Math.sqrt(squares.length);
@@ -97,7 +100,7 @@ const Board = ({ squares, update }) => {
 
 
   const temp = squares ?
-    squares.map(({position, square, piece }) => (
+    squares.map(({ position, square, piece }) => (
         <Square
           key={position}
           color={square.color}
@@ -115,11 +118,15 @@ const Board = ({ squares, update }) => {
     
   return (
     <TempContainer>
-      <Temp3Container/>
+      <Temp2Container>
+        <SideDisplay side="black" name="Computer" active={false} captures={captures?.black} wins={matchInfo?.wins.opponent} />
+      </Temp2Container>
       <BoardContainer>
           {temp}
       </BoardContainer>
-      <Temp2Container/>
+      <Temp2Container>
+        <SideDisplay side="white" name="You" active={true} captures={captures?.white} wins={matchInfo?.wins.player} />
+      </Temp2Container>
     </TempContainer>
   );
 };

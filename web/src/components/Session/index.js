@@ -19,13 +19,12 @@ const Container = styled.div`
   left: 0;
   right: 0;
   min-height: 100vh;
-  min-width: 0%;
 
   align-items: stretch;
   justify-content: center;
   
   // TODO: Make sure to change this to a gradient or a background picture
-  background-color: ${p => p.theme.colors.gray.dark};
+  background-color: ${p => p.theme.color.gray.dark};
 
   @media ${devices.tablet} {
     align-items: stretch;

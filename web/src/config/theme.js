@@ -3,7 +3,7 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 
 const theme = {
-  colors: {
+  color: {
     gold: "#FFD700",
 
     black: {
