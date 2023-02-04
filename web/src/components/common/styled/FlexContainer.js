@@ -11,11 +11,11 @@ const Container = styled.ul`
   width: ${(p) => p.height ?? "auto"};
 
   list-style: none;
-
+/* 
   justify-items: stretch;
   justify-content: stretch;
   align-content: stretch;
-  align-items: stretch;
+  align-items: stretch; */
 
   ${(p) => p.css ?? p.css}
 `;

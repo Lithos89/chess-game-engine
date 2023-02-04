@@ -18,7 +18,9 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  height: 100vh;
   min-height: 100vh;
+  max-height: 100vh;
 
   align-items: stretch;
   justify-content: center;

@@ -5,6 +5,7 @@ import Chess from 'chess-engine';
 // Components
 import Board from '../ChessBoard/Board';
 import Menu from './Menu';
+import SideDisplay from "components/UI/SideDisplay";
 
 // Styling
 import styled from 'styled-components';
@@ -14,19 +15,24 @@ const Container = styled.div`
   display: flex;
   flex: 1 0;
   flex-direction: column;
-  max-height: 100vh;
+  /* max-height: 100vh; */
   justify-content: stretch;
 
   @media ${devices.tablet} {
-    min-width: 80%;
+    justify-content: initial;
+    min-width: 0;
     flex-direction: row;
     align-items: stretch;
-    margin: 2vh 1rem;
+    align-content: start;
+    margin: 2vh 5vh;
   };
 
   @media ${devices.laptop} {
-    min-width: 80%;
-    max-width: 90%;
+    margin: auto 10vw;
+  };
+
+  @media ${devices.laptopL} {
+    margin: auto 15vw;
   };
 
   background-color: #000;
@@ -38,6 +44,40 @@ const Spacer = styled.div`
   @media ${devices.tablet} {
     flex: 0.2;
   }
+`;
+
+const GameContainer = styled.div`
+  display: flex;
+  flex-direction: ${p => p.reverse ? "column-reverse" : "column"};
+  align-items: stretch;
+
+  align-self: flex-start;
+  min-height: 0;
+
+  @media ${devices.mobileL} {
+    /* padding: 10px; */
+  };
+
+  @media ${devices.tablet} {
+    flex: 1 1 600px;
+    /* overflow: auto; */
+    /* padding: 20px; */
+  };
+
+  @media ${devices.laptop} {
+    max-width: 80vh;
+    /* height: 100%; */
+    /* align-items: center; */
+    /* aspect-ratio: 1 / 1; */
+  }
+`;
+
+const Temp2Container = styled.div`
+  flex: 1;
+
+  @media ${devices.laptopL} {
+    flex: 0;
+  };
 `;
 
 const Game = ({ gameId, matchInfo }) => {
@@ -83,29 +123,65 @@ const Game = ({ gameId, matchInfo }) => {
     };
   }, [selectedPiecePos, moveController, gameLoaded]);
 
+  const side1 = matchInfo?.currentSide === "black" ? "You" : "Computer";
+  const side2 = matchInfo?.currentSide === "white" ? "You" : "Computer";
+
+  const score1 = matchInfo?.currentSide === "black" ? matchInfo?.wins.player : matchInfo?.wins.opponent;
+  const score2 = matchInfo?.currentSide === "white" ? matchInfo?.wins.player : matchInfo?.wins.opponent;
+
+  const primarySide = matchInfo?.currentSide;
+  const opponentSide = primarySide === "white" ? "black" : "white"; 
+
+  // TODO: From the gameData prop, get the currentTurnSide value that is provided by the model and seee if it matches with the currentSide to determine whether it is the opponentsTurn
+  const opponentTurn = true;
+  
   return (
       gameLoaded && gameData && moveController !== null ? (
         <Container>
-          <Board
-            squares={gameData.board}
-            update={!gameData.finished ? selectPiece : () => {}}
-            captures={gameData.captures}
-            matchInfo={matchInfo}
+          <GameContainer reverse={opponentTurn}>
+          <SideDisplay
+            side={opponentSide}
+            // TODO: Add in here a clause that checks on the mode to determine wheter the name should be based on the computer or if it should be player 2
+            name="Computer"
+            active={opponentTurn}
+            captures={gameData.captures ? gameData.captures[opponentSide] : {}}
+            wins={matchInfo?.wins.opponent}
           />
+            <Board
+              squares={gameData.board}
+              update={!gameData.finished ? selectPiece : () => {}}
+            />
+            <SideDisplay 
+              side={primarySide}
+              name="You"
+              active={!opponentTurn}
+              captures={gameData.captures ? gameData.captures[primarySide] : {}}
+              wins={matchInfo?.wins.player}
+            />
+            <Temp2Container />
+          </GameContainer>
+
           <Spacer />
+
           <Menu
             undo={!gameData.finished ? moveController.undo : () => {}}
             resign={moveController.resign}
             moveLog={gameData.moveLog}
             captures={gameData.captures}
             next={gameData.finished ? moveController.startNext : null}
-          >
-          </Menu>
+          />
         </Container>
       ) : (
       <Container>
-        <Board />
+        <GameContainer>
+          <SideDisplay side="black" name="" active={false} />
+          <Board />
+          <SideDisplay side="white" name="" active={false} />
+          <Temp2Container />
+        </GameContainer>
+
         <Spacer />
+        
         <Menu />
       </Container>
       )

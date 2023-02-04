@@ -1,5 +1,5 @@
 
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Chess from 'chess-engine';
 
 // Components
@@ -35,19 +35,7 @@ const Match = ({ matchId, mode }) => {
   }, [matchController, gameStarted]);
 
   return (
-    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info}>
-      {/* { matchData?.info && (
-        <Fragment>
-          <h1>Turn: {matchData.info.currentSide}</h1>
-          {
-            mode === "computer" ? 
-              <h5>You: {matchData.info.wins.player}   Computer: {matchData.info.wins.opponent}</h5> :
-              <h5>Player1: {matchData.info.wins.player}   Player2: {matchData.info.wins.opponent}</h5>
-          }
-          <h4>Game: #{matchData.info.games}</h4>
-        </Fragment>
-      )} */}
-    </Game>
+    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info} />
   );
 };
 

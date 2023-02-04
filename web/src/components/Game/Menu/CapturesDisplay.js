@@ -11,40 +11,28 @@ const PieceGroup = styled.div`
 `;
 
 const Container = styled.div`
-  /* grid-column: 2 / span 4;
-  grid-row: 2 / span 1; */
   justify-self: start;
+  height: 2rem;
 `;
 
 // Styling to allow for the pieces to overlap each other
-const CapturedPieceImg = styled.img`
-  height: 100%;
-  
-`;
-
-const TempDiv = styled.div`
+const ImgWrapper = styled.div`
   display: inline-block;
   z-index: ${p => p.z};
   position: relative;
   max-height: 100%;
-  height: auto;
-  width: auto;
 
   & + & {
-    margin-left: -35px;
+    margin-left: -1.5rem;
   };
 `;
 
-const Temp = ({ asset, z }) => {
-  return (
-    <TempDiv z={z}>
-      <CapturedPieceImg src={asset}/>
-    </TempDiv>
-  )
-};
+const CapturedPieceImg = styled.img`
+  height: 2rem;
+`;
 
 const CapturesDisplay = ({ captures, side }) => {
-  const capturedPieces = Object.keys(captures).map(pieceType => {
+  const capturedPieces = Object.keys(captures ?? {}).map(pieceType => {
     let _amountCaptured = captures[pieceType];
     const pieceImgs = [];
 
@@ -54,8 +42,10 @@ const CapturesDisplay = ({ captures, side }) => {
   
         while (_amountCaptured > 0) {
           pieceImgs.push(
-            <Temp key={_amountCaptured} asset={asset} z={_amountCaptured}/>
-          );
+            <ImgWrapper key={`${side}_${pieceType}_${_amountCaptured}`} z={_amountCaptured}>
+              <CapturedPieceImg src={asset}/>
+            </ImgWrapper>
+         );
           _amountCaptured -= 1;
         };
       };
@@ -66,12 +56,10 @@ const CapturesDisplay = ({ captures, side }) => {
 
   return(
     <Container>
-      {capturedPieces.flatMap((val) => (
-        val.length !== 0 ? 
-        <PieceGroup>
+      {capturedPieces.flatMap((val, i) => (
+        <PieceGroup key={i}>
           {val}
         </PieceGroup>
-        : null
       ))}
     </Container>
   );

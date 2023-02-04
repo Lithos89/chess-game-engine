@@ -12,6 +12,10 @@ import useMediaQuery from "hooks/useMediaQuery";
 const Container = styled.div`
   display: flex;
   width: 100%;
+  justify-content: start;
+
+  padding: 0.2rem 1rem;
+
   background-color: ${ p => p.side === "white" ?
     p.theme.color.white.solid :
     p.theme.color.black.solid
@@ -20,37 +24,18 @@ const Container = styled.div`
     p.theme.color.black.solid :
     p.theme.color.white.solid
   };
-
-  flex: 1 1;
-  /* height: 100%; */
-  /* max-height: 4vh;
-
-  @media ${devices.tablet} {
-    max-height: 8vh;
-  }; */
-
-  /* grid-template-columns: repeat(5, 1fr);
-
-  grid-template-rows: repeat(2, 1fr); */
-
-  /* height: 100%; */
-
-  justify-content: start;
 `;
 
 const Indicator = styled.div`
-  align-self: center;
-  width: 4rem;
   display: inline-block;
-  justify-self: start;
-  /* flex: 0; */
-  height: 100%;
+  width: 2rem;
   aspect-ratio: 1 / 1;
-  /* grid-column: 1 / span 1;
-  grid-row: 1 / span 2; */
-  /* display: inline-block; */
-  background-color: ${p => p.active ? "green" : "white" };
   border-radius: 50%;
+
+  align-self: center;
+  justify-self: start;
+
+  background-color: ${p => p.active ? "green" : "white" };
 `;
 
 const NameDisplay = styled.h3`
@@ -58,25 +43,45 @@ const NameDisplay = styled.h3`
 `;
 
 const TempContainer = styled.div`
-  /* flex: 1; */
-  
   display: flex;
   flex-direction: column;
+
+  align-items: start;
+`;
+
+const WinCounter = styled.div`
+  margin: auto 1rem;
+  padding: 0.25rem;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  border: solid ${p => p.theme.color.gray.dark} 1px;
+  border-radius: 5%;
+  background-color: ${p => p.theme.color.gray.light};
+  
+  color: ${p => p.theme.color.black.main};
+
+  @media ${devices.tablet} {
+    padding: 0.5rem;
+  };
 `;
 
 const SideDisplay = ({ side, active, name, captures, wins }) => {
-
   const isLaptop = useMediaQuery(devices.laptop);
+  const score = wins?.toFixed(1) ?? "0.0";
 
   return (
     <Container side={side}>
       <Indicator active={active} />
-      {wins ?? '0.0'}
+        <WinCounter>
+          {score}
+        </WinCounter>
       <TempContainer>
         <NameDisplay>
           {name}
         </NameDisplay>
-        {captures && !isLaptop &&
+        {!isLaptop &&
           <CapturesDisplay captures={captures} side={side === "white" ? "black" : "white"} /> 
         }
       </TempContainer>
