@@ -98,7 +98,8 @@ class MoveManager {
       dest.setPiece(originPiece);
     }
 
-    this.updateState('board');
+    // this.updateState('board');
+    this.updateState();
   };
 
   // public transferPiece(origin: Square, dest: Square) {

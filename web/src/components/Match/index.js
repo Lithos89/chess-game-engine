@@ -35,7 +35,7 @@ const Match = ({ matchId, mode }) => {
   }, [matchController, gameStarted]);
 
   return (
-    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info} />
+    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info} isSinglePlayer={mode !== "local"} />
   );
 };
 

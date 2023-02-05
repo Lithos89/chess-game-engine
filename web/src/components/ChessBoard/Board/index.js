@@ -16,6 +16,10 @@ const BoardContainer = styled.div`
 
   aspect-ratio: 1 / 1;
 
+  @media ${devices.tablet} {
+    max-width: 70vh;
+  };
+
   @media ${devices.laptop} {
     max-width: 80vh;
   }
@@ -31,34 +35,24 @@ const placeholderSquares = columns.flatMap((col, i) =>
     const regex = /b|d|f|h/;
     const isEvenRow = regex.test(col);
 
-    const shade = (_index % 8 + Number(isEvenRow)) % 2 === 0 ? 'dark' : 'light';
+    const shade = (_index % 8 + Number(isEvenRow)) % 2 === 0 ? 'light' : 'dark';
     return <Square key={_index} color={shade} />
   })
 );
 
 // *: This component will control the orientation of the boards and the subsequent squares, as well as have positions on side
-const Board = ({ squares, update }) => {
+const Board = ({ squares, update, flipped }) => {
 
   // // !: Just a temporary solution, in the future the array will be preprocessed for the client
-  // const n = Math.sqrt(squares.length);
-  // const squaresT = [] = squares.map((_, i, a) => a[(i % n) * n + Math.floor(i / n)]);
+  const n = Math.sqrt(squares?.length ?? 0);
+  const squaresT = (squares ?? placeholderSquares).map((_, i, a) => a[((i % n) * n + 7 - Math.floor(i / n))]);
   
-  // return (
-  //   <Background>
-  //       {
-  //         squaresT.reverse().map(({position, square, piece }) => {
-  //           return (
-  //             <Square key={position} color={square.color} position={position} piece={piece} update={update} isHighlighted={square.focus.highlighted} />
-  //           )
-  //         })
-  //       }
-  //   </Background>
-  // );
-    
+  const finalSquares = flipped ? squaresT.reverse() : squaresT
+
   return (
     <BoardContainer>
         { squares ?
-            squares.map(({ position, square, piece }) => (
+            finalSquares.map(({ position, square, piece }) => (
               <Square
                 key={position}
                 color={square.color}

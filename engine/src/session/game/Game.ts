@@ -41,7 +41,7 @@ class Game implements Observable {
   protected signalFinish: (result: Side | 'draw') => (() => void);
   protected startNextGameCallback = () => {};
 
-  constructor(id: string, private readonly playerSide: Side | null = null) {
+  constructor(id: string, protected readonly playerSide: Side | null = null) {
     this.id = id;
 
     this.observer = new Observer(this);
@@ -59,14 +59,8 @@ class Game implements Observable {
     );
     this.updateMoves();
 
-    if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-      const [from, to] = this.genRandomMove(this.currentTurnSide);
-      console.log(from, to)
-      this.moveManager.commitMove(
-        this.boardManager.boardSquares[from],
-        this.boardManager.boardSquares[to]
-      );
-      this.takeTurn();
+    if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+      this.takeComputerTurn();
     }
   };
 
@@ -95,7 +89,11 @@ class Game implements Observable {
       case 'move-controller': {
         const moveController = data;
         this.moveController = moveController
-        this.observer.commitState(prevState => ({ ...prevState, moveController, currentTurnSide: this.currentTurnSide }));
+        this.observer.commitState(prevState => ({
+          ...prevState,
+          moveController,
+          currentTurnSide: this.currentTurnSide
+        }));
         break;
       }
       default: {
@@ -108,6 +106,7 @@ class Game implements Observable {
           currentTurnSide: this.currentTurnSide,
           finished: this.isOver,
           moveController,
+          captures: this.moveManager.captures
         });
         break;
       }
@@ -128,14 +127,20 @@ class Game implements Observable {
     this.currentTurnSide = getEnemySide(this.currentTurnSide);
 
     if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-      const [from, to] = this.genRandomMove(this.currentTurnSide);
-      console.log(from, to)
+      this.takeComputerTurn();
+    };
+  };
+
+  private takeComputerTurn() {
+    const [from, to] = this.genRandomMove(this.currentTurnSide);
+
+    setTimeout(() => {
       this.moveManager.commitMove(
         this.boardManager.boardSquares[from],
         this.boardManager.boardSquares[to]
       );
       this.takeTurn();
-    }
+    }, 1000);
   };
 
   //* Returns whether the highlight was performed successfully
@@ -143,7 +148,7 @@ class Game implements Observable {
     if (isString(position)) {
       const selectedPiece = this.boardManager.boardSquares[position]?.piece;
 
-      if ((selectedPiece instanceof Piece) && isEqual(selectedPiece.side, this.currentTurnSide)) {
+      if ((selectedPiece instanceof Piece) && isEqual(selectedPiece.side, this.currentTurnSide) && (!this.playerSide || isEqual(this.currentTurnSide, this.playerSide))){
         this.boardManager.highlightMoves(selectedPiece);
         return true;
       } else {

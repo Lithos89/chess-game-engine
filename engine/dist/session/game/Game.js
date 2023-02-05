@@ -66,6 +66,7 @@ var Game = /** @class */ (function () {
                         currentTurnSide: _this.currentTurnSide,
                         finished: _this.isOver,
                         moveController: moveController,
+                        captures: _this.moveManager.captures
                     });
                     break;
                 }
@@ -77,7 +78,7 @@ var Game = /** @class */ (function () {
             var _a;
             if ((0, lodash_1.isString)(position)) {
                 var selectedPiece = (_a = _this.boardManager.boardSquares[position]) === null || _a === void 0 ? void 0 : _a.piece;
-                if ((selectedPiece instanceof Piece_1.default) && (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide)) {
+                if ((selectedPiece instanceof Piece_1.default) && (0, lodash_1.isEqual)(selectedPiece.side, _this.currentTurnSide) && (!_this.playerSide || (0, lodash_1.isEqual)(_this.currentTurnSide, _this.playerSide))) {
                     _this.boardManager.highlightMoves(selectedPiece);
                     return true;
                 }
@@ -161,11 +162,8 @@ var Game = /** @class */ (function () {
         // ?: Will also pass in a parameter or two to facilitate the game pattern (turn, if someone has won)
         this.moveManager = new MoveManager_1.default(function (type) { return _this.signalState(type); }, function (king, direction) { return _this.boardManager.commitCastle(king, direction); });
         this.updateMoves();
-        if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-            var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
-            console.log(from, to);
-            this.moveManager.commitMove(this.boardManager.boardSquares[from], this.boardManager.boardSquares[to]);
-            this.takeTurn();
+        if (this.playerSide && this.currentTurnSide !== this.playerSide) {
+            this.takeComputerTurn();
         }
     }
     ;
@@ -178,11 +176,18 @@ var Game = /** @class */ (function () {
         }
         this.currentTurnSide = (0, getEnemySide_1.default)(this.currentTurnSide);
         if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-            var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
-            console.log(from, to);
-            this.moveManager.commitMove(this.boardManager.boardSquares[from], this.boardManager.boardSquares[to]);
-            this.takeTurn();
+            this.takeComputerTurn();
         }
+        ;
+    };
+    ;
+    Game.prototype.takeComputerTurn = function () {
+        var _this = this;
+        var _a = this.genRandomMove(this.currentTurnSide), from = _a[0], to = _a[1];
+        setTimeout(function () {
+            _this.moveManager.commitMove(_this.boardManager.boardSquares[from], _this.boardManager.boardSquares[to]);
+            _this.takeTurn();
+        }, 1000);
     };
     ;
     return Game;

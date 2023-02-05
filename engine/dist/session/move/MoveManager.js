@@ -82,7 +82,8 @@ var MoveManager = /** @class */ (function () {
             else {
                 dest.setPiece(originPiece);
             }
-            _this.updateState('board');
+            // this.updateState('board');
+            _this.updateState();
         };
     }
     ;

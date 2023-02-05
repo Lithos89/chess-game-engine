@@ -18,13 +18,15 @@ const Container = styled.div`
   /* max-height: 100vh; */
   justify-content: stretch;
 
+  background-color: #000;
+
   @media ${devices.tablet} {
     justify-content: initial;
     min-width: 0;
     flex-direction: row;
     align-items: stretch;
     align-content: start;
-    margin: 2vh 5vh;
+    margin: auto 5vh;
   };
 
   @media ${devices.laptop} {
@@ -34,8 +36,6 @@ const Container = styled.div`
   @media ${devices.laptopL} {
     margin: auto 15vw;
   };
-
-  background-color: #000;
 `;
 
 const Spacer = styled.div`
@@ -51,24 +51,17 @@ const GameContainer = styled.div`
   flex-direction: ${p => p.reverse ? "column-reverse" : "column"};
   align-items: stretch;
 
-  align-self: flex-start;
-  min-height: 0;
-
   @media ${devices.mobileL} {
-    /* padding: 10px; */
+    /* padding: 10px; */ 
   };
 
   @media ${devices.tablet} {
+    max-width: 70vh;
     flex: 1 1 600px;
-    /* overflow: auto; */
-    /* padding: 20px; */
   };
 
   @media ${devices.laptop} {
     max-width: 80vh;
-    /* height: 100%; */
-    /* align-items: center; */
-    /* aspect-ratio: 1 / 1; */
   }
 `;
 
@@ -80,7 +73,7 @@ const Temp2Container = styled.div`
   };
 `;
 
-const Game = ({ gameId, matchInfo }) => {
+const Game = ({ gameId, matchInfo, isSinglePlayer }) => {
   const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
@@ -98,6 +91,10 @@ const Game = ({ gameId, matchInfo }) => {
       setMoveController(gameData.moveController)
     }
   }, [gameData]);
+
+  useEffect(() => {
+    setSelectedPiecePos(null);
+  }, [gameData?.currentTurnSide]);
 
   // Piece Selection
   const selectPiece = useCallback((pos, piece) => {
@@ -121,40 +118,38 @@ const Game = ({ gameId, matchInfo }) => {
         };
       };
     };
-  }, [selectedPiecePos, moveController, gameLoaded]);
-
-  const side1 = matchInfo?.currentSide === "black" ? "You" : "Computer";
-  const side2 = matchInfo?.currentSide === "white" ? "You" : "Computer";
-
-  const score1 = matchInfo?.currentSide === "black" ? matchInfo?.wins.player : matchInfo?.wins.opponent;
-  const score2 = matchInfo?.currentSide === "white" ? matchInfo?.wins.player : matchInfo?.wins.opponent;
+  }, [selectedPiecePos, moveController, gameLoaded, gameData]);
 
   const primarySide = matchInfo?.currentSide;
   const opponentSide = primarySide === "white" ? "black" : "white"; 
 
+
   // TODO: From the gameData prop, get the currentTurnSide value that is provided by the model and seee if it matches with the currentSide to determine whether it is the opponentsTurn
-  const opponentTurn = true;
-  
+  const primaryTurn = gameData?.currentTurnSide === matchInfo?.currentSide;
+
+  console.info(gameData)
+
   return (
       gameLoaded && gameData && moveController !== null ? (
         <Container>
-          <GameContainer reverse={opponentTurn}>
-          <SideDisplay
-            side={opponentSide}
-            // TODO: Add in here a clause that checks on the mode to determine wheter the name should be based on the computer or if it should be player 2
-            name="Computer"
-            active={opponentTurn}
-            captures={gameData.captures ? gameData.captures[opponentSide] : {}}
-            wins={matchInfo?.wins.opponent}
-          />
+          <GameContainer reverse={!isSinglePlayer ? !primaryTurn : false}>
+            <SideDisplay
+              side={opponentSide}
+              // TODO: Add in here a clause that checks on the mode to determine wheter the name should be based on the computer or if it should be player 2
+              name="Computer"
+              active={!primaryTurn}
+              captures={gameData.captures ? gameData.captures[opponentSide] : {}}
+              wins={matchInfo?.wins.opponent}
+            />
             <Board
               squares={gameData.board}
+              flipped={isSinglePlayer ? primarySide === "black" : gameData.currentTurnSide === "black"}
               update={!gameData.finished ? selectPiece : () => {}}
             />
             <SideDisplay 
               side={primarySide}
               name="You"
-              active={!opponentTurn}
+              active={primaryTurn}
               captures={gameData.captures ? gameData.captures[primarySide] : {}}
               wins={matchInfo?.wins.player}
             />

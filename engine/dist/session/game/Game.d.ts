@@ -1,7 +1,7 @@
 import { type ShortPosition, type Side } from '../../logic/terms';
 import Observable from '../../state/observable';
 declare class Game implements Observable {
-    private readonly playerSide;
+    protected readonly playerSide: Side | null;
     readonly id: string;
     private readonly startingFormation;
     protected currentTurnSide: Side;
@@ -16,6 +16,7 @@ declare class Game implements Observable {
     constructor(id: string, playerSide?: Side | null);
     signalState: (type?: string, data?: {}) => void;
     private takeTurn;
+    private takeComputerTurn;
     protected attemptHighlight: (position?: ShortPosition) => boolean;
     protected attemptMove: (from: ShortPosition, to: ShortPosition) => boolean;
     protected genRandomMove: (side: Side) => any;
