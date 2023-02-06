@@ -73,7 +73,7 @@ const Temp2Container = styled.div`
   };
 `;
 
-const Game = ({ gameId, matchInfo, isSinglePlayer }) => {
+const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) => {
   const [gameData, setGameData] = useState(null);
   const [gameLoaded, setGameLoaded] = useState(false);
   const [moveController, setMoveController] = useState(null);
@@ -136,7 +136,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer }) => {
             <SideDisplay
               side={opponentSide}
               // TODO: Add in here a clause that checks on the mode to determine wheter the name should be based on the computer or if it should be player 2
-              name="Computer"
+              name={opponentName}
               active={!primaryTurn}
               captures={gameData.captures ? gameData.captures[opponentSide] : {}}
               wins={matchInfo?.wins.opponent}
@@ -148,7 +148,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer }) => {
             />
             <SideDisplay 
               side={primarySide}
-              name="You"
+              name={primaryName}
               active={primaryTurn}
               captures={gameData.captures ? gameData.captures[primarySide] : {}}
               wins={matchInfo?.wins.player}

@@ -64,7 +64,7 @@ class MoveManager {
       };
     }).filter((v) => v !== undefined);
 
-    return compiledMoves
+    return compiledMoves;
   };
 
   private capture = (piece: Piece) => {

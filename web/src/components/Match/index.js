@@ -35,7 +35,13 @@ const Match = ({ matchId, mode }) => {
   }, [matchController, gameStarted]);
 
   return (
-    <Game gameId={matchData?.currentGame ?? null} matchInfo={matchData?.info} isSinglePlayer={mode !== "local"} />
+    <Game
+      gameId={matchData?.currentGame ?? null}
+      matchInfo={matchData?.info}
+      isSinglePlayer={mode !== "local"}
+      primaryName={mode === "local" ? "Player 1" : "You"}
+      opponentName={mode === "local" ? "Player 2" : "Computer"}
+    />
   );
 };
 

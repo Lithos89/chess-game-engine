@@ -1,10 +1,12 @@
 
 // Components
 import CapturesDisplay from "components/Game/Menu/CapturesDisplay";
+import TurnIndicator from "./TurnIndicator";
 
-// Styling
+// Styling & Animations
 import styled from "styled-components";
 import { devices } from "config/devices";
+import blink from "components/common/animations/blink";
 
 // Hooks
 import useMediaQuery from "hooks/useMediaQuery";
@@ -24,18 +26,6 @@ const Container = styled.div`
     p.theme.color.black.solid :
     p.theme.color.white.solid
   };
-`;
-
-const Indicator = styled.div`
-  display: inline-block;
-  width: 2rem;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-
-  align-self: center;
-  justify-self: start;
-
-  background-color: ${p => p.active ? "green" : "white" };
 `;
 
 const NameDisplay = styled.h3`
@@ -73,7 +63,7 @@ const SideDisplay = ({ side, active, name, captures, wins }) => {
 
   return (
     <Container side={side}>
-      <Indicator active={active} />
+      <TurnIndicator active={active} />
         <WinCounter>
           {score}
         </WinCounter>
