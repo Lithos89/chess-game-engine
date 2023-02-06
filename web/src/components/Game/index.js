@@ -137,7 +137,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
               side={opponentSide}
               // TODO: Add in here a clause that checks on the mode to determine wheter the name should be based on the computer or if it should be player 2
               name={opponentName}
-              active={!primaryTurn}
+              active={!primaryTurn && !gameData.finished}
               captures={gameData.captures ? gameData.captures[opponentSide] : {}}
               wins={matchInfo?.wins.opponent}
             />
@@ -149,7 +149,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
             <SideDisplay 
               side={primarySide}
               name={primaryName}
-              active={primaryTurn}
+              active={primaryTurn && !gameData.finished}
               captures={gameData.captures ? gameData.captures[primarySide] : {}}
               wins={matchInfo?.wins.player}
             />
@@ -169,9 +169,9 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
       ) : (
       <Container>
         <GameContainer>
-          <SideDisplay side="black" name="" active={false} />
+          <SideDisplay side="black" name="Opponent" active={false} />
           <Board />
-          <SideDisplay side="white" name="" active={false} />
+          <SideDisplay side="white" name="You" active={false} />
           <Temp2Container />
         </GameContainer>
 
