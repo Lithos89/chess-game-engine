@@ -3,5 +3,6 @@ import { Attack } from "../../logic/concepts";
 import { type BoardSquareListings } from "../../formation/structure/squareCollection";
 declare class EventManager {
     static forceCheckResolve: (board: BoardSquareListings, { attackPiece, frontAttackLine }: Attack, side: Side) => boolean;
+    static identifyDraw: (board: BoardSquareListings, side: Side) => boolean;
 }
 export default EventManager;

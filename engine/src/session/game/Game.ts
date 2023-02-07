@@ -30,6 +30,7 @@ class Game implements Observable {
   protected currentTurnSide: Side = 'white';
   private turnCount: number = 0;
   protected isOver: boolean = false;
+  private result: Side | 'draw';
 
   private boardManager: BoardManager;
   private moveManager: MoveManager;
@@ -120,15 +121,15 @@ class Game implements Observable {
     this.turnCount += 1;
     this.updateMoves(this.currentTurnSide);
 
-    if (this.isOver) {
-      this.startNextGameCallback = this.signalFinish(this.currentTurnSide);
+    if (!this.isOver) {
+      this.currentTurnSide = getEnemySide(this.currentTurnSide);
+
+      if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
+        this.takeComputerTurn();
+      };
+    } else {
+      this.startNextGameCallback = this.signalFinish(this.result);
     }
-
-    this.currentTurnSide = getEnemySide(this.currentTurnSide);
-
-    if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-      this.takeComputerTurn();
-    };
   };
 
   private takeComputerTurn() {
@@ -201,34 +202,48 @@ class Game implements Observable {
     const checks: Attack[] = [];
     this.boardManager.processAvailableMoves(checks, sideLastMoved);
 
-    if (!isEmpty(checks) && !isUndefined(sideLastMoved)) {
-      const isCheckmate = (Array.from(checks))
-        .map((attack) => EventManager.forceCheckResolve(
-            this.boardManager.boardSquares,
-            attack,
-            sideLastMoved
-          )
-        )
-        .some(Boolean);
 
 
-      console.info(this.boardManager.boardSquares);
-      if (isCheckmate) {
-        console.info("Checkmate");
-        this.isOver = true;
+    if (!isUndefined(sideLastMoved)) {
+      if (isEmpty(checks)) {
+        const sideToMove = getEnemySide(sideLastMoved);
+        const isDraw = EventManager.identifyDraw(
+          this.boardManager.boardSquares,
+          sideToMove
+        );
 
-        if (this.playerSide) {
-          if (this.playerSide === this.currentTurnSide) {
-            console.info(this.playerSide + 'has won')
-          } else {
-            console.info('The computer has won')
-          }
+        if (isDraw) {
+          this.isOver = true;
+          this.result = 'draw';
         }
-      } else {
-        console.info("Check");
+      } else { 
+        const isCheckmate = (Array.from(checks))
+          .map((attack) => EventManager.forceCheckResolve(
+              this.boardManager.boardSquares,
+              attack,
+              sideLastMoved
+            )
+          )
+          .some(Boolean);
+
+        if (isCheckmate) {
+          console.info("Checkmate");
+          this.isOver = true;
+
+          if (this.playerSide) {
+            if (this.playerSide === this.currentTurnSide) {
+              this.result = this.currentTurnSide;
+              console.info(this.playerSide + 'has won')
+            } else {
+              this.result = getEnemySide(this.currentTurnSide);
+              console.info('The computer has won');
+            }
+          }
+        } else {
+          console.info("Check");
+        };
       };
     };
-
     this.signalState('board');
   };
 };

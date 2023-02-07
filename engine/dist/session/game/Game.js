@@ -131,25 +131,37 @@ var Game = /** @class */ (function () {
         this.updateMoves = function (sideLastMoved) {
             var checks = [];
             _this.boardManager.processAvailableMoves(checks, sideLastMoved);
-            if (!(0, lodash_1.isEmpty)(checks) && !(0, lodash_1.isUndefined)(sideLastMoved)) {
-                var isCheckmate = (Array.from(checks))
-                    .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved); })
-                    .some(Boolean);
-                console.info(_this.boardManager.boardSquares);
-                if (isCheckmate) {
-                    console.info("Checkmate");
-                    _this.isOver = true;
-                    if (_this.playerSide) {
-                        if (_this.playerSide === _this.currentTurnSide) {
-                            console.info(_this.playerSide + 'has won');
-                        }
-                        else {
-                            console.info('The computer has won');
-                        }
+            if (!(0, lodash_1.isUndefined)(sideLastMoved)) {
+                if ((0, lodash_1.isEmpty)(checks)) {
+                    var sideToMove = (0, getEnemySide_1.default)(sideLastMoved);
+                    var isDraw = EventManager_1.default.identifyDraw(_this.boardManager.boardSquares, sideToMove);
+                    if (isDraw) {
+                        _this.isOver = true;
+                        _this.result = 'draw';
                     }
                 }
                 else {
-                    console.info("Check");
+                    var isCheckmate = (Array.from(checks))
+                        .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved); })
+                        .some(Boolean);
+                    if (isCheckmate) {
+                        console.info("Checkmate");
+                        _this.isOver = true;
+                        if (_this.playerSide) {
+                            if (_this.playerSide === _this.currentTurnSide) {
+                                _this.result = _this.currentTurnSide;
+                                console.info(_this.playerSide + 'has won');
+                            }
+                            else {
+                                _this.result = (0, getEnemySide_1.default)(_this.currentTurnSide);
+                                console.info('The computer has won');
+                            }
+                        }
+                    }
+                    else {
+                        console.info("Check");
+                    }
+                    ;
                 }
                 ;
             }
@@ -171,14 +183,16 @@ var Game = /** @class */ (function () {
     Game.prototype.takeTurn = function () {
         this.turnCount += 1;
         this.updateMoves(this.currentTurnSide);
-        if (this.isOver) {
-            this.startNextGameCallback = this.signalFinish(this.currentTurnSide);
+        if (!this.isOver) {
+            this.currentTurnSide = (0, getEnemySide_1.default)(this.currentTurnSide);
+            if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
+                this.takeComputerTurn();
+            }
+            ;
         }
-        this.currentTurnSide = (0, getEnemySide_1.default)(this.currentTurnSide);
-        if (this.playerSide && this.currentTurnSide !== this.playerSide && !this.isOver) {
-            this.takeComputerTurn();
+        else {
+            this.startNextGameCallback = this.signalFinish(this.result);
         }
-        ;
     };
     ;
     Game.prototype.takeComputerTurn = function () {

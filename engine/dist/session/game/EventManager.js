@@ -66,6 +66,20 @@ var EventManager = /** @class */ (function () {
         king.availableMoves = Array.from(kingMoves);
         return (0, lodash_1.isEmpty)(king.availableMoves) && (0, lodash_1.isEmpty)(preventitiveMoves);
     };
+    EventManager.identifyDraw = function (board, side) {
+        for (var boardPos in board) {
+            var square = board[boardPos];
+            var piece = square.piece;
+            if ((0, lodash_1.isNull)(piece) || piece.side !== side) {
+                continue;
+            }
+            ;
+            if (piece.availableMoves.length !== 0) {
+                return false;
+            }
+        }
+        return true;
+    };
     return EventManager;
 }());
 ;

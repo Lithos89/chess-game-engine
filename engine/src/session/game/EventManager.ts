@@ -69,6 +69,21 @@ class EventManager {
 
     return isEmpty(king.availableMoves) && isEmpty(preventitiveMoves);
   };
+
+  static identifyDraw = (board: BoardSquareListings, side: Side) => {
+    for (const boardPos in board) {
+      const square = board[boardPos];
+      const piece: Piece | null = square.piece;
+
+      if (isNull(piece) || piece.side !== side) { continue };
+
+      if (piece.availableMoves.length !== 0) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 };
 
 export default EventManager;

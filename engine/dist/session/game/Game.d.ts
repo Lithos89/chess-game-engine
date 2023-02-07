@@ -7,6 +7,7 @@ declare class Game implements Observable {
     protected currentTurnSide: Side;
     private turnCount;
     protected isOver: boolean;
+    private result;
     private boardManager;
     private moveManager;
     private observer;
