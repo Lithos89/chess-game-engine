@@ -9,21 +9,27 @@ const theme = {
     black: {
       solid: "#000000",
       main: "#0E1116",
+      temp: "#3B3936",
     },
 
     white: {
       solid: "#FFFFFF",
-      main: "#FBFEF9",
+      main: "#F3F3F3",
     },
     
     wood: {
       dark: "#8B5E3C",
-      light: "#FDf5E6",
+      light: "#D7D6D6",
     },
     gray: {
       dark: "#393E41",
       light: "#D9D9D9",
+      composite: "#DDDDDD",
     },
+    green: {
+      light: "#889C9B",
+      dark: "#486966",
+    }
   },
   font: ["sans-serif", "Roboto"],
   fontSizes: {

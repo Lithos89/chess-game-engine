@@ -12,13 +12,11 @@ var Observer = /** @class */ (function () {
             _this.manager.signalState();
         };
         this.commitState = function (state) {
-            if (_this.manager instanceof Match_1.default) {
-                console.info("Match state updated");
-            }
-            else if (_this.manager instanceof Game_1.default) {
-                console.info("Game state updated");
-            }
-            ;
+            // if (this.manager instanceof Match) {
+            //   console.info("Match state updated");
+            // } else if (this.manager instanceof Game) {
+            //   console.info("Game state updated");
+            // };
             _this.updateState(state);
         };
         this.manager = manager;

@@ -1,6 +1,7 @@
 
 // Styling
 import styled from "styled-components";
+import { devices } from "config/devices";
 
 // Utils
 import { getAssetLink } from 'utils';
@@ -13,6 +14,10 @@ const PieceGroup = styled.div`
 const Container = styled.div`
   justify-self: start;
   height: 2rem;
+
+  @media ${devices.laptop} {
+    height: 4rem;
+  };
 `;
 
 // Styling to allow for the pieces to overlap each other
@@ -24,11 +29,19 @@ const ImgWrapper = styled.div`
 
   & + & {
     margin-left: -1.5rem;
+
+    @media ${devices.laptop} {
+      margin-left: -2rem;
+    }
   };
 `;
 
 const CapturedPieceImg = styled.img`
   height: 2rem;
+
+  @media ${devices.laptop} {
+    height: 3rem;
+  };
 `;
 
 const CapturesDisplay = ({ captures, side }) => {

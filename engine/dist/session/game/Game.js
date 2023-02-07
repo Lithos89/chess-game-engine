@@ -145,21 +145,21 @@ var Game = /** @class */ (function () {
                         .map(function (attack) { return EventManager_1.default.forceCheckResolve(_this.boardManager.boardSquares, attack, sideLastMoved); })
                         .some(Boolean);
                     if (isCheckmate) {
-                        console.info("Checkmate");
+                        // console.info("Checkmate");
                         _this.isOver = true;
                         if (_this.playerSide) {
                             if (_this.playerSide === _this.currentTurnSide) {
                                 _this.result = _this.currentTurnSide;
-                                console.info(_this.playerSide + 'has won');
+                                // console.info(this.playerSide + 'has won')
                             }
                             else {
                                 _this.result = (0, getEnemySide_1.default)(_this.currentTurnSide);
-                                console.info('The computer has won');
+                                // console.info('The computer has won');
                             }
                         }
                     }
                     else {
-                        console.info("Check");
+                        // console.info("Check");
                     }
                     ;
                 }

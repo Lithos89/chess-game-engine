@@ -17,7 +17,7 @@ const MenuContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1;
-  background-color: #ccc;
+  background-color: ${p => p.theme.color.wood.light};
 
   @media ${devices.tablet} {
     min-width: 300px;
@@ -25,6 +25,14 @@ const MenuContainer = styled.div`
     padding: 20px;
     min-height: 0;
   }
+`;
+
+const CapturesContainer = styled.div`
+  margin: 1rem 0;
+
+  @media ${devices.tablet} {
+    margin-bottom: 0.5rem 0;
+  };
 `;
 
 const Menu = ({ undo, resign, moveLog, captures, next, children }) => {
@@ -36,15 +44,18 @@ const Menu = ({ undo, resign, moveLog, captures, next, children }) => {
       {children}
       <MoveHistory moveLog={moveLog} />
       {captures && isLaptop && (
-        <Fragment>
-          <h3>
+        <CapturesContainer>
+          {/* <h3>
             Captures
-          </h3>
+          </h3> */}
           <CapturesDisplay captures={captures.white} side="black"/>
           <CapturesDisplay captures={captures.black} side="white"/>
-        </Fragment>
+        </CapturesContainer>
       )}
-      <Button onClick={undo}> Undo </Button>
+      {
+        // TODO: Add back in when undo is functional in the engine
+        /* <Button onClick={undo}> Undo </Button> */
+      }
       <Button onClick={resign}> Resign </Button>
       { next && (
         <Button onClick={next}> Start Next </Button>

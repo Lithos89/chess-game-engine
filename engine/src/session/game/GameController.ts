@@ -43,7 +43,6 @@ class GameController extends Game {
 
   // *: Move highlighting management for selecting/deselecting a square with a piece
   public selectSquare = (position: ShortPosition) => {
-    console.info(position);
     const isNewSelection = isNull(this.selectedSquarePos);
 
     //* Selecting a square while no square is highlighted

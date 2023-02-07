@@ -19,7 +19,7 @@ const Container = styled.div`
   padding: 0.2rem 1rem;
 
   background-color: ${ p => p.side === "white" ?
-    p.theme.color.white.solid :
+    p.theme.color.white.main :
     p.theme.color.black.solid
   };
   color: ${ p => p.side === "white" ?

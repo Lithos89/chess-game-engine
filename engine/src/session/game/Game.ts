@@ -227,20 +227,20 @@ class Game implements Observable {
           .some(Boolean);
 
         if (isCheckmate) {
-          console.info("Checkmate");
+          // console.info("Checkmate");
           this.isOver = true;
 
           if (this.playerSide) {
             if (this.playerSide === this.currentTurnSide) {
               this.result = this.currentTurnSide;
-              console.info(this.playerSide + 'has won')
+              // console.info(this.playerSide + 'has won')
             } else {
               this.result = getEnemySide(this.currentTurnSide);
-              console.info('The computer has won');
+              // console.info('The computer has won');
             }
           }
         } else {
-          console.info("Check");
+          // console.info("Check");
         };
       };
     };

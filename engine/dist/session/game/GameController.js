@@ -41,7 +41,6 @@ var GameController = /** @class */ (function (_super) {
         // };
         // *: Move highlighting management for selecting/deselecting a square with a piece
         _this.selectSquare = function (position) {
-            console.info(position);
             var isNewSelection = (0, lodash_1.isNull)(_this.selectedSquarePos);
             //* Selecting a square while no square is highlighted
             if (isNewSelection) {

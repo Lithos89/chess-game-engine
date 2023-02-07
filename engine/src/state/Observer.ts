@@ -34,11 +34,11 @@ class Observer<T extends Observable> {
   };
 
   public commitState = (state: ((prevState: {[key: string]: any}) => {}) | {}) => {
-    if (this.manager instanceof Match) {
-      console.info("Match state updated");
-    } else if (this.manager instanceof Game) {
-      console.info("Game state updated");
-    };
+    // if (this.manager instanceof Match) {
+    //   console.info("Match state updated");
+    // } else if (this.manager instanceof Game) {
+    //   console.info("Game state updated");
+    // };
     this.updateState(state);
   };
 };

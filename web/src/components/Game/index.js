@@ -18,7 +18,7 @@ const Container = styled.div`
   /* max-height: 100vh; */
   justify-content: stretch;
 
-  background-color: #000;
+  background-color: ${p => p.theme.color.black.temp};
 
   @media ${devices.tablet} {
     justify-content: initial;
@@ -30,6 +30,8 @@ const Container = styled.div`
   };
 
   @media ${devices.laptop} {
+    padding: 2vh;
+    border-radius: 1rem;
     margin: auto 10vw;
   };
 
@@ -50,12 +52,14 @@ const GameContainer = styled.div`
   display: flex;
   flex-direction: ${p => p.reverse ? "column-reverse" : "column"};
   align-items: stretch;
+  justify-content: space-between;
 
   @media ${devices.mobileL} {
     /* padding: 10px; */ 
   };
 
   @media ${devices.tablet} {
+    /* gap: 1rem; */
     max-width: 70vh;
     flex: 1 1 600px;
   };
@@ -65,7 +69,7 @@ const GameContainer = styled.div`
   }
 `;
 
-const Temp2Container = styled.div`
+const Spacer2 = styled.div`
   flex: 1;
 
   @media ${devices.laptopL} {
@@ -127,8 +131,6 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
   // TODO: From the gameData prop, get the currentTurnSide value that is provided by the model and seee if it matches with the currentSide to determine whether it is the opponentsTurn
   const primaryTurn = gameData?.currentTurnSide === matchInfo?.currentSide;
 
-  console.info(gameData)
-
   return (
       gameLoaded && gameData && moveController !== null ? (
         <Container>
@@ -153,7 +155,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
               captures={gameData.captures ? gameData.captures[primarySide] : {}}
               wins={matchInfo?.wins.player}
             />
-            <Temp2Container />
+            <Spacer2 />
           </GameContainer>
 
           <Spacer />
@@ -172,7 +174,7 @@ const Game = ({ gameId, matchInfo, isSinglePlayer, primaryName, opponentName }) 
           <SideDisplay side="black" name="Opponent" active={false} />
           <Board />
           <SideDisplay side="white" name="You" active={false} />
-          <Temp2Container />
+          <Spacer2 />
         </GameContainer>
 
         <Spacer />

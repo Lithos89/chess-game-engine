@@ -12,11 +12,12 @@ const BoardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   
-  background-color: white;
+  background-color: ${p => p.theme.color.white.solid};
 
   aspect-ratio: 1 / 1;
 
   @media ${devices.tablet} {
+    margin: 0.5vh 0;
     max-width: 70vh;
   };
 

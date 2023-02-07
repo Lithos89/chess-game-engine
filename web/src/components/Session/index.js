@@ -26,7 +26,9 @@ const Container = styled.div`
   justify-content: center;
   
   // TODO: Make sure to change this to a gradient or a background picture
-  background-color: ${p => p.theme.color.gray.dark};
+  
+  /* background: linear-gradient(${p => p.theme.color.green.light}, ${p => p.theme.color.green.dark}); */
+  background-color: ${p => p.theme.color.white.main};
 
   @media ${devices.tablet} {
     align-items: stretch;

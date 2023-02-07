@@ -17,10 +17,10 @@ const MoveCell = styled.div`
   align-items: start;
   padding: 5px;
   display: flex;
-  background-color: #fff;
+  background-color: ${p => p.theme.color.white.solid};
 
-  :nth-child(odd) {
-    background-color: #ddd;
+  :nth-child(even) {
+    background-color: ${p => p.theme.color.gray.composite};
   }
 `;
 
@@ -41,12 +41,11 @@ const MoveBlack = styled.h5`
 `;
 
 const MoveHistory = ({ moveLog }) => {
-
+  const moveHistory = moveLog ?? [];
 
   return (
     <Container>
-      { moveLog &&
-        moveLog.reverse().map((move, i) => {
+      { moveHistory.map((move, i) => {
           return (
             <MoveCell key={i}>
               <MoveIndex>{i + 1}.</MoveIndex>
